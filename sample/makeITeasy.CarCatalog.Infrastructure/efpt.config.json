@@ -1,0 +1,35 @@
+﻿{
+   "ContextClassName": "CarCatalogContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "DoNotCombineNamespace": false,
+   "IdReplace": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": "",
+   "OutputContextPath": null,
+   "OutputPath": "Data",
+   "ProjectRootNamespace": "makeITeasy.CarCatalog.Infrastructure",
+   "SelectedHandlebarsLanguage": 0,
+   "SelectedToBeGenerated": 1,
+   "Tables": [
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[Brand]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[Car]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[Country]"
+      }
+   ],
+   "UseDatabaseNames": false,
+   "UseDbContextSplitting": true,
+   "UseFluentApiOnly": true,
+   "UseHandleBars": true,
+   "UseInflector": true,
+   "UseLegacyPluralizer": false,
+   "UseSpatial": false
+}
