@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DelegateDecompiler" Version="0.28.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\makeITeasy.AppFramework.Models\makeITeasy.AppFramework.Models.csproj" />
   </ItemGroup>
 
