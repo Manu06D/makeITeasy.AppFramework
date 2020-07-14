@@ -11,6 +11,7 @@ using makeITeasy.CarCatalog.Core.Domains.BrandDomain.Queries;
 using System.Threading.Tasks;
 using FluentAssertions;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace makeITeasy.CarCatalog.Tests
 {
@@ -83,6 +84,7 @@ namespace makeITeasy.CarCatalog.Tests
 
             var getResult = await brandService.QueryWithProjectionAsync<SmallBrandInfo>(new BaseBrandQuery());
 
+            getResult.Results.Should().OnlyContain(x => x.Name != null && x.Cars != null && x.Cars.Select(x => x.Name).Count() >= 1 );
 
         }
     }

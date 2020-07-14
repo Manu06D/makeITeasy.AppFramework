@@ -191,7 +191,6 @@ namespace makeITeasy.CarCatalog.Tests
             getResult.TotalItems.Should().Be(newCars.Count(x => x.ReleaseYear > 2000));
         }
 
-
         [Fact]
         public async Task CreateAndGet_ListWithMapping2LevelTest()
         {
@@ -208,6 +207,19 @@ namespace makeITeasy.CarCatalog.Tests
 
             getResult.Results.Should().OnlyContain(x => x.Name != null);
             getResult.Results.Should().OnlyContain(x => x.BrandName != null);
+        }
+
+        [Fact]
+        public async Task CreateAndGet_ListWithPagingTest()
+        {
+            var newCars = TestCarsCatalog.GetValidCars(50);
+
+            newCars.ForEach(async x => await carService.Create(x));
+
+            var getResult = await carService.QueryAsync(new BaseCarQuery() {Skip = 5, Take = 10, IsPagingEnabled = true }, includeCount: true);
+
+            getResult.TotalItems.Should().Be(50);
+            getResult.Results.Count.Should().Be(10);
         }
     }
 }
