@@ -7,7 +7,6 @@ using FluentValidation;
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.AppFramework.Core.Queries;
-using System.ComponentModel;
 
 namespace makeITeasy.AppFramework.Core.Services
 {
