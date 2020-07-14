@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
@@ -7,9 +6,7 @@ using FluentValidation;
 using makeITeasy.AppFramework.Core.Helpers;
 using makeITeasy.AppFramework.Core.Infrastructure.Autofac;
 using makeITeasy.AppFramework.Core.Interfaces;
-using makeITeasy.AppFramework.Core.Services;
 using makeITeasy.AppFramework.Models;
-using makeITeasy.CarCatalog.Core.Domains.CarDomain;
 using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Infrastructure.Persistence;
 using makeITeasy.CarCatalog.Models;
@@ -27,15 +24,17 @@ namespace makeITeasy.CarCatalog.Tests
         protected override void Load(ContainerBuilder builder)
         {
             var services = new ServiceCollection();
-            Assembly[] assembliesToScan = new Assembly[]{
-                    typeof(BaseEntityService<Car>).GetTypeInfo().Assembly,
-                    typeof(CarService).GetTypeInfo().Assembly,
-                    typeof(BaseQuery<>).GetTypeInfo().Assembly};
 
+            Assembly[] assembliesToScan = new Assembly[]{
+                    AppFramework.Core.AppFrameworkCore.Assembly,
+                    Core.CarCatalogCore.Assembly,
+                    AppFrameworkModels.Assembly
+            };
 
             services.AddMediatR(assembliesToScan);
+
             services.AddAutoMapper(new Assembly[] {
-                typeof(MappingProfile).Assembly, //Automatic IMapFrom mapping   
+                AppFramework.Core.AppFrameworkCore.Assembly, //Automatic IMapFrom mapping   
                 Assembly.GetExecutingAssembly() //Custom Mapping
             });
 
@@ -58,17 +57,17 @@ namespace makeITeasy.CarCatalog.Tests
 
             builder.Populate(services);
 
-            builder.RegisterModule(new RegisterAutofacModule() { Assemblies = new List<Assembly>() { typeof(RegisterAutofacModule).Assembly, typeof(CarService).Assembly } });
+            builder.RegisterModule(new RegisterAutofacModule() { Assemblies = assembliesToScan });
 
-            builder.RegisterAssemblyTypes(typeof(CarCatalog.Models.Car).Assembly)
-                .Where(t => t.IsClosedTypeOf(typeof(IValidator<>))).AsImplementedInterfaces();
+
+            builder.RegisterAssemblyTypes(CarCatalogModels.Assembly).Where(t => t.IsClosedTypeOf(typeof(IValidator<>))).AsImplementedInterfaces();
 
             builder.RegisterType<CarCatalogContext>();
 
             builder.RegisterGeneric(typeof(EfRepository<>)).As(typeof(IAsyncRepository<>)).InstancePerLifetimeScope()
-            .PropertiesAutowired()
-            .OnActivated(args => AutofacHelper.InjectProperties(args.Context, args.Instance, true));
-            builder.RegisterType<AutofacValidatorFactory>().As<IValidatorFactory>().SingleInstance();
+                .PropertiesAutowired()
+                .OnActivated(args => AutofacHelper.InjectProperties(args.Context, args.Instance, true));
+                builder.RegisterType<AutofacValidatorFactory>().As<IValidatorFactory>().SingleInstance();
         }
     }
 }

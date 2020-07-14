@@ -8,11 +8,11 @@ namespace makeITeasy.AppFramework.Core.Helpers
 {
     public class RegisterAutofacModule : Module
     {
-        public List<Assembly> Assemblies { get; set; }
+        public Assembly[] Assemblies { get; set; }
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterAssemblyTypes(Assemblies.ToArray())
+            builder.RegisterAssemblyTypes(Assemblies)
                   .Where(t => t.Name.EndsWith("Service"))
                   .AsImplementedInterfaces()
                   .PropertiesAutowired()
