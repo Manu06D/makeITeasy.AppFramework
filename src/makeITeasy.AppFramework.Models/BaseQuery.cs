@@ -10,7 +10,7 @@ namespace makeITeasy.AppFramework.Models
 
         public List<Expression<Func<T, object>>> Includes { get; set; }
 
-        public List<string> IncludeStrings { get; }
+        public List<string> IncludeStrings { get; set; }
 
         public int? Take { get; set; }
 

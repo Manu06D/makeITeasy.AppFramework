@@ -58,7 +58,7 @@ namespace makeITeasy.AppFramework.Core.Services
             return await EntityRepository.ListWithProjectionAsync<TTargetEntity>(specification, includeCount);
         }
 
-        public async Task<CommandResult<TEntity>> Create(TEntity entity, bool saveChanges = true)
+        public virtual async Task<CommandResult<TEntity>> Create(TEntity entity, bool saveChanges = true)
         {
             return await SaveOrUpdate(entity, async (x) => await InnerAddAsync(x));
         }
@@ -71,6 +71,7 @@ namespace makeITeasy.AppFramework.Core.Services
         private async Task<CommandResult<TEntity>> SaveOrUpdate(TEntity entity, Func<TEntity, Task<CommandResult<TEntity>>> action)
         {
             var entityValidator = ValidatorFactory?.GetValidator<TEntity>();
+
             if (entityValidator != null)
             {
                 var validationResult = entityValidator.Validate(entity);

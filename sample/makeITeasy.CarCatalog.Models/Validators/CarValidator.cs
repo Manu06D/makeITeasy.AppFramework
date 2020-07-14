@@ -6,7 +6,7 @@ namespace makeITeasy.CarCatalog.Models.Validators
     {
         public CarValidator()
         {
-            RuleFor(x => x.Name).MinimumLength(3).MaximumLength(50).WithMessage("Name of Car length should be between 3 and 10");
+            RuleFor(x => x.Name).MinimumLength(2).MaximumLength(50).WithMessage("Name of Car length should be between 2 and 10");
         }
     }
 }
