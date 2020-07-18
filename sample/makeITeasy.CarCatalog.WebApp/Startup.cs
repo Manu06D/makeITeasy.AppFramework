@@ -60,7 +60,7 @@ namespace makeITeasy.CarCatalog.WebApp
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.RegisterModule(new RegisterAutofacModule() { Assemblies = new List<Assembly>() { typeof(RegisterAutofacModule).Assembly, typeof(CarService).Assembly } });
+            builder.RegisterModule(new RegisterAutofacModule() { Assemblies = new Assembly[]() { typeof(RegisterAutofacModule).Assembly, typeof(CarService).Assembly } });
 
             builder.RegisterAssemblyTypes(typeof(CarCatalog.Models.Car).Assembly)
                 .Where(t => t.IsClosedTypeOf(typeof(IValidator<>))).AsImplementedInterfaces();

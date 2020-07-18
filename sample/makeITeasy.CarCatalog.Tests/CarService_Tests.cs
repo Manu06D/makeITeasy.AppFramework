@@ -19,6 +19,8 @@ namespace makeITeasy.CarCatalog.Tests
     {
         private ICarService carService;
 
+        //TODO : fix unit test https://github.com/dotnet/efcore/issues/12459
+
         public CarService_Tests()
         {
             carService = Resolve<ICarService>();
