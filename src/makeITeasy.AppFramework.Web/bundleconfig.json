@@ -1,0 +1,17 @@
+[
+  {
+    "outputFileName": "wwwroot/dist/makeITeasy.min.js",
+    "inputFiles": [
+      "wwwroot/js/makeITeasy.common.js",
+      "wwwroot/js/makeITeasy.datatables.js",
+      "wwwroot/js/makeITeasy.form.js",
+      "wwwroot/js/makeITeasy.jqueryExtension.js",
+      "wwwroot/js/makeITeasy.modal.js"
+
+    ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  }
+]

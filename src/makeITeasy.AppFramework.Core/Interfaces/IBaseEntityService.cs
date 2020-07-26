@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.AppFramework.Core.Queries;
+using makeITeasy.AppFramework.Core.Commands;
 
 namespace makeITeasy.AppFramework.Core.Interfaces
 {

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
@@ -8,6 +7,7 @@ using FluentValidation;
 using makeITeasy.AppFramework.Core.Helpers;
 using makeITeasy.AppFramework.Core.Infrastructure.Autofac;
 using makeITeasy.AppFramework.Core.Interfaces;
+using makeITeasy.AppFramework.Web.Helpers;
 using makeITeasy.CarCatalog.Core.Domains.CarDomain;
 using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Infrastructure.Persistence;
@@ -40,7 +40,7 @@ namespace makeITeasy.CarCatalog.WebApp
             
             _ = services.AddOptions();
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddNewtonsoftJson(); 
 
             _ = services.AddDbContext<CarCatalogContext>(options =>
             {
@@ -50,17 +50,16 @@ namespace makeITeasy.CarCatalog.WebApp
                 ;
             });
 
-            Assembly[] assembliesToScan = new Assembly[]
-            {
-                    typeof(CarService).GetTypeInfo().Assembly,
-            };
+            Assembly[] assembliesToScan = new Assembly[]{typeof(CarService).GetTypeInfo().Assembly};
 
             services.AddMediatR(assembliesToScan);
+
+            DatatableHelpers.RegisterDatatableService(services);
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.RegisterModule(new RegisterAutofacModule() { Assemblies = new Assembly[]() { typeof(RegisterAutofacModule).Assembly, typeof(CarService).Assembly } });
+            builder.RegisterModule(new RegisterAutofacModule() { Assemblies = new Assembly[] { typeof(RegisterAutofacModule).Assembly, typeof(CarService).Assembly } });
 
             builder.RegisterAssemblyTypes(typeof(CarCatalog.Models.Car).Assembly)
                 .Where(t => t.IsClosedTypeOf(typeof(IValidator<>))).AsImplementedInterfaces();
@@ -76,7 +75,7 @@ namespace makeITeasy.CarCatalog.WebApp
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            this.AutofacContainer = app.ApplicationServices.GetAutofacRoot();
+            AutofacContainer = app.ApplicationServices.GetAutofacRoot();
 
             if (env.IsDevelopment())
             {

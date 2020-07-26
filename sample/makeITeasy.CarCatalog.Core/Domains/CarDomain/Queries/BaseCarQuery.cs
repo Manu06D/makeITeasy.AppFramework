@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using makeITeasy.AppFramework.Core.Extensions;
 using makeITeasy.AppFramework.Models;
@@ -8,6 +9,7 @@ namespace makeITeasy.CarCatalog.Core.Domains.CarDomain.Queries
 {
     public class BaseCarQuery : BaseQuery<Car>
     {
+        [Required]
         public long? ID { get; set; }
 
         public bool? IsModernCar { get; set; }

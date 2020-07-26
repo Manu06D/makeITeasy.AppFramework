@@ -12,6 +12,7 @@ using makeITeasy.AppFramework.Models;
 using makeITeasy.AppFramework.Core.Queries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using makeITeasy.AppFramework.Core.Commands;
 
 namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
 {
