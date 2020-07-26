@@ -37,11 +37,16 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2020 - makeITeasy.CarCatalog.WebApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2020 - makeITeasy.CarCatalog.WebApp
         </div>
     </footer>
     <script src="~/dist/carcatalog.min.js"></script>
     <script src="/_content/makeITeasy.AppFramework.Web/dist/makeITeasy.min.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
+    <script>
+        $(document).on("dataSavedEvent", function (event) {
+            toastr.info("La sauvegarde s'est bien effectuée.");
+        });
+    </script>
 </body>
 </html>
