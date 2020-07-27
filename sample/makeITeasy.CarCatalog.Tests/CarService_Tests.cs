@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Interfaces;
-using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.CarCatalog.Core.Domains.CarDomain;
 using makeITeasy.CarCatalog.Core.Domains.CarDomain.Queries;
 using makeITeasy.CarCatalog.Infrastructure.Data;
@@ -18,6 +18,8 @@ namespace makeITeasy.CarCatalog.Tests
     public class CarService_Tests : UnitTestAutofacService<ServiceRegistrationAutofacModule>
     {
         private ICarService carService;
+
+        //TODO : fix unit test https://github.com/dotnet/efcore/issues/12459
 
         public CarService_Tests()
         {

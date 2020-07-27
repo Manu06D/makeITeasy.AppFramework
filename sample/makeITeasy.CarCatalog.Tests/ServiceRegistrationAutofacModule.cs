@@ -59,7 +59,6 @@ namespace makeITeasy.CarCatalog.Tests
 
             builder.RegisterModule(new RegisterAutofacModule() { Assemblies = assembliesToScan });
 
-
             builder.RegisterAssemblyTypes(CarCatalogModels.Assembly).Where(t => t.IsClosedTypeOf(typeof(IValidator<>))).AsImplementedInterfaces();
 
             builder.RegisterType<CarCatalogContext>();
