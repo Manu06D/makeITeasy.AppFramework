@@ -5,9 +5,9 @@ using makeITeasy.CarCatalog.Infrastructure.Data;
 
 namespace makeITeasy.CarCatalog.Infrastructure.Persistence
 {
-    public class EfRepository<T> : BaseEfRepository<T, CarCatalogContext> where T : BaseEntity
+    public class CarCatalogRepository<T> : BaseEfRepository<T, CarCatalogContext> where T : BaseEntity
     {
-        public EfRepository(CarCatalogContext dbContext, IMapper mapper) : base(dbContext, mapper)
+        public CarCatalogRepository(CarCatalogContext dbContext, IMapper mapper) : base(dbContext, mapper)
         {
         }
     }
