@@ -1,17 +1,16 @@
 ﻿using AutoMapper;
 using makeITeasy.AppFramework.Core.Interfaces;
-using makeITeasy.CarCatalog.Core.Domains.BrandDomain;
-using makeITeasy.CarCatalog.Core.Domains.CarDomain;
 using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Models;
 using makeITeasy.CarCatalog.Tests.Catalogs;
 using Xunit;
 using makeITeasy.CarCatalog.Models.Collections;
-using makeITeasy.CarCatalog.Core.Domains.BrandDomain.Queries;
 using System.Threading.Tasks;
 using FluentAssertions;
 using System.Collections.Generic;
 using System.Linq;
+using makeITeasy.CarCatalog.Core.Services.Interfaces;
+using makeITeasy.CarCatalog.Core.Services.Queries.BrandQueries;
 
 namespace makeITeasy.CarCatalog.Tests
 {

@@ -5,7 +5,7 @@ using makeITeasy.AppFramework.Core.Extensions;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.CarCatalog.Models;
 
-namespace makeITeasy.CarCatalog.Core.Domains.CarDomain.Queries
+namespace makeITeasy.CarCatalog.Core.Services.Queries.CarQueries
 {
     public class BaseCarQuery : BaseQuery<Car>
     {

@@ -134,6 +134,11 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
 
                     ee.CurrentValues.SetValues(entity);
                 }
+
+                if(entity is TimeTrackingEntity)
+                {
+                    ((ITimeTrackingEntity)entity).LastModifiedDate = DateTime.Now;
+                }
             }
 
             int dbChanges = await _dbContext.SaveChangesAsync();

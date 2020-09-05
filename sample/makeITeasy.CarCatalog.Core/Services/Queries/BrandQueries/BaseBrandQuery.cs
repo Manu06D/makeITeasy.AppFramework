@@ -1,7 +1,7 @@
 ﻿using makeITeasy.AppFramework.Models;
 using makeITeasy.CarCatalog.Models;
 
-namespace makeITeasy.CarCatalog.Core.Domains.BrandDomain.Queries
+namespace makeITeasy.CarCatalog.Core.Services.Queries.BrandQueries
 {
     public class BaseBrandQuery : BaseQuery<Brand>
     {

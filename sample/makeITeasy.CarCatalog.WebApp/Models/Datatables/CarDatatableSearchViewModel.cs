@@ -1,4 +1,4 @@
-﻿using makeITeasy.CarCatalog.Core.Domains.CarDomain.Queries;
+﻿using makeITeasy.CarCatalog.Core.Services.Queries.CarQueries;
 
 namespace makeITeasy.CarCatalog.WebApp.Models.Datatables
 {
