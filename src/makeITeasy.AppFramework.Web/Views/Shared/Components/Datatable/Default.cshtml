@@ -1,0 +1,22 @@
+﻿@using makeITeasy.AppFramework.Web.Helpers
+@using  makeITeasy.AppFramework.Web.Models
+
+@model makeITeasy.AppFramework.Web.Models.IDatatableBaseConfiguration
+@{
+    Layout = null;
+}
+
+<table id="@Model.TableID" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            @foreach (DatatableColumnBase column in @Model.Columns)
+            {
+                <th data-priority="@(column.Priority)">@column.Title</th>
+            }
+        </tr>
+    </thead>
+</table>
+
+<script>
+    this['tableObject' +  "@Model.TableID.ToString()"] = @(Html.GetClientModel(Model));
+</script>   

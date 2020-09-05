@@ -2,7 +2,7 @@
 
 namespace makeITeasy.CarCatalog.Core
 {
-    public class CarCatalogCore
+    public static class CarCatalogCore
     {
         public static Assembly Assembly
         {

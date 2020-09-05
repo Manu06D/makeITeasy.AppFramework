@@ -1,0 +1,25 @@
+[
+  {
+    "outputFileName": "wwwroot/dist/carcatalog.min.js",
+    "inputFiles": [
+      "wwwroot/lib/jquery/jquery.min.js",
+      "wwwroot/lib/datatables.net/jquery.dataTables.js",
+      "wwwroot/lib/jquery-validate/jquery.validate.js",
+      "wwwroot/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js",
+      "wwwroot/lib/twitter-bootstrap/js/bootstrap.js",
+      "wwwroot/lib/jquery-slidePanel/dist/jquery-slidePanel.js",
+      "wwwroot/lib/toastr.js/toastr.min.js"
+    ],
+    "minify": { "enabled": false }
+  },
+  {
+    "outputFileName": "wwwroot/dist/carcatalog.min.css",
+    "inputFiles": [
+      "wwwroot/lib/twitter-bootstrap/css/bootstrap.css",
+      "wwwroot/lib/jquery-slidePanel/dist/css/slidePanel.css",
+      "wwwroot/lib/toastr.js/toastr.css",
+      "wwwroot/css/site.css"
+    ]
+  }
+
+]

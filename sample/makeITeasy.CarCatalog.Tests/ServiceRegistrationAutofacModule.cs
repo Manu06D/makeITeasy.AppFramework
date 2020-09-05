@@ -59,12 +59,11 @@ namespace makeITeasy.CarCatalog.Tests
 
             builder.RegisterModule(new RegisterAutofacModule() { Assemblies = assembliesToScan });
 
-
             builder.RegisterAssemblyTypes(CarCatalogModels.Assembly).Where(t => t.IsClosedTypeOf(typeof(IValidator<>))).AsImplementedInterfaces();
 
             builder.RegisterType<CarCatalogContext>();
 
-            builder.RegisterGeneric(typeof(EfRepository<>)).As(typeof(IAsyncRepository<>)).InstancePerLifetimeScope()
+            builder.RegisterGeneric(typeof(CarCatalogRepository<>)).As(typeof(IAsyncRepository<>)).InstancePerLifetimeScope()
                 .PropertiesAutowired()
                 .OnActivated(args => AutofacHelper.InjectProperties(args.Context, args.Instance, true));
                 builder.RegisterType<AutofacValidatorFactory>().As<IValidatorFactory>().SingleInstance();
