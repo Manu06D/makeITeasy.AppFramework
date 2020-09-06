@@ -54,7 +54,7 @@ namespace makeITeasy.CarCatalog.Tests
         [Fact]
         public async Task CreateAndGet_ListWithFunctionTest()
         {
-            var newCars = TestCarsCatalog.GetValidCars(50);
+            var newCars = TestCarsCatalog.GetCars();
 
             newCars.ForEach(async x => await carService.Create(x));
 
@@ -77,7 +77,7 @@ namespace makeITeasy.CarCatalog.Tests
         [Fact]
         public async Task CreateAndGet_ListWith2LevelMappingTest()
         {
-            var newCars = TestCarsCatalog.GetValidCars(50);
+            var newCars = TestCarsCatalog.GetCars();
 
             newCars.ForEach(async x => await carService.Create(x));
 

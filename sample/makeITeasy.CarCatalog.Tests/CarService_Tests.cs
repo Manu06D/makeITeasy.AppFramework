@@ -10,7 +10,6 @@ using makeITeasy.CarCatalog.Core.Services.Queries.CarQueries;
 using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Models;
 using makeITeasy.CarCatalog.Tests.Catalogs;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
@@ -19,15 +18,17 @@ namespace makeITeasy.CarCatalog.Tests
     public class CarService_Tests : UnitTestAutofacService<ServiceRegistrationAutofacModule>
     {
         private ICarService carService;
-
-        //TODO : fix unit test https://github.com/dotnet/efcore/issues/12459
+        private readonly List<Car> NewCars;
 
         public CarService_Tests()
         {
             carService = Resolve<ICarService>();
-
             var t = Resolve<CarCatalogContext>();
+
             t.Database.EnsureCreated();
+
+            NewCars = TestCarsCatalog.GetCars();
+            NewCars.ForEach(async x => await carService.Create(x));
         }
 
         ~CarService_Tests()
@@ -51,7 +52,7 @@ namespace makeITeasy.CarCatalog.Tests
         {
             var newCar = new Car
             {
-                Name = "xxx"
+                Name = "xxxx"
             };
 
             carService.IsValid(newCar).Should().BeTrue();
@@ -85,13 +86,26 @@ namespace makeITeasy.CarCatalog.Tests
         [Fact]
         public async Task CreateAndGet_BasicTest()
         {
-            var newCar = TestCarsCatalog.GetValidCar();
+            Car newCar = new Car()
+            {
+                Name = "C3",
+                ReleaseYear = 2011,
+                Brand = new Brand()
+                {
+                    Name = "Citroen",
+                    Country = new Country()
+                    {
+                        Name = "France",
+                        CountryCode = "FR"
+                    }
+                }
+            };
 
             var result = await carService.Create(newCar);
 
             result.Result.Should().Be(CommandState.Success);
 
-            var getResult = await carService.QueryAsync(new BaseCarQuery() { ID = result.Entity.Id}, includeCount : true);
+            var getResult = await carService.QueryAsync(new BaseCarQuery() { ID = result.Entity.Id }, includeCount: true);
 
             getResult.TotalItems.Should().Be(1);
             getResult.Results.Should().NotBeEmpty().And.HaveCount(1);
@@ -106,13 +120,9 @@ namespace makeITeasy.CarCatalog.Tests
         [Fact]
         public async Task CreateAndGet_ListTest()
         {
-            var newCars = TestCarsCatalog.GetValidCars(50);
-
-            newCars.ForEach(async x => await carService.Create(x));
-
             var getResult = await carService.QueryAsync(new BaseCarQuery(), includeCount: true);
 
-            getResult.TotalItems.Should().Be(newCars.Count);
+            getResult.TotalItems.Should().Be(NewCars.Count);
 
             getResult.Results.Select(x => x.Id).Should().BeInAscendingOrder();
         }
@@ -120,13 +130,9 @@ namespace makeITeasy.CarCatalog.Tests
         [Fact]
         public async Task CreateAndGet_ListWithIncludeStringTest()
         {
-            var newCars = TestCarsCatalog.GetValidCars(50);
+            var getResult = await carService.QueryAsync(new BaseCarQuery() { IncludeStrings = new List<string>() { "Brand.Country" } }, includeCount: true);
 
-            newCars.ForEach(async x => await carService.Create(x));
-
-            var getResult = await carService.QueryAsync(new BaseCarQuery() { IncludeStrings = new List<string>() { "Brand.Country"} }, includeCount: true);
-
-            getResult.TotalItems.Should().Be(newCars.Count);
+            getResult.TotalItems.Should().Be(NewCars.Count);
 
             getResult.Results.Select(x => x.Id).Should().BeInAscendingOrder();
 
@@ -136,14 +142,10 @@ namespace makeITeasy.CarCatalog.Tests
         [Fact]
         public async Task CreateAndGet_ListWithIncludeTest()
         {
-            var newCars = TestCarsCatalog.GetValidCars(50);
-
-            newCars.ForEach(async x => await carService.Create(x));
-
             var getResult = await carService.QueryAsync
-                (new BaseCarQuery() { Includes=new List<System.Linq.Expressions.Expression<Func<Car, object>>>(){ x => x.Brand.Country } }, includeCount: true);
+                (new BaseCarQuery() { Includes = new List<System.Linq.Expressions.Expression<Func<Car, object>>>() { x => x.Brand.Country } }, includeCount: true);
 
-            getResult.TotalItems.Should().Be(newCars.Count);
+            getResult.TotalItems.Should().Be(NewCars.Count);
 
             getResult.Results.Select(x => x.Id).Should().BeInAscendingOrder();
 
@@ -159,14 +161,10 @@ namespace makeITeasy.CarCatalog.Tests
         [Fact]
         public async Task CreateAndGet_ListWithMappingTest()
         {
-            var newCars = TestCarsCatalog.GetValidCars(50);
-
-            newCars.ForEach(async x => await carService.Create(x));
-
             var getResult = await carService.QueryWithProjectionAsync<SmallCarInfo>
                 (new BaseCarQuery() { }, includeCount: true);
 
-            getResult.TotalItems.Should().Be(newCars.Count);
+            getResult.TotalItems.Should().Be(NewCars.Count);
 
             getResult.Results.Select(x => x.ID).Should().BeInAscendingOrder();
 
@@ -184,27 +182,19 @@ namespace makeITeasy.CarCatalog.Tests
         [Fact]
         public async Task CreateAndGet_ListWithFunctionTest()
         {
-            var newCars = TestCarsCatalog.GetValidCars(50);
-
-            newCars.ForEach(async x => await carService.Create(x));
-
             var getResult = await carService.QueryAsync
-                (new BaseCarQuery() {IsModernCar = true }, includeCount: true);
+                (new BaseCarQuery() { IsModernCar = true }, includeCount: true);
 
-            getResult.TotalItems.Should().Be(newCars.Count(x => x.ReleaseYear > 2000));
+            getResult.TotalItems.Should().Be(NewCars.Count(x => x.ReleaseYear > 2000));
         }
 
         [Fact]
         public async Task CreateAndGet_ListWithMapping2LevelTest()
         {
-            var newCars = TestCarsCatalog.GetValidCars(50);
-
-            newCars.ForEach(async x => await carService.Create(x));
-
             var getResult = await carService.QueryWithProjectionAsync<SmallCarInfoWithBrand>
                 (new BaseCarQuery() { }, includeCount: true);
 
-            getResult.TotalItems.Should().Be(newCars.Count);
+            getResult.TotalItems.Should().Be(NewCars.Count);
 
             getResult.Results.Select(x => x.ID).Should().BeInAscendingOrder();
 
@@ -215,14 +205,11 @@ namespace makeITeasy.CarCatalog.Tests
         [Fact]
         public async Task CreateAndGet_ListWithPagingTest()
         {
-            var newCars = TestCarsCatalog.GetValidCars(50);
+            const int pageSize = 10;
+            var getResult = await carService.QueryAsync(new BaseCarQuery() { Skip = 5, Take = pageSize, IsPagingEnabled = true }, includeCount: true);
 
-            newCars.ForEach(async x => await carService.Create(x));
-
-            var getResult = await carService.QueryAsync(new BaseCarQuery() {Skip = 5, Take = 10, IsPagingEnabled = true }, includeCount: true);
-
-            getResult.TotalItems.Should().Be(50);
-            getResult.Results.Count.Should().Be(10);
+            getResult.TotalItems.Should().Be(NewCars.Count);
+            getResult.Results.Count.Should().Be(Math.Min(NewCars.Count, pageSize));
         }
     }
 }
