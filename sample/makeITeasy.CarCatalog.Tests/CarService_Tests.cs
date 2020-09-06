@@ -18,7 +18,7 @@ namespace makeITeasy.CarCatalog.Tests
     public class CarService_Tests : UnitTestAutofacService<ServiceRegistrationAutofacModule>
     {
         private ICarService carService;
-        private readonly List<Car> NewCars;
+        private readonly List<Car> carList;
 
         public CarService_Tests()
         {
@@ -27,8 +27,9 @@ namespace makeITeasy.CarCatalog.Tests
 
             t.Database.EnsureCreated();
 
-            NewCars = TestCarsCatalog.GetCars();
-            NewCars.ForEach(async x => await carService.Create(x));
+            carList = TestCarsCatalog.GetCars();
+
+            carList.ForEach(async x => await carService.CreateAsync(x));
         }
 
         ~CarService_Tests()
@@ -66,7 +67,7 @@ namespace makeITeasy.CarCatalog.Tests
                 Name = "x"
             };
 
-            var result = await carService.Create(newCar);
+            var result = await carService.CreateAsync(newCar);
 
             result.Result.Should().Be(CommandState.Error);
         }
@@ -79,9 +80,8 @@ namespace makeITeasy.CarCatalog.Tests
                 Name = "xxx"
             };
 
-            carService.Invoking(y => y.Create(newCar)).Should().Throw<DbUpdateException>();
+            carService.Invoking(y => y.CreateAsync(newCar)).Should().Throw<DbUpdateException>();
         }
-
 
         [Fact]
         public async Task CreateAndGet_BasicTest()
@@ -101,7 +101,7 @@ namespace makeITeasy.CarCatalog.Tests
                 }
             };
 
-            var result = await carService.Create(newCar);
+            var result = await carService.CreateAsync(newCar);
 
             result.Result.Should().Be(CommandState.Success);
 
@@ -122,7 +122,7 @@ namespace makeITeasy.CarCatalog.Tests
         {
             var getResult = await carService.QueryAsync(new BaseCarQuery(), includeCount: true);
 
-            getResult.TotalItems.Should().Be(NewCars.Count);
+            getResult.TotalItems.Should().Be(carList.Count);
 
             getResult.Results.Select(x => x.Id).Should().BeInAscendingOrder();
         }
@@ -132,7 +132,7 @@ namespace makeITeasy.CarCatalog.Tests
         {
             var getResult = await carService.QueryAsync(new BaseCarQuery() { IncludeStrings = new List<string>() { "Brand.Country" } }, includeCount: true);
 
-            getResult.TotalItems.Should().Be(NewCars.Count);
+            getResult.TotalItems.Should().Be(carList.Count);
 
             getResult.Results.Select(x => x.Id).Should().BeInAscendingOrder();
 
@@ -145,7 +145,7 @@ namespace makeITeasy.CarCatalog.Tests
             var getResult = await carService.QueryAsync
                 (new BaseCarQuery() { Includes = new List<System.Linq.Expressions.Expression<Func<Car, object>>>() { x => x.Brand.Country } }, includeCount: true);
 
-            getResult.TotalItems.Should().Be(NewCars.Count);
+            getResult.TotalItems.Should().Be(carList.Count);
 
             getResult.Results.Select(x => x.Id).Should().BeInAscendingOrder();
 
@@ -164,19 +164,12 @@ namespace makeITeasy.CarCatalog.Tests
             var getResult = await carService.QueryWithProjectionAsync<SmallCarInfo>
                 (new BaseCarQuery() { }, includeCount: true);
 
-            getResult.TotalItems.Should().Be(NewCars.Count);
+            getResult.TotalItems.Should().Be(carList.Count);
 
             getResult.Results.Select(x => x.ID).Should().BeInAscendingOrder();
 
             getResult.Results.Should().OnlyContain(x => x.Name != null);
 
-        }
-
-        public class SmallCarInfoWithBrand : IMapFrom<Car>
-        {
-            public long ID { get; set; }
-            public string Name { get; set; }
-            public string BrandName { get; set; }
         }
 
         [Fact]
@@ -185,7 +178,14 @@ namespace makeITeasy.CarCatalog.Tests
             var getResult = await carService.QueryAsync
                 (new BaseCarQuery() { IsModernCar = true }, includeCount: true);
 
-            getResult.TotalItems.Should().Be(NewCars.Count(x => x.ReleaseYear > 2000));
+            getResult.TotalItems.Should().Be(carList.Count(x => x.ReleaseYear > 2000));
+        }
+
+        public class SmallCarInfoWithBrand : IMapFrom<Car>
+        {
+            public long ID { get; set; }
+            public string Name { get; set; }
+            public string BrandName { get; set; } //Automatic mapping with Brand.Name
         }
 
         [Fact]
@@ -194,7 +194,7 @@ namespace makeITeasy.CarCatalog.Tests
             var getResult = await carService.QueryWithProjectionAsync<SmallCarInfoWithBrand>
                 (new BaseCarQuery() { }, includeCount: true);
 
-            getResult.TotalItems.Should().Be(NewCars.Count);
+            getResult.TotalItems.Should().Be(carList.Count);
 
             getResult.Results.Select(x => x.ID).Should().BeInAscendingOrder();
 
@@ -208,8 +208,8 @@ namespace makeITeasy.CarCatalog.Tests
             const int pageSize = 10;
             var getResult = await carService.QueryAsync(new BaseCarQuery() { Skip = 5, Take = pageSize, IsPagingEnabled = true }, includeCount: true);
 
-            getResult.TotalItems.Should().Be(NewCars.Count);
-            getResult.Results.Count.Should().Be(Math.Min(NewCars.Count, pageSize));
+            getResult.TotalItems.Should().Be(carList.Count);
+            getResult.Results.Count.Should().Be(Math.Min(carList.Count, pageSize));
         }
     }
 }

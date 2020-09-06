@@ -17,7 +17,7 @@ namespace makeITeasy.AppFramework.Core.Queries
 
         public async Task<QueryResult<TResult>> Handle(GenericQueryWithProjectCommand<TEntity, TResult> request, CancellationToken cancellationToken)
         {
-            return await baseService.QueryWithProjectionAsync<TResult>(request?.Query, request?.IncludeCount == true);
+            return await baseService.QueryWithProjectionAsync<TResult>(request?.Query, request?.IncludeCount == false);
         }
     }
 }

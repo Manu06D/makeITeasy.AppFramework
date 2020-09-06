@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Module = Autofac.Module;
 using System.Reflection;
 using Autofac;
@@ -21,6 +20,7 @@ namespace makeITeasy.AppFramework.Core.Helpers
             builder.RegisterGeneric(typeof(Queries.GenericQueryCommandHandler<>)).AsImplementedInterfaces();
             builder.RegisterGeneric(typeof(Queries.GenericQueryWithProjectCommandHandler<,>)).AsImplementedInterfaces();
             builder.RegisterGeneric(typeof(Commands.UpdateEntityCommandHandler<>)).AsImplementedInterfaces();
+            builder.RegisterGeneric(typeof(Commands.CreateEntityCommandHandler<>)).AsImplementedInterfaces();
         }
     }
 }

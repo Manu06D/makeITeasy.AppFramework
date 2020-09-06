@@ -8,6 +8,7 @@ using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.AppFramework.Core.Commands;
+using makeITeasy.AppFramework.Core.Models.Exceptions;
 
 namespace makeITeasy.AppFramework.Core.Services
 {
@@ -59,7 +60,7 @@ namespace makeITeasy.AppFramework.Core.Services
             return await EntityRepository.ListWithProjectionAsync<TTargetEntity>(specification, includeCount);
         }
 
-        public virtual async Task<CommandResult<TEntity>> Create(TEntity entity, bool saveChanges = true)
+        public virtual async Task<CommandResult<TEntity>> CreateAsync(TEntity entity, bool saveChanges = true)
         {
             return await SaveOrUpdate(entity, async (x) => await InnerAddAsync(x));
         }
@@ -106,16 +107,9 @@ namespace makeITeasy.AppFramework.Core.Services
             return await EntityRepository.UpdatePropertiesAsync(entity, properties);
         }
 
-        //TODO : Add primary attribute to retrieve key property and check if its value is default
-        //public async Task<CommandResult<TEntity>> CreateOrUpdate(TEntity entity)
-        //{
-        //    
-        //    if (entity?.ID <= 0)
-        //    {
-        //        return await Add(entity);
-        //    }
-
-        //    return await UpdateAsync(entity);
-        //}
+        public bool IsValid(TEntity entity)
+        {
+            return ValidatorFactory.GetValidator<TEntity>()?.Validate(entity).IsValid ?? throw new ValidatorNotFoundException(typeof(TEntity));
+        }
     }
 }

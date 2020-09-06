@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;

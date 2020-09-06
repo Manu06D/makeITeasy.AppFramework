@@ -6,7 +6,7 @@ using MediatR;
 
 namespace makeITeasy.AppFramework.Core.Commands
 {
-    public class CreateEntityCommandHandler<TEntity> : IRequestHandler<UpdateEntityCommand<TEntity>, CommandResult<TEntity>> where TEntity : BaseEntity
+    public class CreateEntityCommandHandler<TEntity> : IRequestHandler<CreateEntityCommand<TEntity>, CommandResult<TEntity>> where TEntity : BaseEntity
     {
         private readonly IBaseEntityService<TEntity> baseService;
 
@@ -14,9 +14,9 @@ namespace makeITeasy.AppFramework.Core.Commands
         {
             this.baseService = baseService;
         }
-        public async Task<CommandResult<TEntity>> Handle(UpdateEntityCommand<TEntity> request, CancellationToken cancellationToken)
+        public async Task<CommandResult<TEntity>> Handle(CreateEntityCommand<TEntity> request, CancellationToken cancellationToken)
         {
-            return await baseService.UpdateAsync(request?.Entity);
+            return await baseService.CreateAsync(request?.Entity);
         }
     }
 }

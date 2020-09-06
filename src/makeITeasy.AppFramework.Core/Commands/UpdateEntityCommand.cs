@@ -7,7 +7,6 @@ namespace makeITeasy.AppFramework.Core.Commands
     {
         public TEntity Entity { get; private set; }
 
-
         public UpdateEntityCommand(TEntity entity)
         {
             this.Entity = entity;

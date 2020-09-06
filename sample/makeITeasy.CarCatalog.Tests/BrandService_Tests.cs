@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using makeITeasy.CarCatalog.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.Core.Services.Queries.BrandQueries;
+using makeITeasy.AppFramework.Core.Models.Exceptions;
 
 namespace makeITeasy.CarCatalog.Tests
 {
@@ -56,7 +57,7 @@ namespace makeITeasy.CarCatalog.Tests
         {
             var newCars = TestCarsCatalog.GetCars();
 
-            newCars.ForEach(async x => await carService.Create(x));
+            newCars.ForEach(async x => await carService.CreateAsync(x));
 
             var getResult = await brandService.QueryWithProjectionAsync<BrandInfo>(new BaseBrandQuery());
 
@@ -79,12 +80,23 @@ namespace makeITeasy.CarCatalog.Tests
         {
             var newCars = TestCarsCatalog.GetCars();
 
-            newCars.ForEach(async x => await carService.Create(x));
+            newCars.ForEach(async x => await carService.CreateAsync(x));
 
             var getResult = await brandService.QueryWithProjectionAsync<SmallBrandInfo>(new BaseBrandQuery());
 
-            getResult.Results.Should().OnlyContain(x => x.Name != null && x.Cars != null && x.Cars.Select(x => x.Name).Count() >= 1 );
+            getResult.Results.Should().OnlyContain(x => x.Name != null && x.Cars != null && x.Cars.Select(x => x.Name).Count() >= 1);
 
+        }
+
+        [Fact]
+        public void MissingValidator_Test()
+        {
+            var newBrand = new Brand
+            {
+                Name = "x"
+            };
+
+            brandService.Invoking(y => y.IsValid(newBrand)).Should().Throw<ValidatorNotFoundException>();
         }
     }
 }
