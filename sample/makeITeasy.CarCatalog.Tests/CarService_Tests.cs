@@ -186,6 +186,7 @@ namespace makeITeasy.CarCatalog.Tests
             public long ID { get; set; }
             public string Name { get; set; }
             public string BrandName { get; set; } //Automatic mapping with Brand.Name
+            public string BrandCountryName { get; set; }
         }
 
         [Fact]
@@ -210,6 +211,38 @@ namespace makeITeasy.CarCatalog.Tests
 
             getResult.TotalItems.Should().Be(carList.Count);
             getResult.Results.Count.Should().Be(Math.Min(carList.Count, pageSize));
+        }
+
+        [Fact]
+        public async Task OrderAscending_Test()
+        {
+            var getResult = await carService.QueryAsync(new BaseCarQuery() { OrderString = nameof(Car.ReleaseYear) });
+
+            getResult.Results.Select(x => x.ReleaseYear).Should().BeInAscendingOrder();
+        }
+
+        [Fact]
+        public async Task OrderDescending_Test()
+        {
+            var getResult = await carService.QueryAsync(new BaseCarQuery() { OrderString = nameof(Car.ReleaseYear) , SortDescending = true });
+
+            getResult.Results.Select(x => x.ReleaseYear).Should().BeInDescendingOrder();
+        }
+
+        [Fact]
+        public async Task OrderWith2LevelString_Test()
+        {
+            var getResult = await carService.QueryAsync(new BaseCarQuery() { OrderString = "Brand.Country.Name", IncludeStrings = new List<string> { "Brand.Country" } });
+
+            getResult.Results.Select(x => (int)x.Brand.Country.Name.First()).Should().BeInAscendingOrder();
+        }
+
+        [Fact]
+        public async Task CreateAndGe2t_ListWithPagingTest()
+        {
+            var getResult = await carService.QueryAsync(new BaseCarQuery() { Order = x => x.ReleaseYear}, includeCount: false);
+
+            getResult.Results.Select(x => (int)x.ReleaseYear).Should().BeInAscendingOrder();
         }
     }
 }

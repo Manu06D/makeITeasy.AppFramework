@@ -17,8 +17,9 @@ namespace makeITeasy.AppFramework.Models
         public int? Skip { get; set; }
 
         public bool IsPagingEnabled { get; set; }
-        public string SortBy { get; set; }
+        public string OrderString { get; set; }
         public bool SortDescending { get; set; }
+        public Expression<Func<T, object>> Order { get; set; }
 
         protected BaseQuery()
         {

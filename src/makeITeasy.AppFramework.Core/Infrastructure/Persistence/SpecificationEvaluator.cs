@@ -30,15 +30,27 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
                                         (current, include) => current.Include(include));
             }
 
-            if (!String.IsNullOrEmpty(specification.SortBy))
+            if (!String.IsNullOrEmpty(specification.OrderString))
             {
                 if (specification.SortDescending)
                 {
-                    query = query.OrderByDescending(specification.SortBy);
+                    query = query.OrderByDescending(specification.OrderString);
                 }
                 else
                 {
-                    query = query.OrderBy(specification.SortBy);
+                    query = query.OrderBy(specification.OrderString);
+                }
+            }
+            
+            if(specification.Order != null)
+            {
+                if (specification.SortDescending)
+                {
+                    query = query.OrderByDescending(specification.Order);
+                }
+                else
+                {
+                    query = query.OrderBy(specification.Order);
                 }
             }
 

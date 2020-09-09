@@ -9,7 +9,8 @@ namespace makeITeasy.AppFramework.Models
         Expression<Func<T, bool>> Criteria { get; }
         List<Expression<Func<T, object>>> Includes { get; }
         List<string> IncludeStrings { get; }
-        string SortBy { get; set; }
+        string OrderString { get; set; }
+        Expression<Func<T,object>> Order { get; set; }
         bool SortDescending { get; set; }
         int? Take { get; }
         int? Skip { get; }

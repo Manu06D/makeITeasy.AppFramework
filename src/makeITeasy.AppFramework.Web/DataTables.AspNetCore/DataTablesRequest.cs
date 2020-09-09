@@ -65,17 +65,17 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
                 ((IBaseQuery)searchResult).IsPagingEnabled = true;
                 ((IBaseQuery)searchResult).Skip = Start;
                 ((IBaseQuery)searchResult).Take = Length;
-                ((IBaseQuery)searchResult).SortBy = SortInformation.Item1;
+                ((IBaseQuery)searchResult).OrderString = SortInformation.Item1;
                 ((IBaseQuery)searchResult).SortDescending = !SortInformation.Item2;
             }
 
             var instance = createObjectWithDefaultConstructor(typeof(T)) as IDatatableBaseConfiguration;
 
-            var filterColum = instance.Columns.Where(x => String.Compare(((IBaseQuery)searchResult).SortBy, x.Name, true) == 0 && !String.IsNullOrEmpty(x.SortDataSource)).FirstOrDefault();
+            var filterColum = instance.Columns.Where(x => String.Compare(((IBaseQuery)searchResult).OrderString, x.Name, true) == 0 && !String.IsNullOrEmpty(x.SortDataSource)).FirstOrDefault();
 
             if (filterColum != null)
             {
-                ((IBaseQuery)searchResult).SortBy = filterColum.SortDataSource;
+                ((IBaseQuery)searchResult).OrderString = filterColum.SortDataSource;
             }
 
             return ((IBaseQuery)searchResult) as BaseQuery<U>;
