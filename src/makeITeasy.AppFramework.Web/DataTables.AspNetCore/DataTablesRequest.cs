@@ -55,7 +55,13 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
 
             var searchResult = createObjectWithDefaultConstructor(searchType);
 
-            if (searchResult != null && IsTypeImplementInterface(searchType, typeof(IBaseQuery)))
+            var orderBySpecification = new OrderBySpecification<string>()
+            {
+                OrderBy = SortInformation.Item1,
+                SortDescending = !SortInformation.Item2
+            };
+
+            if (searchResult != null && IsTypeImplementInterface(searchType, typeof(IBaseQuery)) && IsTypeImplementInterface(searchType, typeof(ISpecification<U>)))
             {
                 if (AdditionalParameters != null && AdditionalParameters.Count > 0)
                 {
@@ -65,17 +71,17 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
                 ((IBaseQuery)searchResult).IsPagingEnabled = true;
                 ((IBaseQuery)searchResult).Skip = Start;
                 ((IBaseQuery)searchResult).Take = Length;
-                ((IBaseQuery)searchResult).OrderString = SortInformation.Item1;
-                ((IBaseQuery)searchResult).SortDescending = !SortInformation.Item2;
+                
+                ((ISpecification<U>)searchResult).OrderByStrings = new List<OrderBySpecification<string>>() {orderBySpecification};
             }
 
             var instance = createObjectWithDefaultConstructor(typeof(T)) as IDatatableBaseConfiguration;
 
-            var filterColum = instance.Columns.Where(x => String.Compare(((IBaseQuery)searchResult).OrderString, x.Name, true) == 0 && !String.IsNullOrEmpty(x.SortDataSource)).FirstOrDefault();
+            var filterColum = instance.Columns.FirstOrDefault(x => string.Compare(orderBySpecification.OrderBy, x.Name, true) == 0  && !string.IsNullOrEmpty(x.SortDataSource));
 
             if (filterColum != null)
             {
-                ((IBaseQuery)searchResult).OrderString = filterColum.SortDataSource;
+                orderBySpecification.OrderBy = filterColum.SortDataSource;
             }
 
             return ((IBaseQuery)searchResult) as BaseQuery<U>;
@@ -96,7 +102,8 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
             {
                 object[] parameters =
                     datatableCtr.GetParameters().Select(p =>
-                        p.HasDefaultValue ? p.DefaultValue : p.ParameterType.IsValueType && Nullable.GetUnderlyingType(p.ParameterType) == null ? Activator.CreateInstance(p.ParameterType) : null
+                        p.HasDefaultValue ? p.DefaultValue : 
+                        p.ParameterType.IsValueType && Nullable.GetUnderlyingType(p.ParameterType) == null ? Activator.CreateInstance(p.ParameterType) : null
                     ).ToArray();
 
                 instance = datatableCtr.Invoke(parameters);

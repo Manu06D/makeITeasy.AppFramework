@@ -30,28 +30,27 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
                                         (current, include) => current.Include(include));
             }
 
-            if (!String.IsNullOrEmpty(specification.OrderString))
+            if (specification.OrderBy?.Any() != null || specification.OrderByStrings?.Any() != null)
             {
-                if (specification.SortDescending)
-                {
-                    query = query.OrderByDescending(specification.OrderString);
-                }
-                else
-                {
-                    query = query.OrderBy(specification.OrderString);
-                }
+                query = HandQueryForOrder(specification, query);
             }
-            
-            if(specification.Order != null)
+
+            return query;
+        }
+
+        private static IQueryable<T> HandQueryForOrder(ISpecification<T> specification, IQueryable<T> query)
+        {
+            if (specification?.OrderBy != null)
             {
-                if (specification.SortDescending)
-                {
-                    query = query.OrderByDescending(specification.Order);
-                }
-                else
-                {
-                    query = query.OrderBy(specification.Order);
-                }
+                var sortedQuery = specification.OrderBy.First().SortDescending ? query.OrderByDescending(specification.OrderBy.First().OrderBy) : query.OrderBy(specification.OrderBy.First().OrderBy);
+
+                query = specification.OrderBy.Aggregate(sortedQuery,
+                         (current, orderSpec) => orderSpec.SortDescending ? current.ThenByDescending(orderSpec.OrderBy) : current.ThenBy(orderSpec.OrderBy));
+            }
+            else  if (specification?.OrderByStrings != null)
+            {
+                query = specification.OrderByStrings.Aggregate(query, 
+                    (current, orderSpec) => orderSpec.SortDescending ? current.OrderByDescending(orderSpec.OrderBy) : current.OrderBy(orderSpec.OrderBy));
             }
 
             return query;

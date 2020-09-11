@@ -17,9 +17,10 @@ namespace makeITeasy.AppFramework.Models
         public int? Skip { get; set; }
 
         public bool IsPagingEnabled { get; set; }
-        public string OrderString { get; set; }
-        public bool SortDescending { get; set; }
-        public Expression<Func<T, object>> Order { get; set; }
+
+        public List<OrderBySpecification<String>> OrderByStrings { get; set; }
+
+        public List<OrderBySpecification<Expression<Func<T, object>>>> OrderBy { get; set; }
 
         protected BaseQuery()
         {
@@ -109,6 +110,19 @@ namespace makeITeasy.AppFramework.Models
             var rightVisitor = new ReplaceExpressionVisitor(funcToAdd.Parameters[0], parameter);
             Expression right = rightVisitor.Visit(funcToAdd.Body);
             return Expression.Lambda<Func<T, bool>>(functionToApply(left, right), parameter);
+        }
+
+        public void AddOrder(string orderByColumn, bool sortDescending = false)
+        {
+            var lists = OrderByStrings ??= new List<OrderBySpecification<string>>();
+            lists.Add(new OrderBySpecification<string>() { OrderBy = orderByColumn, SortDescending = sortDescending });
+
+        }
+
+        public void AddOrder(Expression<Func<T, object>> orderByColumn, bool sortDescending = false)
+        {
+            var lists = OrderBy ??= new List<OrderBySpecification<Expression<Func<T, object>>>>();
+            lists.Add(new OrderBySpecification<Expression<Func<T, object>>>() { OrderBy = orderByColumn, SortDescending = sortDescending });
         }
     }
 }

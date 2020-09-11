@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FluentAssertions;
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Interfaces;
+using makeITeasy.AppFramework.Models;
 using makeITeasy.CarCatalog.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.Core.Services.Queries.CarQueries;
 using makeITeasy.CarCatalog.Infrastructure.Data;
@@ -214,17 +216,19 @@ namespace makeITeasy.CarCatalog.Tests
         }
 
         [Fact]
-        public async Task OrderAscending_Test()
+        public async Task OrderString_Tests()
         {
-            var getResult = await carService.QueryAsync(new BaseCarQuery() { OrderString = nameof(Car.ReleaseYear) });
+            var getResult = await carService.QueryAsync(new BaseCarQuery() 
+            {  
+                OrderByStrings = new List<OrderBySpecification<string>>() { new OrderBySpecification<string>() { OrderBy = nameof(Car.ReleaseYear), SortDescending = false } }
+            });
 
             getResult.Results.Select(x => x.ReleaseYear).Should().BeInAscendingOrder();
-        }
 
-        [Fact]
-        public async Task OrderDescending_Test()
-        {
-            var getResult = await carService.QueryAsync(new BaseCarQuery() { OrderString = nameof(Car.ReleaseYear) , SortDescending = true });
+            getResult = await carService.QueryAsync(new BaseCarQuery()
+            {
+                OrderByStrings = new List<OrderBySpecification<string>>() { new OrderBySpecification<string>() { OrderBy = nameof(Car.ReleaseYear), SortDescending = true } }
+            });
 
             getResult.Results.Select(x => x.ReleaseYear).Should().BeInDescendingOrder();
         }
@@ -232,17 +236,126 @@ namespace makeITeasy.CarCatalog.Tests
         [Fact]
         public async Task OrderWith2LevelString_Test()
         {
-            var getResult = await carService.QueryAsync(new BaseCarQuery() { OrderString = "Brand.Country.Name", IncludeStrings = new List<string> { "Brand.Country" } });
+            var getResult = await carService.QueryAsync(new BaseCarQuery() { 
+                OrderByStrings = new List<OrderBySpecification<string>>() { new OrderBySpecification<string>() { OrderBy = "Brand.Country.Name", SortDescending = false } },
+                    IncludeStrings = new List<string> { "Brand.Country" } });
 
             getResult.Results.Select(x => (int)x.Brand.Country.Name.First()).Should().BeInAscendingOrder();
+
+            getResult = await carService.QueryAsync(new BaseCarQuery()
+            {
+                OrderByStrings = new List<OrderBySpecification<string>>() { new OrderBySpecification<string>() { OrderBy = "Brand.Country.Name", SortDescending = true } },
+                IncludeStrings = new List<string> { "Brand.Country" }
+            });
+
+            getResult.Results.Select(x => (int)x.Brand.Country.Name.First()).Should().BeInDescendingOrder();
         }
 
         [Fact]
-        public async Task CreateAndGe2t_ListWithPagingTest()
+        public async Task OrderFunction_Tests()
         {
-            var getResult = await carService.QueryAsync(new BaseCarQuery() { Order = x => x.ReleaseYear}, includeCount: false);
 
-            getResult.Results.Select(x => (int)x.ReleaseYear).Should().BeInAscendingOrder();
+            var getResult = await carService.QueryAsync(new BaseCarQuery()
+            {
+                OrderBy = new List<OrderBySpecification<Expression<Func<Car, object>>>>() { new OrderBySpecification<Expression<Func<Car, object>>>() { OrderBy = x => x.ReleaseYear} }
+            });
+
+            getResult.Results.Select(x => x.ReleaseYear).Should().BeInAscendingOrder();
+
+
+            getResult = await carService.QueryAsync(new BaseCarQuery()
+            {
+                OrderBy = new List<OrderBySpecification<Expression<Func<Car, object>>>>() { new OrderBySpecification<Expression<Func<Car, object>>>() { OrderBy = x => x.ReleaseYear, SortDescending = true } }
+            });
+
+            getResult.Results.Select(x => x.ReleaseYear).Should().BeInDescendingOrder();
+        }
+
+
+        [Fact]
+        public async Task OrderFunction2Level_Tests()
+        {
+            Car newCar = new Car()
+            {
+                Name = "C3",
+                ReleaseYear = 2011,
+                Brand = new Brand()
+                {
+                    Name = "Citroen",
+                    Country = new Country()
+                    {
+                        Name = "France",
+                        CountryCode = "FR"
+                    }
+                }
+            };
+
+            _ = await carService.CreateAsync(newCar);
+
+            Car newCar2 = new Car()
+            {
+                Name = "B2",
+                ReleaseYear = 2011,
+                Brand = new Brand()
+                {
+                    Name = "Citroen",
+                    Country = new Country()
+                    {
+                        Name = "France",
+                        CountryCode = "FR"
+                    }
+                }
+            };
+
+            _ = await carService.CreateAsync(newCar2);
+
+            Car newCar3 = new Car()
+            {
+                Name = "A2",
+                ReleaseYear = 2011,
+                Brand = new Brand()
+                {
+                    Name = "Citroen",
+                    Country = new Country()
+                    {
+                        Name = "France",
+                        CountryCode = "FR"
+                    }
+                }
+            };
+
+            _ = await carService.CreateAsync(newCar3);
+
+            var getResult = await carService.QueryAsync(new BaseCarQuery()
+            {
+                OrderBy = new List<OrderBySpecification<Expression<Func<Car, object>>>>() { 
+                    new OrderBySpecification<Expression<Func<Car, object>>>() { OrderBy = x => x.ReleaseYear } ,
+                    new OrderBySpecification<Expression<Func<Car, object>>>() { OrderBy = x => x.Name }
+                }
+            });
+
+            getResult.Results.Select(x => x.ReleaseYear).Should().BeInAscendingOrder();
+            getResult.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear).Select(x => x.Name).Should().BeInAscendingOrder();
+
+            BaseCarQuery specification = new BaseCarQuery() { };
+            specification.AddOrder(x => x.ReleaseYear, false);
+            specification.AddOrder(x => x.Name, true);
+            getResult = await carService.QueryAsync(specification);
+
+            getResult.Results.Select(x => x.ReleaseYear).Should().BeInAscendingOrder();
+            getResult.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear).Select(x => x.Name).Should().BeInDescendingOrder();
+
+            getResult = await carService.QueryAsync(new BaseCarQuery()
+            {
+                OrderBy = new List<OrderBySpecification<Expression<Func<Car, object>>>>() {
+                    new OrderBySpecification<Expression<Func<Car, object>>>() { OrderBy = x => x.ReleaseYear } ,
+                    new OrderBySpecification<Expression<Func<Car, object>>>() { OrderBy = x => x.Name , SortDescending = true}
+                }
+            });
+
+            getResult.Results.Select(x => x.ReleaseYear).Should().BeInAscendingOrder();
+            getResult.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear).Select(x => x.Name).Should().BeInDescendingOrder();
+
         }
     }
 }

@@ -9,11 +9,13 @@ namespace makeITeasy.AppFramework.Models
         Expression<Func<T, bool>> Criteria { get; }
         List<Expression<Func<T, object>>> Includes { get; }
         List<string> IncludeStrings { get; }
-        string OrderString { get; set; }
-        Expression<Func<T,object>> Order { get; set; }
-        bool SortDescending { get; set; }
+        List<OrderBySpecification<string>> OrderByStrings { get; set; }
+        List<OrderBySpecification<Expression<Func<T, object>>>> OrderBy { get; set; }
         int? Take { get; }
         int? Skip { get; }
         bool IsPagingEnabled { get; }
+
+        void AddOrder(string orderByColumn, bool sortDescending = false);
+        void AddOrder(Expression<Func<T, object>> orderByColumn, bool sortDescending = false);
     }
 }

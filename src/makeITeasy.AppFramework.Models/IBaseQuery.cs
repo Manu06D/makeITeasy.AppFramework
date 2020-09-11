@@ -7,9 +7,5 @@
         int? Skip { get; set; }
 
         bool IsPagingEnabled { get; set; }
-
-        string OrderString { get; set; }
-
-        bool SortDescending { get; set; }
     }
 }

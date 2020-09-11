@@ -12,7 +12,7 @@ namespace makeITeasy.CarCatalog.Tests.Catalogs
             new[]{ "Peugeot", "205", "1993", "France", "FR" },
             new[]{ "Citroen", "C4", "2011", "France", "FR"},
             new[]{ "Peugeot", "2008", "2019", "France", "FR"},
-            new[]{ "Tesla", "Model 3", "2017", "United States", "US"},
+            new[]{ "Tesla", "Model 3", "2018", "United States", "US"},
             new[]{ "Chevrolet", "Corvette", "1953", "United States", "US"},
             new[]{ "Fiat", "500", "1936", "Italy", "IT"},
             new[]{ "Ferrari", "F40", "1987", "Italy", "IT"},
