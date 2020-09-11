@@ -21,9 +21,10 @@ namespace makeITeasy.AppFramework.Core.Services
         {
         }
 
-        protected BaseEntityService(IAsyncRepository<TEntity> entityRepository)
+        protected BaseEntityService(IAsyncRepository<TEntity> entityRepository, IValidatorFactory validatorFactory)
         {
             EntityRepository = entityRepository;
+            ValidatorFactory = validatorFactory;
         }
 
         public void Dispose()

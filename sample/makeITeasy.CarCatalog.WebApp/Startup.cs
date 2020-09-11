@@ -9,8 +9,12 @@ using makeITeasy.AppFramework.Core.Infrastructure.Autofac;
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.AppFramework.Web.Helpers;
+using makeITeasy.CarCatalog.Core.Ports;
+using makeITeasy.CarCatalog.Core.Services;
+using makeITeasy.CarCatalog.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Infrastructure.Persistence;
+using makeITeasy.CarCatalog.Infrastructure.Repositories;
 using makeITeasy.CarCatalog.Models;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -74,7 +78,12 @@ namespace makeITeasy.CarCatalog.WebApp
                     .OnActivated(args => AutofacHelper.InjectProperties(args.Context, args.Instance, true));
 
             builder.RegisterAssemblyTypes(CarCatalogModels.Assembly).Where(t => t.IsClosedTypeOf(typeof(IValidator<>))).AsImplementedInterfaces();
+            
             builder.RegisterType<AutofacValidatorFactory>().As<IValidatorFactory>().SingleInstance();
+
+            //specific service/repository
+            builder.RegisterType<CarService>().As<ICarService>();
+            builder.RegisterType<CarRepository>().As<ICarRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
+﻿using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
@@ -9,8 +7,12 @@ using makeITeasy.AppFramework.Core.Helpers;
 using makeITeasy.AppFramework.Core.Infrastructure.Autofac;
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Models;
+using makeITeasy.CarCatalog.Core.Ports;
+using makeITeasy.CarCatalog.Core.Services;
+using makeITeasy.CarCatalog.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Infrastructure.Persistence;
+using makeITeasy.CarCatalog.Infrastructure.Repositories;
 using makeITeasy.CarCatalog.Models;
 using MediatR;
 using Microsoft.Data.Sqlite;
@@ -65,10 +67,15 @@ namespace makeITeasy.CarCatalog.Tests
 
             builder.RegisterType<CarCatalogContext>();
 
+            //specific service/repository
+            builder.RegisterType<CarService>().As<ICarService>();
+            builder.RegisterType<CarRepository>().As<ICarRepository>();
+
             builder.RegisterGeneric(typeof(CarCatalogRepository<>)).As(typeof(IAsyncRepository<>)).InstancePerLifetimeScope()
                 .PropertiesAutowired()
                 .OnActivated(args => AutofacHelper.InjectProperties(args.Context, args.Instance, true));
-                builder.RegisterType<AutofacValidatorFactory>().As<IValidatorFactory>().SingleInstance();
+                
+            builder.RegisterType<AutofacValidatorFactory>().As<IValidatorFactory>().SingleInstance();
         }
     }
 }
