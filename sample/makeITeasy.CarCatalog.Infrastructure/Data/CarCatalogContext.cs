@@ -18,11 +18,11 @@ namespace makeITeasy.CarCatalog.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasAnnotation("Scaffolding:ConnectionString", "Data Source=(local);Initial Catalog=makeITeasy.CarCatalog.Database;Integrated Security=true");
+
             modelBuilder.ApplyConfiguration(new BrandConfiguration());
             modelBuilder.ApplyConfiguration(new CarConfiguration());
             modelBuilder.ApplyConfiguration(new CountryConfiguration());
-
-
             OnModelCreatingPartial(modelBuilder);
         }
 

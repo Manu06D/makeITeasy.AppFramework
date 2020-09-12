@@ -12,6 +12,7 @@ using System.Linq;
 using makeITeasy.CarCatalog.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.Core.Services.Queries.BrandQueries;
 using makeITeasy.AppFramework.Core.Models.Exceptions;
+using System.Transactions;
 
 namespace makeITeasy.CarCatalog.Tests
 {
@@ -97,6 +98,52 @@ namespace makeITeasy.CarCatalog.Tests
             };
 
             brandService.Invoking(y => y.IsValid(newBrand)).Should().Throw<ValidatorNotFoundException>();
+        }
+
+
+        [Fact]
+        public async Task Transaction_Tests()
+        {
+            var newBrand = new Brand
+            {
+                Name = "x",
+                Country = new Country()
+                {
+                    Name = "France",
+                    CountryCode =  "FR"
+                }
+            };
+
+            var newBrand2 = new Brand
+            {
+                Name = "xx",
+            };
+
+            using (var scope = new TransactionScope(TransactionScopeOption.Required))
+            {
+                try
+                {
+                    _ = await brandService.CreateAsync(newBrand);
+
+                    var localSearch = await brandService.QueryAsync(new BaseBrandQuery() { });
+                    localSearch.Results.Should().HaveCount(1);
+
+                    _ = await brandService.CreateAsync(newBrand2);
+
+                    scope.Complete();
+
+                    newBrand.Id.Should().BePositive();
+                    newBrand2.Id.Should().BePositive();
+
+                }
+                catch
+                {
+                    scope.Dispose();
+                }
+            }
+
+            var search = await brandService.QueryAsync(new BaseBrandQuery() { });
+            search.Results.Should().HaveCount(0);
         }
     }
 }

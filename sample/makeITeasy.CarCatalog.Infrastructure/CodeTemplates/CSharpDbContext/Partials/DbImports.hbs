@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using makeITeasy.CarCatalog.Models;
-
 {{#if model-namespace}}
 using {{model-namespace}};
 {{/if}}
+{{#each model-imports}}
+using {{model-import}};
+{{/each}}

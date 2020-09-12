@@ -2,12 +2,17 @@
 
 namespace {{namespace}}
 {
-{{#if class-annotation}}
-{{{class-annotation}}}
-{{/if}}
+    {{#if comment}}
+    /// <summary>
+    /// {{comment}}
+    /// </summary>
+    {{/if}}
+    {{#if class-annotation}}
+    {{{class-annotation}}}
+    {{/if}}
     public partial class {{class}}: BaseEntity
     {
-{{{> constructor}}}
-{{{> properties}}}
+        {{{> constructor}}}
+        {{{> properties}}}
     }
 }

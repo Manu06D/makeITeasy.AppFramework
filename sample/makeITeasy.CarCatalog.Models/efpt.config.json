@@ -2,13 +2,13 @@
    "ContextClassName": "Carcatalog2Context",
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
-   "DoNotCombineNamespace": false,
-   "IdReplace": false,
+   "FilterSchemas": false,
    "IncludeConnectionString": false,
    "ModelNamespace": null,
    "OutputContextPath": null,
    "OutputPath": "",
    "ProjectRootNamespace": "makeITeasy.CarCatalog.Models",
+   "Schemas": null,
    "SelectedHandlebarsLanguage": 0,
    "SelectedToBeGenerated": 2,
    "Tables": [
@@ -31,5 +31,7 @@
    "UseHandleBars": true,
    "UseInflector": true,
    "UseLegacyPluralizer": false,
-   "UseSpatial": false
+   "UseNodaTime": false,
+   "UseSpatial": false,
+   "UseStoredProcedures": false
 }
