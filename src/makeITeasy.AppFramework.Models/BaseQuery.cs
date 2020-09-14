@@ -4,7 +4,9 @@ using System.Linq.Expressions;
 
 namespace makeITeasy.AppFramework.Models
 {
-    public abstract class BaseQuery<T> : IBaseQuery, ISpecification<T> where T : IBaseEntity
+    public abstract class BaseQuery<T> : 
+        //IBaseQuery, 
+        ISpecification<T> where T : IBaseEntity
     {
         public Expression<Func<T, bool>> Criteria { get; set; }
 
@@ -61,7 +63,7 @@ namespace makeITeasy.AppFramework.Models
             }
         }
 
-        public void AddFunctionToCriteria(Expression<Func<T, bool>> funcToAdd, FunctionType type = FunctionType.And)
+        public void AddFunctionToCriteria(Expression<Func<T, bool>> funcToAdd, FunctionAggregatorEnum type = FunctionAggregatorEnum.And)
         {
             if (this.Criteria == null)
             {
@@ -69,7 +71,7 @@ namespace makeITeasy.AppFramework.Models
             }
             else
             {
-                if (type == FunctionType.And)
+                if (type == FunctionAggregatorEnum.And)
                 {
                     this.Criteria = AndAlsoCriteria(funcToAdd, this.Criteria);
                 }

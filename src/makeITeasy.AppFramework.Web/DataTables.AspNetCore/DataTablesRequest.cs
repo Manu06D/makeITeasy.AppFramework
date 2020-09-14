@@ -61,16 +61,16 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
                 SortDescending = !SortInformation.Item2
             };
 
-            if (searchResult != null && IsTypeImplementInterface(searchType, typeof(IBaseQuery)) && IsTypeImplementInterface(searchType, typeof(ISpecification<U>)))
+            if (searchResult != null && IsTypeImplementInterface(searchType, typeof(ISpecification<U>)))
             {
                 if (AdditionalParameters != null && AdditionalParameters.Count > 0)
                 {
                     searchResult = AdditionalParameters.ToObject(searchResult);
                 }
 
-                ((IBaseQuery)searchResult).IsPagingEnabled = true;
-                ((IBaseQuery)searchResult).Skip = Start;
-                ((IBaseQuery)searchResult).Take = Length;
+                ((ISpecification<U>)searchResult).IsPagingEnabled = true;
+                ((ISpecification<U>)searchResult).Skip = Start;
+                ((ISpecification<U>)searchResult).Take = Length;
                 
                 ((ISpecification<U>)searchResult).OrderByStrings = new List<OrderBySpecification<string>>() {orderBySpecification};
             }
@@ -84,7 +84,7 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
                 orderBySpecification.OrderBy = filterColum.SortDataSource;
             }
 
-            return ((IBaseQuery)searchResult) as BaseQuery<U>;
+            return ((ISpecification<U>)searchResult) as BaseQuery<U>;
         }
 
         private bool IsTypeImplementInterface(Type type, Type searchInterface)
