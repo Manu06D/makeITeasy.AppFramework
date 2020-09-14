@@ -13,6 +13,8 @@ using makeITeasy.CarCatalog.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.Core.Services.Queries.BrandQueries;
 using makeITeasy.AppFramework.Core.Models.Exceptions;
 using System.Transactions;
+using makeITeasy.CarCatalog.Core.Services.Queries.CarQueries;
+using makeITeasy.AppFramework.Models;
 
 namespace makeITeasy.CarCatalog.Tests
 {
@@ -110,7 +112,7 @@ namespace makeITeasy.CarCatalog.Tests
                 Country = new Country()
                 {
                     Name = "France",
-                    CountryCode =  "FR"
+                    CountryCode = "FR"
                 }
             };
 
@@ -144,6 +146,17 @@ namespace makeITeasy.CarCatalog.Tests
 
             var search = await brandService.QueryAsync(new BaseBrandQuery() { });
             search.Results.Should().HaveCount(0);
+        }
+
+        [Fact]
+        public async Task TestFluent()
+        {
+            //ICanAddFunctionFilter canAddFunctionFilter =
+            //    FluentQueryBuilder.Create<Car>(new BaseCarQuery());
+
+            QueryBuilder.Create(new BaseCarQuery()).Where(x => x.ReleaseYear == 2010);
+
+            //new BaseCarQuery().Where();
         }
     }
 }

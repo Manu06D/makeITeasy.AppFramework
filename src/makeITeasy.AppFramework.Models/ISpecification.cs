@@ -11,11 +11,11 @@ namespace makeITeasy.AppFramework.Models
         List<string> IncludeStrings { get; }
         List<OrderBySpecification<string>> OrderByStrings { get; set; }
         List<OrderBySpecification<Expression<Func<T, object>>>> OrderBy { get; set; }
-        int? Take { get; }
-        int? Skip { get; }
-        bool IsPagingEnabled { get; }
-
+        int? Take { get; set; }
+        int? Skip { get; set; }
+        bool IsPagingEnabled { get; set; }
         void AddOrder(string orderByColumn, bool sortDescending = false);
         void AddOrder(Expression<Func<T, object>> orderByColumn, bool sortDescending = false);
+        void AddFunctionToCriteria(Expression<Func<T, bool>> funcToAdd, FunctionAggregatorEnum type = FunctionAggregatorEnum.And);
     }
 }
