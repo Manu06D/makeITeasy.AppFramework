@@ -8,46 +8,62 @@ namespace makeITeasy.AppFramework.Models
         BaseQuery<T> Build();
     }
 
-    public interface ICanAddPostBuilder<T> : ICanBuild<T> where T : IBaseEntity
+    public interface ICanAddPostBuilder<T> : ICanOrder<T>, ICanAddInclude<T> where T : IBaseEntity
     {
         ICanAddFunctionFilter<T> Where(Expression<Func<T, bool>> funcToAdd);
-        ICanAddThenOrderByOrTake<T> OrderBy(string spec, bool sortDescending);
-        ICanAddInclude<T> Include();
+
     }
 
-    public interface ICanAddThenOrderByOrTake<T> : ICanBuild<T> where T : IBaseEntity
+    public interface ICanAddFunctionFilter<T> : ICanOrder<T> , ICanAddInclude<T> where T : IBaseEntity
     {
-        ICanAddThenOrderByOrTake<T> ThenOrderBy(OrderBySpecification<String> spec);
+        ICanAddFunctionFilter<T> And(Expression<Func<T, bool>> funcToAdd);
+        ICanAddFunctionFilter<T> Or(Expression<Func<T, bool>> funcToAdd);
+    }
+
+    public interface ICanOrder<T> where T : IBaseEntity
+    {
+        ICanAddThenOrderByOrTake<T> OrderBy(string spec, bool sortDescending = false);
+        ICanAddThenOrderByOrTake<T> OrderBy(Expression<Func<T, object>> spec, bool sortDescending = false);
+    }
+
+    public interface ICanAddThenOrderByOrTake<T> : ICanBuild<T>, ICanAddInclude<T> where T : IBaseEntity
+    {
+        ICanAddThenOrderByOrTake<T> ThenOrderBy(string spec, bool sortDescending = false);
+        ICanAddThenOrderByOrTake<T> ThenOrderBy(Expression<Func<T, object>> spec, bool sortDescending = false);
+
         ICanSkip<T> Take(int page);
     }
 
-
-    public interface ICanSkip<T> : ICanBuild<T> where T : IBaseEntity
+    public interface ICanSkip<T> : ICanAddInclude<T> where T : IBaseEntity
     {
         ICanAddInclude<T> Skip(int pageSize);
     }
 
-
     public interface ICanAddInclude<T> : ICanBuild<T> where T : IBaseEntity
-    { 
-    }
-
-    public interface ICanAddFunctionFilter<T> : ICanBuild<T> where T : IBaseEntity
     {
-        ICanAddThenOrderByOrTake<T> OrderBy(Expression<Func<T, object>> spec, bool sortDescending);
-        ICanAddThenOrderByOrTake<T> OrderBy(string spec, bool sortDescending);
-        ICanAddInclude<T> Include();
+        ICanAddInclude<T> Include(Expression<Func<T, object>> spec);
+        ICanAddInclude<T> Include(string spec);
     }
 
     public class QueryBuilder
     {
+        protected QueryBuilder()
+        {
+        }
+
         public static ICanAddPostBuilder<C> Create<C>(ISpecification<C> spec) where C:IBaseEntity
         {
             return new FluentQueryBuilder<C>(spec);
         }
+
+        public static ICanAddPostBuilder<C> Create<B,C>() where B : BaseQuery<C> where C:IBaseEntity
+        {
+
+            return new FluentQueryBuilder<C>((B)Activator.CreateInstance(typeof(B)));
+        }
     }
 
-    public class FluentQueryBuilder<T> : ICanAddPostBuilder<T>, ICanAddFunctionFilter<T>, ICanAddThenOrderByOrTake<T>, ICanSkip<T>, ICanAddInclude<T> where T:IBaseEntity
+    public class FluentQueryBuilder<T> : ICanAddPostBuilder<T>, ICanAddFunctionFilter<T>, ICanAddThenOrderByOrTake<T>, ICanSkip<T> where T:IBaseEntity
     {
         private readonly ISpecification<T> _baseQuery;
 
@@ -63,28 +79,16 @@ namespace makeITeasy.AppFramework.Models
             return this;
         }
 
-        public ICanAddInclude<T> Include()
-        {
-            throw new NotImplementedException();
-        }
-
-        public ICanAddThenOrderByOrTake<T> OrderBy(string spec, bool sortDescending)
+        public ICanAddThenOrderByOrTake<T> OrderBy(string spec, bool sortDescending = false)
         {
             _baseQuery.AddOrder(new OrderBySpecification<String>(spec, sortDescending));
 
             return this;
         }
 
-        public ICanAddThenOrderByOrTake<T> OrderBy(Expression<Func<T, object>> spec, bool sortDescending)
+        public ICanAddThenOrderByOrTake<T> OrderBy(Expression<Func<T, object>> spec, bool sortDescending = false)
         {
             _baseQuery.AddOrder(new OrderBySpecification<Expression<Func<T, object>>>(spec, sortDescending));
-            return this;
-        }
-
-        public ICanAddThenOrderByOrTake<T> ThenOrderBy(OrderBySpecification<String> spec)
-        {
-            _baseQuery.AddOrder(spec);
-
             return this;
         }
 
@@ -105,6 +109,48 @@ namespace makeITeasy.AppFramework.Models
         public BaseQuery<T> Build()
         {
             return _baseQuery as BaseQuery<T>;
+        }
+
+        public ICanAddFunctionFilter<T> And(Expression<Func<T, bool>> funcToAdd)
+        {
+            _baseQuery.AddFunctionToCriteria(funcToAdd, FunctionAggregatorEnum.And);
+
+            return this;
+        }
+
+        public ICanAddFunctionFilter<T> Or(Expression<Func<T, bool>> funcToAdd)
+        {
+            _baseQuery.AddFunctionToCriteria(funcToAdd, FunctionAggregatorEnum.Or);
+
+            return this;
+        }
+
+        public ICanAddInclude<T> Include(Expression<Func<T, object>> spec)
+        {
+            _baseQuery.AddInclude(spec);
+
+            return this;
+        }
+
+        public ICanAddInclude<T> Include(string spec)
+        {
+            _baseQuery.AddInclude(spec);
+
+            return this;
+        }
+
+        public ICanAddThenOrderByOrTake<T> ThenOrderBy(string spec, bool sortDescending = false)
+        {
+            _baseQuery.AddOrder(new OrderBySpecification<string>(spec, sortDescending));
+
+            return this;
+        }
+
+        public ICanAddThenOrderByOrTake<T> ThenOrderBy(Expression<Func<T, object>> spec, bool sortDescending = false)
+        {
+            _baseQuery.AddOrder(new OrderBySpecification<Expression<Func<T, object>>>(spec, sortDescending));
+
+            return this;
         }
     }
 }

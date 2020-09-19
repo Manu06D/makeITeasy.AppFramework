@@ -127,6 +127,10 @@ namespace makeITeasy.CarCatalog.Tests
             getResult.TotalItems.Should().Be(carList.Count);
 
             getResult.Results.Select(x => x.Id).Should().BeInAscendingOrder();
+
+            var getResultFluent = await carService.QueryAsync(QueryBuilder.Create<BaseCarQuery, Car>().Build(), includeCount: true);
+
+            getResultFluent.Results.Select(x => x.Id).Should().BeEquivalentTo(getResult.Results.Select(x => x.Id));
         }
 
         [Fact]
@@ -139,19 +143,35 @@ namespace makeITeasy.CarCatalog.Tests
             getResult.Results.Select(x => x.Id).Should().BeInAscendingOrder();
 
             getResult.Results.Should().OnlyContain(x => x.Brand.Country != null);
+
+            var getResultFluent = await carService.QueryAsync(QueryBuilder.Create<BaseCarQuery, Car>().Include("Brand.Country").Build(), includeCount: true);
+
+            getResultFluent.Results.Select(x => x.Id).Should().BeInAscendingOrder();
+
+            getResultFluent.Results.Should().OnlyContain(x => x.Brand.Country != null);
+
+            getResultFluent.Results.Select(x => x.Id).Should().BeEquivalentTo(getResult.Results.Select(x => x.Id));
         }
 
         [Fact]
         public async Task CreateAndGet_ListWithIncludeTest()
         {
             var getResult = await carService.QueryAsync
-                (new BaseCarQuery() { Includes = new List<System.Linq.Expressions.Expression<Func<Car, object>>>() { x => x.Brand.Country } }, includeCount: true);
+                (new BaseCarQuery() { Includes = new List<Expression<Func<Car, object>>>() { x => x.Brand.Country } }, includeCount: true);
 
             getResult.TotalItems.Should().Be(carList.Count);
 
             getResult.Results.Select(x => x.Id).Should().BeInAscendingOrder();
 
             getResult.Results.Should().OnlyContain(x => x.Brand.Country != null);
+
+            var getResultFluent = await carService.QueryAsync(QueryBuilder.Create<BaseCarQuery, Car>().Include(x => x.Brand.Country).Build(), includeCount: true);
+
+            getResultFluent.TotalItems.Should().Be(carList.Count);
+
+            getResultFluent.Results.Select(x => x.Id).Should().BeInAscendingOrder();
+
+            getResultFluent.Results.Should().OnlyContain(x => x.Brand.Country != null);
         }
 
         public class SmallCarInfo : IMapFrom<Car>
@@ -209,10 +229,15 @@ namespace makeITeasy.CarCatalog.Tests
         public async Task CreateAndGet_ListWithPagingTest()
         {
             const int pageSize = 10;
-            var getResult = await carService.QueryAsync(new BaseCarQuery() { Skip = 5, Take = pageSize, IsPagingEnabled = true }, includeCount: true);
+            var getResult = await carService.QueryAsync(new BaseCarQuery() { Skip = 5, Take = pageSize }, includeCount: true);
 
             getResult.TotalItems.Should().Be(carList.Count);
             getResult.Results.Count.Should().Be(Math.Min(carList.Count, pageSize));
+
+            var getResultFluent = await carService.QueryAsync(QueryBuilder.Create<BaseCarQuery, Car>().OrderBy(x => x.Id).Take(pageSize).Skip(5).Build(), includeCount: true);
+
+            getResultFluent.TotalItems.Should().Be(carList.Count);
+            getResultFluent.Results.Count.Should().Be(Math.Min(carList.Count, pageSize));
         }
 
         [Fact]
@@ -231,6 +256,11 @@ namespace makeITeasy.CarCatalog.Tests
             });
 
             getResult.Results.Select(x => x.ReleaseYear).Should().BeInDescendingOrder();
+
+            var getResultFluent = await carService.QueryAsync(QueryBuilder.Create<BaseCarQuery, Car>().OrderBy(nameof(Car.ReleaseYear)).Build());
+
+            getResultFluent.Results.Select(x => x.ReleaseYear).Should().BeInAscendingOrder();
+
         }
 
         [Fact]
@@ -249,6 +279,10 @@ namespace makeITeasy.CarCatalog.Tests
             });
 
             getResult.Results.Select(x => (int)x.Brand.Country.Name.First()).Should().BeInDescendingOrder();
+
+            var getResultFluent = await carService.QueryAsync(QueryBuilder.Create<BaseCarQuery, Car>().OrderBy("Brand.Country.Name", true).Include("Brand.Country").Build());
+
+            getResultFluent.Results.Select(x => (int)x.Brand.Country.Name.First()).Should().BeInDescendingOrder();
         }
 
         [Fact]
@@ -269,6 +303,15 @@ namespace makeITeasy.CarCatalog.Tests
             });
 
             getResult.Results.Select(x => x.ReleaseYear).Should().BeInDescendingOrder();
+
+            var getResultFluent = await carService.QueryAsync(QueryBuilder.Create<BaseCarQuery, Car>().OrderBy(x => x.ReleaseYear).Include("Brand.Country").Build());
+
+
+            getResultFluent.Results.Select(x => x.ReleaseYear).Should().BeInAscendingOrder();
+
+            getResultFluent = await carService.QueryAsync(QueryBuilder.Create<BaseCarQuery, Car>().OrderBy(x => x.ReleaseYear, true).Include("Brand.Country").Build());
+
+            getResultFluent.Results.Select(x => x.ReleaseYear).Should().BeInDescendingOrder();
         }
 
 
@@ -337,6 +380,10 @@ namespace makeITeasy.CarCatalog.Tests
             getResult.Results.Select(x => x.ReleaseYear).Should().BeInAscendingOrder();
             getResult.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear).Select(x => x.Name).Should().BeInAscendingOrder();
 
+            var getResultFluent = await carService.QueryAsync(QueryBuilder.Create<BaseCarQuery, Car>().OrderBy(x => x.ReleaseYear).ThenOrderBy(x => x.Name).Build());
+            getResultFluent.Results.Select(x => x.ReleaseYear).Should().BeInAscendingOrder();
+            getResultFluent.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear).Select(x => x.Name).Should().BeInAscendingOrder();
+
             BaseCarQuery specification = new BaseCarQuery() { };
             specification.AddOrder(new OrderBySpecification<Expression<Func<Car, object>>>(x => x.ReleaseYear, false ));
             specification.AddOrder(new OrderBySpecification<Expression<Func<Car, object>>>(x => x.Name, true ));
@@ -344,6 +391,10 @@ namespace makeITeasy.CarCatalog.Tests
 
             getResult.Results.Select(x => x.ReleaseYear).Should().BeInAscendingOrder();
             getResult.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear).Select(x => x.Name).Should().BeInDescendingOrder();
+
+             getResultFluent = await carService.QueryAsync(QueryBuilder.Create<BaseCarQuery, Car>().OrderBy(x => x.ReleaseYear).ThenOrderBy(x => x.Name, true).Build());
+            getResultFluent.Results.Select(x => x.ReleaseYear).Should().BeInAscendingOrder();
+            getResultFluent.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear).Select(x => x.Name).Should().BeInDescendingOrder();
 
             getResult = await carService.QueryAsync(new BaseCarQuery()
             {
@@ -365,6 +416,8 @@ namespace makeITeasy.CarCatalog.Tests
             var getResult = await carService.QueryAsync(
                 QueryBuilder.Create(new BaseCarQuery()).Where(x => x.ReleaseYear >= 2010).OrderBy("ReleaseYear", true).Build()
             );
+
+            QueryBuilder.Create(new BaseCarQuery()).OrderBy("aa", true).Take(5);//.Include(/*XmlAssertionExtensions*/ )
 
 
             getResult.Results.Should().NotBeEmpty();

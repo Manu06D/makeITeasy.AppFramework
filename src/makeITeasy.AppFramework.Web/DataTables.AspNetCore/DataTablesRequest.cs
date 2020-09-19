@@ -64,7 +64,6 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
                     searchResult = AdditionalParameters.ToObject(searchResult);
                 }
 
-                ((ISpecification<U>)searchResult).IsPagingEnabled = true;
                 ((ISpecification<U>)searchResult).Skip = Start;
                 ((ISpecification<U>)searchResult).Take = Length;
                 

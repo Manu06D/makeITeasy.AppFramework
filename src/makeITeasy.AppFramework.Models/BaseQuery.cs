@@ -4,9 +4,7 @@ using System.Linq.Expressions;
 
 namespace makeITeasy.AppFramework.Models
 {
-    public abstract class BaseQuery<T> : 
-        //IBaseQuery, 
-        ISpecification<T> where T : IBaseEntity
+    public abstract class BaseQuery<T> : ISpecification<T> where T : IBaseEntity
     {
         public Expression<Func<T, bool>> Criteria { get; set; }
 
@@ -18,7 +16,7 @@ namespace makeITeasy.AppFramework.Models
 
         public int? Skip { get; set; }
 
-        public bool IsPagingEnabled { get; set; }
+        public bool IsPagingEnabled => Take.HasValue || Skip.HasValue;
 
         public List<OrderBySpecification<String>> OrderByStrings { get; set; }
 
@@ -124,6 +122,18 @@ namespace makeITeasy.AppFramework.Models
         {
             OrderBy ??= new List<OrderBySpecification<Expression<Func<T, object>>>>();
             OrderBy.Add(spec);
+        }
+
+        public void AddInclude(Expression<Func<T, object>> spec)
+        {
+            Includes ??= new List<Expression<Func<T, object>>>();
+            Includes.Add(spec);
+        }
+
+        public void AddInclude(string spec)
+        {
+            IncludeStrings ??= new List<string>();
+            IncludeStrings.Add(spec);
         }
     }
 }
