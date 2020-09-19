@@ -13,9 +13,11 @@ namespace makeITeasy.AppFramework.Models
         List<OrderBySpecification<Expression<Func<T, object>>>> OrderBy { get; set; }
         int? Take { get; set; }
         int? Skip { get; set; }
-        bool IsPagingEnabled { get; set; }
+        bool IsPagingEnabled { get; }
         void AddOrder(OrderBySpecification<string> spec);
         void AddOrder(OrderBySpecification<Expression<Func<T, object>>> spec);
         void AddFunctionToCriteria(Expression<Func<T, bool>> funcToAdd, FunctionAggregatorEnum type = FunctionAggregatorEnum.And);
+        void AddInclude(Expression<Func<T, object>> spec);
+        void AddInclude(string spec);
     }
 }
