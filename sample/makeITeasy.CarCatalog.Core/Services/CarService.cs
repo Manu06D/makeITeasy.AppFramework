@@ -3,22 +3,23 @@ using makeITeasy.CarCatalog.Models;
 using makeITeasy.CarCatalog.Core.Services.Interfaces;
 using FluentValidation;
 using makeITeasy.CarCatalog.Core.Ports;
+using System.Collections.Generic;
+using makeITeasy.CarCatalog.Models.Custom;
 
 namespace makeITeasy.CarCatalog.Core.Services
 {
     public class CarService : BaseEntityService<Car>, ICarService
     {
-        private readonly ICarRepository carRepository;
+        private readonly ICarRepository _carRepository;
 
-        public CarService(ICarRepository _carRepository, IValidatorFactory validatorFactory) : base(_carRepository, validatorFactory)
+        public CarService(ICarRepository carRepository, IValidatorFactory validatorFactory) : base(carRepository, validatorFactory)
         {
-            carRepository = _carRepository;
+            _carRepository = carRepository;
         }
 
-        public void OwnServiceMethod()
+        public List<BrandGroupByCarCount> GetBrandWithCount()
         {
-            string s = "hello world";
-            carRepository.OwnRepositoryMethod();
+            return _carRepository.OwnRepositoryMethod();
         }
     }
 }
