@@ -55,11 +55,7 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
 
             var searchResult = createObjectWithDefaultConstructor(searchType);
 
-            var orderBySpecification = new OrderBySpecification<string>()
-            {
-                OrderBy = SortInformation.Item1,
-                SortDescending = !SortInformation.Item2
-            };
+            var orderBySpecification = new OrderBySpecification<string>(SortInformation.Item1, !SortInformation.Item2);
 
             if (searchResult != null && IsTypeImplementInterface(searchType, typeof(ISpecification<U>)))
             {

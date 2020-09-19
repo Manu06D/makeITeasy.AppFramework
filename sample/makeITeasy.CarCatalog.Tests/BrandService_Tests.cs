@@ -137,6 +137,8 @@ namespace makeITeasy.CarCatalog.Tests
                     newBrand.Id.Should().BePositive();
                     newBrand2.Id.Should().BePositive();
 
+
+
                 }
                 catch
                 {
@@ -146,17 +148,6 @@ namespace makeITeasy.CarCatalog.Tests
 
             var search = await brandService.QueryAsync(new BaseBrandQuery() { });
             search.Results.Should().HaveCount(0);
-        }
-
-        [Fact]
-        public async Task TestFluent()
-        {
-            //ICanAddFunctionFilter canAddFunctionFilter =
-            //    FluentQueryBuilder.Create<Car>(new BaseCarQuery());
-
-            QueryBuilder.Create(new BaseCarQuery()).Where(x => x.ReleaseYear == 2010);
-
-            //new BaseCarQuery().Where();
         }
     }
 }

@@ -1,18 +1,42 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace makeITeasy.AppFramework.Models
 {
-    public interface ICanAddPostBuilder<T>
+    public interface ICanBuild<T> where T:IBaseEntity
     {
-        ICanAddFunctionFilter Where(Expression<Func<T, bool>> funcToAdd);
+        BaseQuery<T> Build();
     }
 
-    public interface ICanAddFunctionFilter
+    public interface ICanAddPostBuilder<T> : ICanBuild<T> where T : IBaseEntity
     {
+        ICanAddFunctionFilter<T> Where(Expression<Func<T, bool>> funcToAdd);
+        ICanAddThenOrderByOrTake<T> OrderBy(string spec, bool sortDescending);
+        ICanAddInclude<T> Include();
+    }
 
+    public interface ICanAddThenOrderByOrTake<T> : ICanBuild<T> where T : IBaseEntity
+    {
+        ICanAddThenOrderByOrTake<T> ThenOrderBy(OrderBySpecification<String> spec);
+        ICanSkip<T> Take(int page);
+    }
+
+
+    public interface ICanSkip<T> : ICanBuild<T> where T : IBaseEntity
+    {
+        ICanAddInclude<T> Skip(int pageSize);
+    }
+
+
+    public interface ICanAddInclude<T> : ICanBuild<T> where T : IBaseEntity
+    { 
+    }
+
+    public interface ICanAddFunctionFilter<T> : ICanBuild<T> where T : IBaseEntity
+    {
+        ICanAddThenOrderByOrTake<T> OrderBy(Expression<Func<T, object>> spec, bool sortDescending);
+        ICanAddThenOrderByOrTake<T> OrderBy(string spec, bool sortDescending);
+        ICanAddInclude<T> Include();
     }
 
     public class QueryBuilder
@@ -23,7 +47,7 @@ namespace makeITeasy.AppFramework.Models
         }
     }
 
-    public class FluentQueryBuilder<T> : ICanAddPostBuilder<T>, ICanAddFunctionFilter  where T:IBaseEntity
+    public class FluentQueryBuilder<T> : ICanAddPostBuilder<T>, ICanAddFunctionFilter<T>, ICanAddThenOrderByOrTake<T>, ICanSkip<T>, ICanAddInclude<T> where T:IBaseEntity
     {
         private readonly ISpecification<T> _baseQuery;
 
@@ -32,11 +56,55 @@ namespace makeITeasy.AppFramework.Models
             _baseQuery = basequery;
         }
 
-        public ICanAddFunctionFilter Where(Expression<Func<T, bool>> funcToAdd)
+        public ICanAddFunctionFilter<T> Where(Expression<Func<T, bool>> funcToAdd)
         {
             _baseQuery.AddFunctionToCriteria(funcToAdd);
 
             return this;
+        }
+
+        public ICanAddInclude<T> Include()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICanAddThenOrderByOrTake<T> OrderBy(string spec, bool sortDescending)
+        {
+            _baseQuery.AddOrder(new OrderBySpecification<String>(spec, sortDescending));
+
+            return this;
+        }
+
+        public ICanAddThenOrderByOrTake<T> OrderBy(Expression<Func<T, object>> spec, bool sortDescending)
+        {
+            _baseQuery.AddOrder(new OrderBySpecification<Expression<Func<T, object>>>(spec, sortDescending));
+            return this;
+        }
+
+        public ICanAddThenOrderByOrTake<T> ThenOrderBy(OrderBySpecification<String> spec)
+        {
+            _baseQuery.AddOrder(spec);
+
+            return this;
+        }
+
+        public ICanSkip<T> Take(int page)
+        {
+            _baseQuery.Take = page;
+
+            return this;
+        }
+
+        public ICanAddInclude<T> Skip(int pageSize)
+        {
+            _baseQuery.Skip = pageSize;
+
+            return this;
+        }
+
+        public BaseQuery<T> Build()
+        {
+            return _baseQuery as BaseQuery<T>;
         }
     }
 }

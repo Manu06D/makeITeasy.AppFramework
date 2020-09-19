@@ -114,17 +114,16 @@ namespace makeITeasy.AppFramework.Models
             return Expression.Lambda<Func<T, bool>>(functionToApply(left, right), parameter);
         }
 
-        public void AddOrder(string orderByColumn, bool sortDescending = false)
+        public void AddOrder(OrderBySpecification<string> spec)
         {
-            var lists = OrderByStrings ??= new List<OrderBySpecification<string>>();
-            lists.Add(new OrderBySpecification<string>() { OrderBy = orderByColumn, SortDescending = sortDescending });
-
+            OrderByStrings ??= new List<OrderBySpecification<string>>();
+            OrderByStrings.Add(spec);
         }
 
-        public void AddOrder(Expression<Func<T, object>> orderByColumn, bool sortDescending = false)
+        public void AddOrder(OrderBySpecification<Expression<Func<T, object>>> spec)
         {
-            var lists = OrderBy ??= new List<OrderBySpecification<Expression<Func<T, object>>>>();
-            lists.Add(new OrderBySpecification<Expression<Func<T, object>>>() { OrderBy = orderByColumn, SortDescending = sortDescending });
+            OrderBy ??= new List<OrderBySpecification<Expression<Func<T, object>>>>();
+            OrderBy.Add(spec);
         }
     }
 }

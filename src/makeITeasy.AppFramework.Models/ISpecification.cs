@@ -14,8 +14,8 @@ namespace makeITeasy.AppFramework.Models
         int? Take { get; set; }
         int? Skip { get; set; }
         bool IsPagingEnabled { get; set; }
-        void AddOrder(string orderByColumn, bool sortDescending = false);
-        void AddOrder(Expression<Func<T, object>> orderByColumn, bool sortDescending = false);
+        void AddOrder(OrderBySpecification<string> spec);
+        void AddOrder(OrderBySpecification<Expression<Func<T, object>>> spec);
         void AddFunctionToCriteria(Expression<Func<T, bool>> funcToAdd, FunctionAggregatorEnum type = FunctionAggregatorEnum.And);
     }
 }
