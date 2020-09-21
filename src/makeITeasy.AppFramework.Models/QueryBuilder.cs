@@ -56,10 +56,10 @@ namespace makeITeasy.AppFramework.Models
             return new FluentQueryBuilder<C>(spec);
         }
 
-        public static ICanAddPostBuilder<C> Create<B,C>() where B : BaseQuery<C> where C:IBaseEntity
+        public static ICanAddPostBuilder<C> Create<B,C>() where B : BaseQuery<C>, new() where C:IBaseEntity
         {
 
-            return new FluentQueryBuilder<C>((B)Activator.CreateInstance(typeof(B)));
+            return new FluentQueryBuilder<C>(new B());
         }
     }
 
