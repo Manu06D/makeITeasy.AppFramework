@@ -5,6 +5,7 @@ using FluentValidation;
 using makeITeasy.CarCatalog.Core.Ports;
 using System.Collections.Generic;
 using makeITeasy.CarCatalog.Models.Custom;
+using System.Threading.Tasks;
 
 namespace makeITeasy.CarCatalog.Core.Services
 {
@@ -17,9 +18,9 @@ namespace makeITeasy.CarCatalog.Core.Services
             _carRepository = carRepository;
         }
 
-        public List<BrandGroupByCarCount> GetBrandWithCount()
+        public async Task<List<BrandGroupByCarCount>> GetBrandWithCountAsync()
         {
-            return _carRepository.OwnRepositoryMethod();
+            return await _carRepository.GroupByBrandAndCountAsync();
         }
     }
 }

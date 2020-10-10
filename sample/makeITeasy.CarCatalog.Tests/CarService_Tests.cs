@@ -415,7 +415,7 @@ namespace makeITeasy.CarCatalog.Tests
         public async Task BrandGroupByCarCount_BasicTest()
         {
 
-            var getResult = carService.GetBrandWithCount();
+            var getResult = await carService.GetBrandWithCountAsync();
 
             getResult.Should().HaveCountGreaterThan(0);
             getResult.Select(x => x.CarCount).Where(x => x > 1).Should().HaveCountGreaterThan(0);
@@ -428,9 +428,6 @@ namespace makeITeasy.CarCatalog.Tests
             var getResult = await carService.QueryAsync(
                 QueryBuilder.Create(new BaseCarQuery()).Where(x => x.ReleaseYear >= 2010).OrderBy("ReleaseYear", true).Build()
             );
-
-            QueryBuilder.Create(new BaseCarQuery()).OrderBy("aa", true).Take(5);//.Include(/*XmlAssertionExtensions*/ )
-
 
             getResult.Results.Should().NotBeEmpty();
         }
