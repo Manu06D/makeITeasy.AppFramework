@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
 namespace makeITeasy.AppFramework.Models
 {
@@ -25,6 +26,7 @@ namespace makeITeasy.AppFramework.Models
         protected BaseQuery()
         {
         }
+
 
         protected BaseQuery(Expression<Func<T, bool>> criteria)
         {
