@@ -11,6 +11,8 @@ namespace makeITeasy.CarCatalog.Models
         public string Name { get; set; }
         public int BrandId { get; set; }
         public int ReleaseYear { get; set; }
+        public DateTime? CreationDate { get; set; }
+        public DateTime? LastModificationDate { get; set; }
 
         public virtual Brand Brand { get; set; }
     }
