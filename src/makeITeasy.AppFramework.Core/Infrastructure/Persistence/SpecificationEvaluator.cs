@@ -6,7 +6,7 @@ using makeITeasy.AppFramework.Core.Extensions;
 
 namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
 {
-    public static class SpecificationEvaluator<T> where T : BaseEntity
+    public static class SpecificationEvaluator<T> where T : class, IBaseEntity
     {
         public static IQueryable<T> GetQuery(IQueryable<T> inputQuery, ISpecification<T> specification)
         {

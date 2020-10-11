@@ -6,7 +6,7 @@ using MediatR;
 
 namespace makeITeasy.AppFramework.Core.Queries
 {
-    public class GenericQueryCommandHandler<TEntity> : IRequestHandler<GenericQueryCommand<TEntity>, QueryResult<TEntity>> where TEntity : BaseEntity
+    public class GenericQueryCommandHandler<TEntity> : IRequestHandler<GenericQueryCommand<TEntity>, QueryResult<TEntity>> where TEntity : class, IBaseEntity
     {
         private readonly IBaseEntityService<TEntity> baseService;
 

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace makeITeasy.AppFramework.Core.Queries
 {
-    public class GenericQueryWithProjectCommand<TRequest, TResult> : IRequest<QueryResult<TResult>> where TRequest : BaseEntity where TResult : class
+    public class GenericQueryWithProjectCommand<TRequest, TResult> : IRequest<QueryResult<TResult>> where TRequest : class, IBaseEntity where TResult : class
     {
         public BaseQuery<TRequest> Query { get; }
         public bool IncludeCount { get; }

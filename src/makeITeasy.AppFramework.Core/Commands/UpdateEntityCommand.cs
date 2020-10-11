@@ -3,7 +3,7 @@ using MediatR;
 
 namespace makeITeasy.AppFramework.Core.Commands
 {
-    public class UpdateEntityCommand<TEntity> : IRequest<CommandResult<TEntity>> where TEntity : BaseEntity
+    public class UpdateEntityCommand<TEntity> : IRequest<CommandResult<TEntity>> where TEntity : IBaseEntity
     {
         public TEntity Entity { get; private set; }
 

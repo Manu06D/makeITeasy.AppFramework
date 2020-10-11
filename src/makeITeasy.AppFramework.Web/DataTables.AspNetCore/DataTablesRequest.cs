@@ -49,7 +49,7 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
             AdditionalParameters = additionalParameters;
         }
 
-        public BaseQuery<U> GetSearchInformation<T,U>() where T : IDatatableBaseConfiguration where U:BaseEntity
+        public BaseQuery<U> GetSearchInformation<T,U>() where T : IDatatableBaseConfiguration where U:IBaseEntity
         {
             Type searchType = typeof(T).BaseType.GetGenericArguments()[0];
 

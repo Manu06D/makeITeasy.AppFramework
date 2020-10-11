@@ -2,7 +2,7 @@
 {
     public partial class Brand
     {
-        public override object DatabaseID { get => Id; }
+        public object DatabaseID { get => Id; }
 
     }
 }

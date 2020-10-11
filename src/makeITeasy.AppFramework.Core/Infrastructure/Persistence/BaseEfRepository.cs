@@ -16,10 +16,10 @@ using makeITeasy.AppFramework.Core.Commands;
 
 namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
 {
-    public abstract class BaseEfRepository<T, U> : IAsyncRepository<T> where T : BaseEntity where U : DbContext
+    public abstract class BaseEfRepository<T, U> : IAsyncRepository<T> where T : class, IBaseEntity where U : DbContext
     {
         protected readonly U _dbContext;
-        private readonly IMapper _mapper;
+        private readonly IMapper _mapper;   
 
         protected BaseEfRepository(U dbContext, IMapper mapper)
         {
@@ -110,25 +110,35 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
 
         public async Task<T> AddAsync(T entity, bool saveChanges = true)
         {
-            UpdateTimeTrackingInfo(entity, nameof(ITimeTrackingEntity.CreationDate));
-
             await _dbContext.Set<T>().AddAsync(entity);
 
-            if (saveChanges)
-            {
-                await _dbContext.SaveChangesAsync();
-            }
+            await SaveOrUpdateChanges(saveChanges);
 
             return entity;
         }
 
-        private static void UpdateTimeTrackingInfo(T entity, string timeTrackingFieldName)
+        private async Task<int> SaveOrUpdateChanges(bool saveChanges = true)
         {
-            if (entity is ITimeTrackingEntity)
+            var entries =
+                _dbContext.ChangeTracker.Entries().Where(e => e.Entity is ITimeTrackingEntity && (e.State == EntityState.Added || e.State == EntityState.Modified));
+
+            foreach (var entry in entries)
             {
-                var prop = entity.GetType().GetProperty(timeTrackingFieldName);
-                prop.SetValue(entity, DateTime.Now);
+                DateTime now = DateTime.Now;
+
+                ((ITimeTrackingEntity)entry.Entity).LastModificationDate = now;
+                if (entry.State == EntityState.Added)
+                {
+                    ((ITimeTrackingEntity)entry.Entity).CreationDate = now;
+                }
             }
+
+            if (saveChanges)
+            {
+                return await _dbContext.SaveChangesAsync();
+            }
+
+            return -1;
         }
 
         public async Task<CommandResult<T>> UpdateAsync(T entity)
@@ -147,9 +157,7 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
                 }
             }
 
-            UpdateTimeTrackingInfo(entity, nameof(ITimeTrackingEntity.LastModificationDate));
-
-            int dbChanges = await _dbContext.SaveChangesAsync();
+            int dbChanges = await SaveOrUpdateChanges();
 
             result.Entity = entity;
             result.Result = dbChanges > 0 ? CommandState.Success : CommandState.Warning;

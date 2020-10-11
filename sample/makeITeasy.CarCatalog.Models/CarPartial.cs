@@ -7,7 +7,7 @@ namespace makeITeasy.CarCatalog.Models
 {
     public partial class Car : ITimeTrackingEntity
     {
-        public override object DatabaseID { get => Id; }
+        public object DatabaseID => Id;
 
         public static Expression<Func<Car, bool>> ModernCarFunction => (x) => x.ReleaseYear > 2000;
 

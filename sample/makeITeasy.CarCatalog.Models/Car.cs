@@ -5,7 +5,7 @@ using makeITeasy.AppFramework.Models;
 
 namespace makeITeasy.CarCatalog.Models
 {
-    public partial class Car: BaseEntity
+    public partial class Car: IBaseEntity
     {
         public long Id { get; set; }
         public string Name { get; set; }

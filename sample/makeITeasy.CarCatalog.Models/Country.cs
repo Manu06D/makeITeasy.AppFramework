@@ -5,7 +5,7 @@ using makeITeasy.AppFramework.Models;
 
 namespace makeITeasy.CarCatalog.Models
 {
-    public partial class Country: BaseEntity
+    public partial class Country: IBaseEntity
     {
         public Country()
         {

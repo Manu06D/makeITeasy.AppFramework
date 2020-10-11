@@ -6,7 +6,7 @@ using MediatR;
 
 namespace makeITeasy.AppFramework.Core.Commands
 {
-    public class UpdateEntityCommandHandler<TEntity> : IRequestHandler<UpdateEntityCommand<TEntity>, CommandResult<TEntity>> where TEntity : BaseEntity
+    public class UpdateEntityCommandHandler<TEntity> : IRequestHandler<UpdateEntityCommand<TEntity>, CommandResult<TEntity>> where TEntity : class, IBaseEntity
     {
         private readonly IBaseEntityService<TEntity> baseService;
 
