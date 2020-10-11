@@ -110,6 +110,8 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
 
         public async Task<T> AddAsync(T entity, bool saveChanges = true)
         {
+            UpdateTimeTrackingInfo(entity, nameof(ITimeTrackingEntity.CreationDate));
+
             await _dbContext.Set<T>().AddAsync(entity);
 
             if (saveChanges)
@@ -118,6 +120,15 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
             }
 
             return entity;
+        }
+
+        private static void UpdateTimeTrackingInfo(T entity, string timeTrackingFieldName)
+        {
+            if (entity is ITimeTrackingEntity)
+            {
+                var prop = entity.GetType().GetProperty(timeTrackingFieldName);
+                prop.SetValue(entity, DateTime.Now);
+            }
         }
 
         public async Task<CommandResult<T>> UpdateAsync(T entity)
@@ -134,12 +145,9 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
 
                     ee.CurrentValues.SetValues(entity);
                 }
-
-                if(entity is TimeTrackingEntity)
-                {
-                    ((ITimeTrackingEntity)entity).LastModifiedDate = DateTime.Now;
-                }
             }
+
+            UpdateTimeTrackingInfo(entity, nameof(ITimeTrackingEntity.LastModificationDate));
 
             int dbChanges = await _dbContext.SaveChangesAsync();
 

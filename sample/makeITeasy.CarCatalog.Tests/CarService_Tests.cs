@@ -107,6 +107,8 @@ namespace makeITeasy.CarCatalog.Tests
 
             result.Result.Should().Be(CommandState.Success);
 
+            result.Entity.Id.Should().Be((long)result.Entity.DatabaseID);
+
             var getResult = await carService.QueryAsync(new BaseCarQuery() { ID = result.Entity.Id }, includeCount: true);
 
             getResult.TotalItems.Should().Be(1);
@@ -422,7 +424,7 @@ namespace makeITeasy.CarCatalog.Tests
         }
 
         [Fact]
-        public async Task TestFluent()
+        public async Task QueryBuilder_BasicTest()
         {
 
             var getResult = await carService.QueryAsync(

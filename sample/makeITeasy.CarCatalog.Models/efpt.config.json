@@ -1,5 +1,5 @@
 ﻿{
-   "ContextClassName": "Carcatalog2Context",
+   "ContextClassName": "CarcatalogContext",
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
    "FilterSchemas": false,

@@ -4,7 +4,7 @@ namespace makeITeasy.AppFramework.Models
 {
     public interface ITimeTrackingEntity
     {
-        DateTime CreatedDate { get; set; }
-        DateTime LastModifiedDate { get; set; }
+        DateTime? CreationDate { get; }
+        DateTime? LastModificationDate { get; }
     }
 }

@@ -2,6 +2,6 @@
 {
     public interface IBaseEntity
     {
-        object DatabaseID { get; set; }
+        object DatabaseID { get; }
     }
 }
