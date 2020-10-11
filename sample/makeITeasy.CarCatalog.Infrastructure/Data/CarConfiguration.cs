@@ -13,6 +13,9 @@ namespace makeITeasy.CarCatalog.Infrastructure.Data
         {
             entity.ToTable("Car");
 
+            entity.HasIndex(e => e.Name)
+                .IsUnique();
+
             entity.Property(e => e.Id).HasColumnName("ID");
 
             entity.Property(e => e.Name)
