@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace makeITeasy.AppFramework.Web.Areas.Datatable
 {
     [ViewComponent(Name = "Datatable")]
-    public class DatatablViewComponent : ViewComponent
+    public class DatatableViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(IDatatableBaseConfiguration configuration)
         {

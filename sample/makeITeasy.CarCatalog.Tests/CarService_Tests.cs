@@ -190,10 +190,7 @@ namespace makeITeasy.CarCatalog.Tests
 
             getResult.TotalItems.Should().Be(carList.Count);
 
-            getResult.Results.Select(x => x.ID).Should().BeInAscendingOrder();
-
             getResult.Results.Should().OnlyContain(x => x.Name != null);
-
         }
 
         [Fact]

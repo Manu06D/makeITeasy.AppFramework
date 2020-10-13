@@ -8,9 +8,9 @@ using makeITeasy.AppFramework.Web.Helpers;
 
 namespace makeITeasy.AppFramework.Web.Models
 {
-    public class DatatableBaseConfiguration<TSearch, TResult> : IDatatableBaseConfiguration where TSearch : class where TResult : class
+    public class DatatableBaseConfiguration<TSearch, TResult> : IDatatableBaseConfiguration where TSearch : class, new() where TResult : class
     {
-        public TSearch SearchModel = default(TSearch);
+        public TSearch SearchModel = new TSearch();
 
         [JsonPropertyName("options")]
         public DatatableOptions Options { get; } = new DatatableOptions();

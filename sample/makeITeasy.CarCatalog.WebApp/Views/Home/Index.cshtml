@@ -40,7 +40,7 @@
 
             $("#@carDatatable.TableID").on("dblDrawEvent", '', function (event) {
                 $('#@carDatatable.TableID [data-toggle="ajax-modal"]').on("click", function (event) {
-                    var modal = new Modal();
+                    var modal = new saveModal();
                     modal.initModal(this);
                     $(this).on("saveDataEvent", function (event) { datatableReload("@carDatatable.TableID"); });
                 });

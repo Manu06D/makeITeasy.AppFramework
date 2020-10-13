@@ -6,7 +6,7 @@
       "wwwroot/js/makeITeasy.datatables.js",
       "wwwroot/js/makeITeasy.form.js",
       "wwwroot/js/makeITeasy.jqueryExtension.js",
-      "wwwroot/js/makeITeasy.savemodal.js"
+      "wwwroot/js/makeITeasy.saveModal.js"
 
     ],
     "minify": {

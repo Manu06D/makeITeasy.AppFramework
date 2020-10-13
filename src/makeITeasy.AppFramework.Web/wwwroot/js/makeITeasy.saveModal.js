@@ -1,4 +1,4 @@
-﻿class SaveModal {
+﻿class saveModal {
     constructor() { }
 
     initModal(dataToggle) {

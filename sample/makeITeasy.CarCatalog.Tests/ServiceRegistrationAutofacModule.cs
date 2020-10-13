@@ -76,6 +76,8 @@ namespace makeITeasy.CarCatalog.Tests
                 .OnActivated(args => AutofacHelper.InjectProperties(args.Context, args.Instance, true));
                 
             builder.RegisterType<AutofacValidatorFactory>().As<IValidatorFactory>().SingleInstance();
+
+            builder.RegisterType<UnitOfWork>().As(typeof(IUnitOfWork));
         }
     }
 }
