@@ -19,7 +19,10 @@
     },
     {
       "library": "jquery-validate@1.19.2",
-      "destination": "wwwroot/lib/jquery-validate/"
+      "destination": "wwwroot/lib/jquery-validate/",
+      "files": [
+        "jquery.validate.js"
+      ]
     },
     {
       "library": "jquery-validation-unobtrusive@3.2.11",
