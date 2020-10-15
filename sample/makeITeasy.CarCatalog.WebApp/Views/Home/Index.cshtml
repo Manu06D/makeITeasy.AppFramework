@@ -4,19 +4,26 @@
         new makeITeasy.CarCatalog.WebApp.Models.Datatables.CarDatatable(Url.RouteUrl(nameof(makeITeasy.CarCatalog.WebApp.ApiControllers.CarApiController.CarDatatableSearchRequest)));
 }
 
-    <form asp-antiforgery="false" onsubmit="event.preventDefault();" id="searchRequestForm">
-        <div class="col-xs-6 col-sm-3 col-lg-2">
-            <div class="form-group">
+<form asp-antiforgery="false" onsubmit="event.preventDefault();" id="searchRequestForm">
+    <div class="col-12">
+        <div class="form-group row">
+            <div class="col-4">
                 <label class="control-label" asp-for="@(carDatatable.SearchModel.ID)"></label>
                 <input class="form-control" asp-for="@(carDatatable.SearchModel.ID)" name="@nameof(carDatatable.SearchModel.ID)" />
                 <span asp-validation-for="@(carDatatable.SearchModel.ID)" class="text-danger"></span>
             </div>
+            <div class="col-4">
+                <label class="control-label" asp-for="@(carDatatable.SearchModel.Name)"></label>
+                <input class="form-control" asp-for="@(carDatatable.SearchModel.Name)" name="@nameof(carDatatable.SearchModel.Name)" />
+                <span asp-validation-for="@(carDatatable.SearchModel.Name)" class="text-danger"></span>
+            </div>
         </div>
         <div class="panel-footer text-center">
             <input type="submit" class="btn btn-success" id="submit" name="search" value="Rechercher" />
-            <br />        <br />
+            <br />       
+            <br />
         </div>
-    </form>
+</form>
 
 <vc:datatable configuration="carDatatable"></vc:datatable>
 

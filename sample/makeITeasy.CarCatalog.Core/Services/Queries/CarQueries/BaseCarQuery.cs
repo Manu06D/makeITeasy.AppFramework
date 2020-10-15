@@ -9,8 +9,9 @@ namespace makeITeasy.CarCatalog.Core.Services.Queries.CarQueries
 {
     public class BaseCarQuery : BaseQuery<Car>
     {
-        [Required]
         public long? ID { get; set; }
+
+        public string Name { get; set; }
 
         public bool? IsModernCar { get; set; }
 
@@ -21,6 +22,11 @@ namespace makeITeasy.CarCatalog.Core.Services.Queries.CarQueries
             if (ID.HasValue && ID.Value > 0)
             {
                 AddFunctionToCriteria(x => x.Id == ID);
+            }
+
+            if(!string.IsNullOrWhiteSpace(Name))
+            {
+                AddFunctionToCriteria(x => x.Name.StartsWith(Name));
             }
 
             HandleNullableBoolSearch(IsModernCar, Car.ModernCarFunction);
