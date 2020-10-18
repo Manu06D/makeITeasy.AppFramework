@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using makeITeasy.AppFramework.Core.Extensions;
 using makeITeasy.AppFramework.Models;
@@ -15,8 +14,6 @@ namespace makeITeasy.CarCatalog.Core.Services.Queries.CarQueries
 
         public bool? IsModernCar { get; set; }
 
-        public bool? IsItalianCar { get; set; }
-
         public override void BuildQuery()
         {
             if (ID.HasValue && ID.Value > 0)
@@ -31,7 +28,6 @@ namespace makeITeasy.CarCatalog.Core.Services.Queries.CarQueries
 
             HandleNullableBoolSearch(IsModernCar, Car.ModernCarFunction);
 
-            HandleNullableBoolSearch(IsItalianCar, Car.ItalianCarFunction);
         }
 
         public void HandleNullableBoolSearch(bool? searchValue, Expression<Func<Car, bool>> searchExp)

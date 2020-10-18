@@ -21,8 +21,11 @@ namespace makeITeasy.CarCatalog.WebApp.Models.Datatables
 
         public String BrandCountryCountryCode { get; set; }
 
-        [TableColumn(Name = nameof(IsModernCar), Title = "Actual", Sortable = true)]
+        [TableColumn(Name = nameof(IsModernCar), Title = "Actual", Sortable = false)]
         public bool IsModernCar { get; set; }
+
+        [TableColumn(Name = nameof(IsItalianCar), Title = "Italian", Sortable = false)]
+        public bool IsItalianCar { get; set; }
 
         [TableColumn(Name = nameof(Edit), Title = "")]
         public String Edit { get; set; } = String.Empty;

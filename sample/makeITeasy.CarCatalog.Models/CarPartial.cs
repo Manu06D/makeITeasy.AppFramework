@@ -11,7 +11,7 @@ namespace makeITeasy.CarCatalog.Models
 
         public static Expression<Func<Car, bool>> ModernCarFunction => (x) => x.ReleaseYear > 2000;
 
-        public static Expression<Func<Car, bool>> ItalianCarFunction => (x) => x.Brand.Country.CountryCode == "IT";
+        public static Expression<Func<Country, bool>> ItalianCarFunction => (x) => x.CountryCode == "IT";
 
         [Computed]
         public bool IsModernCar => ModernCarFunction.Compile()(this);
@@ -19,5 +19,8 @@ namespace makeITeasy.CarCatalog.Models
         //this cannot be used on filter
         [Computed]
         public bool IsSuperModernCar => ReleaseYear > 2020;
+
+        [Computed]
+        public bool IsItalianCar => ItalianCarFunction.Compile()(Brand.Country);
     }
 }
