@@ -2,7 +2,7 @@ using System;
 using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using AutoMapper;
+using AutoMapper.Contrib.Autofac.DependencyInjection;
 using FluentValidation;
 using makeITeasy.AppFramework.Core.Helpers;
 using makeITeasy.AppFramework.Core.Infrastructure.Autofac;
@@ -16,7 +16,7 @@ using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Infrastructure.Persistence;
 using makeITeasy.CarCatalog.Infrastructure.Repositories;
 using makeITeasy.CarCatalog.Models;
-using MediatR;
+using MediatR.Extensions.Autofac.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -44,13 +44,6 @@ namespace makeITeasy.CarCatalog.WebApp
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMediatR(assembliesToScan);
-
-            services.AddAutoMapper(new Assembly[] {
-                AppFramework.Core.AppFrameworkCore.Assembly, //Automatic IMapFrom mapping   
-                Assembly.GetExecutingAssembly() //Custom Mapping
-            });
-
             _ = services.AddOptions();
 
             services.AddControllersWithViews().AddNewtonsoftJson(); 
@@ -70,6 +63,8 @@ namespace makeITeasy.CarCatalog.WebApp
         {
 
             builder.RegisterModule(new RegisterAutofacModule() { Assemblies = assembliesToScan });
+            builder.RegisterAutoMapper(assembliesToScan);
+            builder.RegisterMediatR(assembliesToScan);
 
             builder.RegisterType<CarCatalogContext>();
 
