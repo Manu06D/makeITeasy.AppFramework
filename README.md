@@ -92,6 +92,24 @@ This is the adapter part of our data acess. First we need to create our DbContex
     }
 ```
 
+#### Querying
+
+One query, one class, ideally. Class query need to inherit _BaseQuery<T>_ and implement the _BuildQuery_ method.
+```
+    public class BaseMyModelQuery : BaseQuery<MyModel>
+    {
+        public long? ID { get; set; }
+        public override void BuildQuery()
+        {
+            if (ID.HasValue && ID.Value > 0)
+            {
+                AddFunctionToCriteria(x => x.Id == ID);
+            }
+        }
+    }
+```
+
+
 #### Giving life
 
 We setup the minimal classes required by this framework and we just need to mix them all together with a decent DI framework to go to our first test. 
@@ -99,5 +117,7 @@ I'm using [Autofac](https://autofac.org/) as DI framework cause it gives more fl
 
 Check [this file](https://github.com/Manu06D/makeITeasy.AppFramework/blob/master/sample/makeITeasy.CarCatalog.Tests/ServiceRegistrationAutofacModule.cs) for an autofac DI sample 
 
+#### Playing
 
+After completing previous step, you should be able to perform data creation, rich queries .. 
 
