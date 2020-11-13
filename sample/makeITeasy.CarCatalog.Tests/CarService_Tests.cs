@@ -185,13 +185,30 @@ namespace makeITeasy.CarCatalog.Tests
         [Fact]
         public async Task CreateAndGet_ListWithMappingTest()
         {
-            var getResult = await carService.QueryWithProjectionAsync<SmallCarInfo>
-                (new BaseCarQuery() { }, includeCount: true);
+            var getResult = await carService.QueryWithProjectionAsync<SmallCarInfo>(new BaseCarQuery() { }, includeCount : true);
 
             getResult.TotalItems.Should().Be(carList.Count);
 
             getResult.Results.Should().OnlyContain(x => x.Name != null);
         }
+
+        public class SmallCarWithCentury : IMapFrom<Car>
+        {
+            public long ID { get; set; }
+            public string Name { get; set; }
+            public bool CurrentCentury { get; set; }
+            public int ReleaseYear { get; set; }
+        }
+
+        [Fact]
+        public async Task CreateAndGet_SelectWithFunctionTest()
+        {
+           var getResult = await carService.QueryAsync(QueryBuilder.Create<BaseCarQuery, Car>().Where(Car.ModernCarFunction).Build());
+
+            getResult.Results.Where(x => x.ReleaseYear >= 2000).Should().HaveCount(getResult.Results.Count(x => x.CurrentCentury));
+            getResult.Results.Where(x => x.ReleaseYear < 2000).Should().HaveCount(getResult.Results.Count(x => ! x.CurrentCentury));
+        }
+
 
         [Fact]
         public async Task CreateAndGet_ListWithFunctionTest()
@@ -213,8 +230,7 @@ namespace makeITeasy.CarCatalog.Tests
         [Fact]
         public async Task CreateAndGet_ListWithMapping2LevelTest()
         {
-            var getResult = await carService.QueryWithProjectionAsync<SmallCarInfoWithBrand>
-                (new BaseCarQuery() { }, includeCount: true);
+            var getResult = await carService.QueryWithProjectionAsync<SmallCarInfoWithBrand>(new BaseCarQuery() { }, includeCount: true);
 
             getResult.TotalItems.Should().Be(carList.Count);
 

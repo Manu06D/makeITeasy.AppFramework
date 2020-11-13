@@ -11,16 +11,17 @@ namespace makeITeasy.CarCatalog.Models
 
         public static Expression<Func<Car, bool>> ModernCarFunction => (x) => x.ReleaseYear > 2000;
 
-        public static Expression<Func<Country, bool>> ItalianCarFunction => (x) => x.CountryCode == "IT";
-
-        [Computed]
         public bool IsModernCar => ModernCarFunction.Compile()(this);
 
-        //this cannot be used on filter
+        public static Expression<Func<Country, bool>> ItalianCarFunction => (x) => x.CountryCode == "IT";
+        [Computed]
+        public bool IsItalianCar => ItalianCarFunction.Compile()(Brand.Country);
+
         [Computed]
         public bool IsSuperModernCar => ReleaseYear > 2020;
 
         [Computed]
-        public bool IsItalianCar => ItalianCarFunction.Compile()(Brand.Country);
+        public bool CurrentCentury => ReleaseYear >= 2000;
+
     }
 }
