@@ -13,8 +13,7 @@ using makeITeasy.CarCatalog.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.Core.Services.Queries.BrandQueries;
 using makeITeasy.AppFramework.Core.Models.Exceptions;
 using System.Transactions;
-using makeITeasy.CarCatalog.Core.Services.Queries.CarQueries;
-using makeITeasy.AppFramework.Models;
+using System;
 
 namespace makeITeasy.CarCatalog.Tests
 {
@@ -99,7 +98,7 @@ namespace makeITeasy.CarCatalog.Tests
                 Name = "x"
             };
 
-            brandService.Invoking(y => y.IsValid(newBrand)).Should().Throw<ValidatorNotFoundException>();
+            brandService.Invoking(y => y.Validate(newBrand)).Should().Throw<ValidatorNotFoundException>();
         }
 
 
@@ -148,6 +147,24 @@ namespace makeITeasy.CarCatalog.Tests
 
             var search = await brandService.QueryAsync(new BaseBrandQuery() { });
             search.Results.Should().HaveCount(0);
+        }
+
+        [Fact]
+        public async Task EF5IncludeWithFunction_Test()
+        {
+            var carList = TestCarsCatalog.GetCars();
+
+            carList.ForEach(async x => await carService.CreateAsync(x));
+
+            var getResult = await brandService.QueryAsync(
+                new BaseBrandQuery()
+                {
+                    Includes = new List<System.Linq.Expressions.Expression<Func<Brand, object>>>() { x => x.Cars.Where(x => x.Name.StartsWith("A3")) },
+                }
+                , includeCount: true);
+
+            getResult.Results.Where(x => x.Cars.Count >= 1).Should().HaveCount(1);
+            getResult.Results.First(x => x.Cars.Count >= 1).Cars.FirstOrDefault().Name.Should().Be("A3");
         }
     }
 }

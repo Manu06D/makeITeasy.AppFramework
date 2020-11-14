@@ -16,6 +16,6 @@ namespace makeITeasy.AppFramework.Core.Interfaces
         Task<CommandResult<T>> CreateAsync(T entity, bool saveChanges = true);
         Task<CommandResult<T>> UpdateAsync(T entity);
         Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] properties);
-        bool IsValid(T entity);
+        bool Validate(T entity);
     }
 }

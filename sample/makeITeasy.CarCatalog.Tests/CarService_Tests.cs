@@ -47,7 +47,7 @@ namespace makeITeasy.CarCatalog.Tests
                 Name = "x"
             };
 
-            carService.IsValid(newCar).Should().BeFalse();
+            carService.Validate(newCar).Should().BeFalse();
         }
 
         [Fact]
@@ -58,7 +58,7 @@ namespace makeITeasy.CarCatalog.Tests
                 Name = "xxxx"
             };
 
-            carService.IsValid(newCar).Should().BeTrue();
+            carService.Validate(newCar).Should().BeTrue();
         }
 
         [Fact]

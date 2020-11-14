@@ -108,7 +108,7 @@ namespace makeITeasy.AppFramework.Core.Services
             return await EntityRepository.UpdatePropertiesAsync(entity, properties);
         }
 
-        public bool IsValid(TEntity entity)
+        public bool Validate(TEntity entity)
         {
             return ValidatorFactory.GetValidator<TEntity>()?.Validate(entity).IsValid ?? throw new ValidatorNotFoundException(typeof(TEntity));
         }
