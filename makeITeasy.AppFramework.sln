@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "makeITeasy.AppFramework.Mod
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "makeITeasy.CarCatalog.Tests", "sample\makeITeasy.CarCatalog.Tests\makeITeasy.CarCatalog.Tests.csproj", "{2ACBF4D1-3F1B-4E6A-9BBB-519138951A65}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "makeITeasy.AppFramework.Web", "src\makeITeasy.AppFramework.Web\makeITeasy.AppFramework.Web.csproj", "{995A1A21-3448-4058-A17F-BE17B29978D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "makeITeasy.AppFramework.Web", "src\makeITeasy.AppFramework.Web\makeITeasy.AppFramework.Web.csproj", "{995A1A21-3448-4058-A17F-BE17B29978D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

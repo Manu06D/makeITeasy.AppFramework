@@ -1,0 +1,26 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index WithBlazor</title>
+</head>
+<body>
+
+<component type="typeof(makeITeasy.CarCatalog.WebApp.WebAppElements.Components.Cars.CarList)" render-mode="Server" />
+
+<script src="~/_framework/blazor.server.js" autostart="false"></script>
+<script>
+        Blazor.start({
+            configureSignalR: function (builder) {
+                builder.withUrl("/_blazor");
+            }
+        });
+</script> 
+</body>
+</html>

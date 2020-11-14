@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
@@ -19,6 +20,7 @@ using makeITeasy.CarCatalog.Models;
 using MediatR.Extensions.Autofac.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,12 +30,15 @@ namespace makeITeasy.CarCatalog.WebApp
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public IConfiguration Configuration { get; }
+        private readonly IWebHostEnvironment _environment;
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            _environment = environment;
         }
 
-        public IConfiguration Configuration { get; }
         public ILifetimeScope AutofacContainer { get; private set; }
 
         private readonly Assembly[] assembliesToScan = new Assembly[]{
@@ -46,7 +51,17 @@ namespace makeITeasy.CarCatalog.WebApp
         {
             _ = services.AddOptions();
 
-            services.AddControllersWithViews().AddNewtonsoftJson(); 
+            services.AddControllersWithViews().AddNewtonsoftJson();
+
+            services.AddServerSideBlazor().AddCircuitOptions(o =>
+            {
+                o.DetailedErrors = _environment.IsDevelopment();
+            }); 
+
+            services.AddResponseCompression(opts =>
+            {
+                opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/octet-stream" });
+            });
 
             _ = services.AddDbContext<CarCatalogContext>(options =>
             {
@@ -92,11 +107,12 @@ namespace makeITeasy.CarCatalog.WebApp
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseResponseCompression();
 
             app.UseRouting();
 
@@ -107,6 +123,7 @@ namespace makeITeasy.CarCatalog.WebApp
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapBlazorHub();
             });
         }
     }
