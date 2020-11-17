@@ -1,5 +1,5 @@
 ﻿{
-   "ContextClassName": "CarcatalogContext",
+   "ContextClassName": "CarCatalogContext",
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
    "FilterSchemas": false,
@@ -14,15 +14,18 @@
    "Tables": [
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[Brand]"
+         "Name": "[dbo].[Brand]",
+         "ObjectType": 0
       },
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[Car]"
+         "Name": "[dbo].[Car]",
+         "ObjectType": 0
       },
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[Country]"
+         "Name": "[dbo].[Country]",
+         "ObjectType": 0
       }
    ],
    "UseDatabaseNames": false,
@@ -32,6 +35,5 @@
    "UseInflector": true,
    "UseLegacyPluralizer": false,
    "UseNodaTime": false,
-   "UseSpatial": false,
-   "UseStoredProcedures": false
+   "UseSpatial": false
 }

@@ -91,7 +91,7 @@ namespace makeITeasy.CarCatalog.WebApp
             
             builder.RegisterType<AutofacValidatorFactory>().As<IValidatorFactory>().SingleInstance();
 
-            //specific service/repository
+            ////specific service/repository
             builder.RegisterType<CarService>().As<ICarService>();
             builder.RegisterType<CarRepository>().As<ICarRepository>();
         }

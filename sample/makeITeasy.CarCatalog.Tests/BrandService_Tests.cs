@@ -120,7 +120,8 @@ namespace makeITeasy.CarCatalog.Tests
                 Name = "xx",
             };
 
-            using (var scope = new TransactionScope(TransactionScopeOption.Required))
+            //Dont' work in unit test due to leak of support of transaction of sqllite
+            using (var scope = new TransactionScope(TransactionScopeOption.Required, TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
@@ -135,9 +136,6 @@ namespace makeITeasy.CarCatalog.Tests
 
                     newBrand.Id.Should().BePositive();
                     newBrand2.Id.Should().BePositive();
-
-
-
                 }
                 catch
                 {

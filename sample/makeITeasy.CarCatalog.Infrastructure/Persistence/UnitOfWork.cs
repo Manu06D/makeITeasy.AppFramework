@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using AutoMapper;
 using makeITeasy.AppFramework.Core.Infrastructure.Persistence;
 using makeITeasy.AppFramework.Core.Interfaces;
