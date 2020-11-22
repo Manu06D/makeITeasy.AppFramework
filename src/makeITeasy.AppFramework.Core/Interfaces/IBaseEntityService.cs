@@ -10,7 +10,7 @@ namespace makeITeasy.AppFramework.Core.Interfaces
 {
     public interface IBaseEntityService<T> where T : class, IBaseEntity
     {
-        Task<T> GetByID(object id, List<Expression<Func<T, object>>> includes);
+        Task<T> GetByIdAsync(object id, List<Expression<Func<T, object>>> includes = null);
         Task<QueryResult<T>> QueryAsync(BaseQuery<T> specification, bool includeCount = false);
         Task<QueryResult<TTarget>> QueryWithProjectionAsync<TTarget>(BaseQuery<T> specification, bool includeCount = false) where TTarget : class;
         Task<CommandResult<T>> CreateAsync(T entity, bool saveChanges = true);

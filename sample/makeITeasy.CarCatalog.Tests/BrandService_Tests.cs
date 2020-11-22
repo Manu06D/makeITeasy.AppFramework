@@ -150,9 +150,7 @@ namespace makeITeasy.CarCatalog.Tests
         [Fact]
         public async Task EF5IncludeWithFunction_Test()
         {
-            var carList = TestCarsCatalog.GetCars();
-
-            carList.ForEach(async x => await carService.CreateAsync(x));
+            TestCarsCatalog.SaveCarsInDB(carService);
 
             var getResult = await brandService.QueryAsync(
                 new BaseBrandQuery()

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using makeITeasy.CarCatalog.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.Models;
 
 namespace makeITeasy.CarCatalog.Tests.Catalogs
@@ -36,6 +37,30 @@ namespace makeITeasy.CarCatalog.Tests.Catalogs
             var rawCar = rawCars.Select(x => new Car { Name = x[1], ReleaseYear = int.Parse(x[2]), Brand = rawBrand.First(y => y.Name == x[0]) });
 
             return rawCar.ToList();
+        }
+
+        public static List<Car> SaveCarsInDB(ICarService carService)
+        {
+            List<Car> carList = GetCars();
+
+            carList.ForEach(async x =>
+            {
+                if (x.Brand.Country?.Id > 0)
+                {
+                    x.Brand.CountryId = x.Brand.Country.Id;
+                    x.Brand.Country = null;
+                }
+
+                if (x.Brand.Id > 0)
+                {
+                    x.BrandId = x.Brand.Id;
+                    x.Brand = null;
+                }
+
+                await carService.CreateAsync(x);
+            });
+
+            return carList;
         }
     }
 }

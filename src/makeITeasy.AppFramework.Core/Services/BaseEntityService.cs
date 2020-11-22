@@ -41,7 +41,7 @@ namespace makeITeasy.AppFramework.Core.Services
             }
         }
 
-        public async Task<TEntity> GetByID(object id, List<Expression<Func<TEntity, object>>> includes)
+        public async Task<TEntity> GetByIdAsync(object id, List<Expression<Func<TEntity, object>>> includes = null)
         {
             return await EntityRepository.GetByIdAsync(id, includes);
         }
