@@ -7,7 +7,7 @@ namespace makeITeasy.CarCatalog.Infrastructure.Persistence
 {
     public class EfRepository<T> : BaseEfRepository<T, DbContext> where T : class, IBaseEntity
     {
-        public EfRepository(DbContext dbContext, IMapper mapper) : base(dbContext, mapper)
+        public EfRepository(IDbContextFactory<DbContext> dbFactory, IMapper mapper) : base(dbFactory, mapper)
         {
         }
     }

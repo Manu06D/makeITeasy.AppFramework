@@ -47,8 +47,9 @@ namespace makeITeasy.CarCatalog.Tests
             var sqlLiteMemoryConnection = new SqliteConnection("DataSource=:memory:");
             sqlLiteMemoryConnection.Open();
 
-            services.AddDbContext<CarCatalogContext>(options =>
-            {
+            //services.AddDbContext<CarCatalogContext>(options =>
+            _ = services.AddDbContextFactory<CarCatalogContext>(options =>
+                        {
                 options.UseSqlite(sqlLiteMemoryConnection);
                 //options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CarCatalog2;Trusted_Connection=True;MultipleActiveResultSets=true");
                 options.EnableSensitiveDataLogging(true);
