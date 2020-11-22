@@ -5,13 +5,14 @@ using makeITeasy.AppFramework.Core.Infrastructure.Persistence;
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.CarCatalog.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace makeITeasy.CarCatalog.Infrastructure.Persistence
 {
     public class UnitOfWork : BaseUnitOfWork, IUnitOfWork
     {
-        public UnitOfWork(CarCatalogContext context, IMapper mapper, ILogger<UnitOfWork> logger) : base(context, mapper, logger)
+        public UnitOfWork(IDbContextFactory<CarCatalogContext> dbFactory, IMapper mapper, ILogger<UnitOfWork> logger) : base(dbFactory, mapper, logger)
         {
         }
 
@@ -26,7 +27,7 @@ namespace makeITeasy.CarCatalog.Infrastructure.Persistence
 
             if (!_repositories.ContainsKey(type))
             {
-                _repositories[type] = new EfRepository<TEntity>(_context, _mapper);
+                _repositories[type] = new EfRepository<TEntity>(_dbFactory, _mapper);
             }
 
             return (IAsyncRepository<TEntity>)_repositories[type];

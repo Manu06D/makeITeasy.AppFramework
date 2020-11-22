@@ -31,7 +31,11 @@ namespace makeITeasy.CarCatalog.Tests
 
             carList = TestCarsCatalog.GetCars();
 
-            carList.ForEach(async x => await carService.CreateAsync(x));
+            carList.ForEach(async x =>
+            {
+                await carService.CreateAsync(x);
+                await Task.Delay(100);
+            }) ;
         }
 
         ~CarService_Tests()

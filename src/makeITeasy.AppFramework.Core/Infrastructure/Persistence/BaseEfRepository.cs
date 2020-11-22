@@ -18,27 +18,33 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
 {
     public abstract class BaseEfRepository<T, U> : IAsyncRepository<T> where T : class, IBaseEntity where U : DbContext
     {
-        protected readonly U _dbContext;
-        private readonly IMapper _mapper;   
+        private readonly IDbContextFactory<U> _dbFactory;
+        private readonly IMapper _mapper;
 
-        protected BaseEfRepository(U dbContext, IMapper mapper)
+        protected BaseEfRepository(IDbContextFactory<U> dbFactory, IMapper mapper)
         {
-            _dbContext = dbContext;
+            this._dbFactory = dbFactory;
             _mapper = mapper;
+        }
+
+        protected U GetDbContext()
+        {
+            return _dbFactory.CreateDbContext();
         }
 
         public virtual async Task<T> GetByIdAsync(object id)
         {
-            return await _dbContext.Set<T>().FindAsync(id);
+            return await GetDbContext().Set<T>().FindAsync(id);
         }
 
         public virtual async Task<T> GetByIdAsync(object id, List<Expression<Func<T, object>>> includes)
         {
+            U dbContext = GetDbContext();
             if (includes != null)
             {
-                var keyProperty = _dbContext.Model.FindEntityType(typeof(T)).FindPrimaryKey().Properties[0];
+                var keyProperty = dbContext.Model.FindEntityType(typeof(T)).FindPrimaryKey().Properties[0];
 
-                var dbSet = _dbContext.Set<T>().AsQueryable();
+                var dbSet = dbContext.Set<T>().AsQueryable();
 
                 //TODO : test if it works :)
                 dbSet = includes.Aggregate(dbSet, (current, include) => current.Include(include));
@@ -51,14 +57,15 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
 
         public async Task<IList<T>> ListAllAsync()
         {
-            return await _dbContext.Set<T>().ToListAsync();
+            U dbContext = GetDbContext();
+            return await dbContext.Set<T>().ToListAsync();
         }
 
         public async Task<QueryResult<T>> ListAsync(ISpecification<T> spec, bool includeCount = false)
         {
             QueryResult<T> result = new QueryResult<T>();
 
-            (int nbResult, IQueryable<T> filteredSet) = await CreateQueryableFromSpec(spec, includeCount);
+            (int nbResult, IQueryable<T> filteredSet) = await CreateQueryableFromSpec(spec, GetDbContext(), includeCount);
 
             result.TotalItems = nbResult;
 
@@ -71,7 +78,7 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
         {
             QueryResult<X> result = new QueryResult<X>();
 
-            (int nbResult, IQueryable<T> filteredSet) = await CreateQueryableFromSpec(spec, includeCount);
+            (int nbResult, IQueryable<T> filteredSet) = await CreateQueryableFromSpec(spec, GetDbContext(), includeCount);
 
             result.TotalItems = nbResult;
             result.Results = filteredSet.AsNoTracking().ProjectTo<X>(_mapper.ConfigurationProvider).DecompileAsync().ToList();
@@ -79,9 +86,9 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
             return result;
         }
 
-        private async Task<(int, IQueryable<T>)> CreateQueryableFromSpec(ISpecification<T> spec, bool includeCount = false)
+        private async Task<(int, IQueryable<T>)> CreateQueryableFromSpec(ISpecification<T> spec, U dbContext, bool includeCount = false)
         {
-            IQueryable<T> filteredSet = ApplySpecification(spec);
+            IQueryable<T> filteredSet = ApplySpecification(spec, dbContext);
 
             int totalItems = await ApplyCountIfNeededAsync(filteredSet, includeCount);
 
@@ -105,22 +112,23 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
 
         public async Task<int> CountAsync(ISpecification<T> spec)
         {
-            return await ApplySpecification(spec).CountAsync();
+            return await ApplySpecification(spec, GetDbContext()).CountAsync();
         }
 
         public async Task<T> AddAsync(T entity, bool saveChanges = true)
         {
-            await _dbContext.Set<T>().AddAsync(entity);
+            U dbContext = GetDbContext();
+            await dbContext.Set<T>().AddAsync(entity);
 
-            await SaveOrUpdateChanges(saveChanges);
+            await SaveOrUpdateChanges(dbContext, saveChanges);
 
             return entity;
         }
 
-        private async Task<int> SaveOrUpdateChanges(bool saveChanges = true)
+        private async Task<int> SaveOrUpdateChanges(U dbContext, bool saveChanges = true)
         {
             var entries =
-                _dbContext.ChangeTracker.Entries().Where(e => e.Entity is ITimeTrackingEntity && (e.State == EntityState.Added || e.State == EntityState.Modified));
+                dbContext.ChangeTracker.Entries().Where(e => e.Entity is ITimeTrackingEntity && (e.State == EntityState.Added || e.State == EntityState.Modified));
 
             foreach (var entry in entries)
             {
@@ -135,7 +143,7 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
 
             if (saveChanges)
             {
-                return await _dbContext.SaveChangesAsync();
+                return await dbContext.SaveChangesAsync();
             }
 
             return -1;
@@ -145,19 +153,21 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
         {
             var result = new CommandResult<T>();
 
-            if (_dbContext.Entry(entity).State == EntityState.Detached)
+            var dbContext = GetDbContext();
+
+            if (dbContext.Entry(entity).State == EntityState.Detached)
             {
                 //This can be an issue if input entity is not fully filled with database value. Data can be lost !!
                 T databaseEntity = await GetByIdAsync(entity.DatabaseID);
                 if (databaseEntity != null)
                 {
-                    EntityEntry<T> ee = _dbContext.Entry(databaseEntity);
+                    EntityEntry<T> ee = dbContext.Entry(databaseEntity);
 
                     ee.CurrentValues.SetValues(entity);
                 }
             }
 
-            int dbChanges = await SaveOrUpdateChanges();
+            int dbChanges = await SaveOrUpdateChanges(dbContext);
 
             result.Entity = entity;
             result.Result = dbChanges > 0 ? CommandState.Success : CommandState.Warning;
@@ -167,6 +177,8 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
 
         public async Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] propertyNames)
         {
+            var dbContext = GetDbContext();
+
             var result = new CommandResult<T>();
             T databaseEntity = await GetByIdAsync(entity.DatabaseID);
 
@@ -187,7 +199,7 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
                             (oldValue == null && newValue != null))
                         {
                             property.SetValue(databaseEntity, newValue);
-                            _dbContext.Entry(databaseEntity).Property(property.Name).IsModified = true;
+                            dbContext.Entry(databaseEntity).Property(property.Name).IsModified = true;
                             shouldSave = true;
                         }
                     }
@@ -218,13 +230,14 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
 
         public async Task DeleteAsync(T entity)
         {
-            _dbContext.Set<T>().Remove(entity);
-            await _dbContext.SaveChangesAsync();
+            U dbContext = GetDbContext();
+            dbContext.Set<T>().Remove(entity);
+            await dbContext.SaveChangesAsync();
         }
 
-        private IQueryable<T> ApplySpecification(ISpecification<T> spec)
+        private IQueryable<T> ApplySpecification(ISpecification<T> spec, U dbContext)
         {
-            return SpecificationEvaluator<T>.GetQuery(_dbContext.Set<T>().AsQueryable(), spec);
+            return SpecificationEvaluator<T>.GetQuery(dbContext.Set<T>().AsQueryable(), spec);
         }
 
         private IQueryable<T> ApplyPaging(IQueryable<T> filteredSet, ISpecification<T> spec)
@@ -242,7 +255,6 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
         {
             if (disposing)
             {
-                _dbContext.Dispose();
             }
         }
     }

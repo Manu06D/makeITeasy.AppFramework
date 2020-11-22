@@ -13,13 +13,13 @@ namespace makeITeasy.CarCatalog.Infrastructure.Repositories
 {
     public class CarRepository : BaseEfRepository<Car, CarCatalogContext>, ICarRepository
     {
-        public CarRepository(CarCatalogContext dbContext, IMapper mapper) : base(dbContext, mapper)
+        public CarRepository(IDbContextFactory<CarCatalogContext> dbFactory, IMapper mapper) : base(dbFactory, mapper)
         {
         }
 
         public async Task<List<BrandGroupByCarCount>> GroupByBrandAndCountAsync()
         {
-            var query = _dbContext.Cars.GroupBy(x => x.Brand.Name).Select(x => new BrandGroupByCarCount() { BrandName = x.Key, CarCount = x.Count() });
+            var query = GetDbContext().Cars.GroupBy(x => x.Brand.Name).Select(x => new BrandGroupByCarCount() { BrandName = x.Key, CarCount = x.Count() });
 
             return await query.ToListAsync();
         }

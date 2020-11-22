@@ -9,15 +9,16 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
 {
     public class BaseUnitOfWork
     {
+        protected readonly IDbContextFactory<DbContext> _dbFactory;
         protected readonly IMapper _mapper;
-        protected readonly DbContext _context;
+        protected DbContext _context => _dbFactory.CreateDbContext();
         protected Dictionary<Type, object> _repositories = new Dictionary<Type, object>();
         protected ILogger<BaseUnitOfWork> _logger;
 
-        public BaseUnitOfWork(DbContext context, IMapper mapper, ILogger<BaseUnitOfWork> logger)
+        public BaseUnitOfWork(IDbContextFactory<DbContext> dbFactory, IMapper mapper, ILogger<BaseUnitOfWork> logger)
         {
-            this._context = context;
-            this._mapper = mapper;
+            _dbFactory = dbFactory;
+            _mapper = mapper;
             _logger = logger;
         }
 
