@@ -120,12 +120,12 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
             U dbContext = GetDbContext();
             await dbContext.Set<T>().AddAsync(entity);
 
-            await SaveOrUpdateChanges(dbContext, saveChanges);
+            await SaveOrUpdateChanges(entity, dbContext, saveChanges);
 
             return entity;
         }
 
-        private async Task<int> SaveOrUpdateChanges(U dbContext, bool saveChanges = true)
+        private async Task<int> SaveOrUpdateChanges(T entity, U dbContext, bool saveChanges = true)
         {
             var entries =
                 dbContext.ChangeTracker.Entries().Where(e => e.Entity is ITimeTrackingEntity && (e.State == EntityState.Added || e.State == EntityState.Modified));
@@ -135,9 +135,12 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
                 DateTime now = DateTime.Now;
 
                 ((ITimeTrackingEntity)entry.Entity).LastModificationDate = now;
+                ((ITimeTrackingEntity)entity).LastModificationDate = now;
+
                 if (entry.State == EntityState.Added)
                 {
                     ((ITimeTrackingEntity)entry.Entity).CreationDate = now;
+                    ((ITimeTrackingEntity)entity).CreationDate = now;
                 }
             }
 
@@ -164,10 +167,12 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
                     EntityEntry<T> ee = dbContext.Entry(databaseEntity);
 
                     ee.CurrentValues.SetValues(entity);
+
+                    ee.State = EntityState.Modified;
                 }
             }
 
-            int dbChanges = await SaveOrUpdateChanges(dbContext);
+            int dbChanges = await SaveOrUpdateChanges(entity, dbContext);
 
             result.Entity = entity;
             result.Result = dbChanges > 0 ? CommandState.Success : CommandState.Warning;

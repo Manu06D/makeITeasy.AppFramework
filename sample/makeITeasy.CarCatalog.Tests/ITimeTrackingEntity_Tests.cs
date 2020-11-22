@@ -62,6 +62,10 @@ namespace makeITeasy.CarCatalog.Tests
             modificationResult.Entity.Name.Should().Be("C4");
 
             newCar.LastModificationDate.Should().NotBeNull().And.Be(modificationResult.Entity.LastModificationDate).And.BeAfter(modificationDate);
+
+            Car latestCar = await carService.GetByIdAsync(newCar.Id);
+
+            latestCar.LastModificationDate.Should().NotBeNull().And.Be(latestCar.LastModificationDate).And.BeAfter(modificationDate);
         }
     }
 }

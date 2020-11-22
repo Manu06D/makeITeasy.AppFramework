@@ -29,13 +29,7 @@ namespace makeITeasy.CarCatalog.Tests
 
             t.Database.EnsureCreated();
 
-            carList = TestCarsCatalog.GetCars();
-
-            carList.ForEach(async x =>
-            {
-                await carService.CreateAsync(x);
-                await Task.Delay(100);
-            }) ;
+            carList = TestCarsCatalog.SaveCarsInDB(carService);
         }
 
         ~CarService_Tests()
