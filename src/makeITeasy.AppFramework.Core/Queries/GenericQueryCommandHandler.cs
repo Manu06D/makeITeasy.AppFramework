@@ -17,7 +17,7 @@ namespace makeITeasy.AppFramework.Core.Queries
 
         public async Task<QueryResult<TEntity>> Handle(GenericQueryCommand<TEntity> request, CancellationToken cancellationToken)
         {
-            return await baseService.QueryAsync(request?.Query, request?.IncludeCount ?? false);
+            return await baseService.QueryAsync(request?.Query, request?.IncludeCount == true);
         }
     }
 }
