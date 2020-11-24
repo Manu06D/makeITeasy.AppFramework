@@ -20,15 +20,27 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
     {
         private readonly IDbContextFactory<U> _dbFactory;
         private readonly IMapper _mapper;
+        private U _dbContext = null;
 
         protected BaseEfRepository(IDbContextFactory<U> dbFactory, IMapper mapper)
         {
-            this._dbFactory = dbFactory;
+            _dbFactory = dbFactory;
+            _mapper = mapper;
+        }
+
+        protected BaseEfRepository(U dbContext, IMapper mapper)
+        {
+            _dbContext = dbContext;
             _mapper = mapper;
         }
 
         protected U GetDbContext()
         {
+            if (_dbContext != null)
+            {
+                return _dbContext;
+            }
+
             return _dbFactory.CreateDbContext();
         }
 
