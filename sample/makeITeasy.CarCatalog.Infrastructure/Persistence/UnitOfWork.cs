@@ -27,7 +27,7 @@ namespace makeITeasy.CarCatalog.Infrastructure.Persistence
 
             if (!_repositories.ContainsKey(type))
             {
-                _repositories[type] = new EfRepository<TEntity>(_dbFactory, _mapper);
+                _repositories[type] = new EfRepository<TEntity>(_context, _mapper);
             }
 
             return (IAsyncRepository<TEntity>)_repositories[type];

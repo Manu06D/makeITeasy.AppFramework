@@ -57,9 +57,7 @@ namespace makeITeasy.CarCatalog.Tests
         [Fact]
         public async Task CreateAndGet_ListWithFunctionTest()
         {
-            var newCars = TestCarsCatalog.GetCars();
-
-            newCars.ForEach(async x => await carService.CreateAsync(x));
+            var newCars = TestCarsCatalog.SaveCarsInDB(carService);
 
             var getResult = await brandService.QueryWithProjectionAsync<BrandInfo>(new BaseBrandQuery());
 

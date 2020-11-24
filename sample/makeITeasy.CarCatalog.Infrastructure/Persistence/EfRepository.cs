@@ -10,5 +10,10 @@ namespace makeITeasy.CarCatalog.Infrastructure.Persistence
         public EfRepository(IDbContextFactory<DbContext> dbFactory, IMapper mapper) : base(dbFactory, mapper)
         {
         }
+
+        public EfRepository(DbContext dbContext, IMapper mapper) : base(dbContext, mapper)
+        {
+
+        }
     }
 }
