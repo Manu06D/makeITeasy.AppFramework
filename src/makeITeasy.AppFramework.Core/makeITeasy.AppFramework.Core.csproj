@@ -6,6 +6,16 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
+    <PackageTags>framework ef</PackageTags>
+    <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
+    <Authors>Emmanuel D.</Authors>
+    <Company>Make IT Easy</Company>
+    <Description>Core module for makeITeasy.Appframework</Description>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <FileVersion>1.0.1.0</FileVersion>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
