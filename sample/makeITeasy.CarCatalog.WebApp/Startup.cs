@@ -63,7 +63,7 @@ namespace makeITeasy.CarCatalog.WebApp
                 opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/octet-stream" });
             });
 
-            _ = services.AddDbContext<CarCatalogContext>(options =>
+            _ = services.AddDbContextFactory<CarCatalogContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("dbConnectionString"))
                 .EnableDetailedErrors()
