@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="6.0.0" />
+    <PackageReference Include="Autofac" Version="6.1.0" />
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="DelegateDecompiler" Version="0.28.2" />
     <PackageReference Include="DelegateDecompiler.EntityFrameworkCore5" Version="0.28.2" />
