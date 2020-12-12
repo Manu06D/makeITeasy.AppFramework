@@ -8,3 +8,4 @@ namespace makeITeasy.AppFramework.Models
         DateTime? LastModificationDate { get; set; }
     }
 }
+
