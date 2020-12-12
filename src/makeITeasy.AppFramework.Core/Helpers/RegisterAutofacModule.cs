@@ -20,6 +20,7 @@ namespace makeITeasy.AppFramework.Core.Helpers
             builder.RegisterGeneric(typeof(Queries.GenericQueryCommandHandler<>)).AsImplementedInterfaces();
             builder.RegisterGeneric(typeof(Queries.GenericQueryWithProjectCommandHandler<,>)).AsImplementedInterfaces();
             builder.RegisterGeneric(typeof(Commands.UpdateEntityCommandHandler<>)).AsImplementedInterfaces();
+            builder.RegisterGeneric(typeof(Commands.UpdatePartialEntityCommandHandler<>)).AsImplementedInterfaces();
             builder.RegisterGeneric(typeof(Commands.CreateEntityCommandHandler<>)).AsImplementedInterfaces();
         }
     }

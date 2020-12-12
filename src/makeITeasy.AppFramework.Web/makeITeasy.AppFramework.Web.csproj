@@ -14,7 +14,9 @@
     <Authors>Emmanuel D.</Authors>
     <Company>Make IT Easy</Company>
     <Description>Web extentions module for makeITeasy.Appframework</Description>
-    <Version>1.0.1</Version>
+    <Version>1.0.2-b1</Version>
+    <DebugType>Embedded</DebugType>
+    <EmbedAllSources>True</EmbedAllSources>
   </PropertyGroup>
 
   <ItemGroup>

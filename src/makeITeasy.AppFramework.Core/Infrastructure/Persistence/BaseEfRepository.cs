@@ -164,10 +164,21 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
             return -1;
         }
 
-        public async Task<CommandResult<T>> UpdateAsync(T entity)
+        private async Task<CommandResult<T>> SaveOrUpdateChangesWithResult(T entity, U dbContext, bool saveChanges = true)
         {
-            var result = new CommandResult<T>();
 
+            var result = new CommandResult<T>(); 
+            
+            int dbChanges = await SaveOrUpdateChanges(entity, dbContext, saveChanges);
+
+            result.Entity = entity;
+            result.Result = dbChanges > 0 ? CommandState.Success : CommandState.Warning;
+
+            return result;
+        }
+
+        public async Task<CommandResult<T>> UpdateAsync(T entity, bool saveChanges = true)
+        {
             var dbContext = GetDbContext();
 
             if (dbContext.Entry(entity).State == EntityState.Detached)
@@ -184,15 +195,12 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
                 }
             }
 
-            int dbChanges = await SaveOrUpdateChanges(entity, dbContext);
+            var dbResult = await SaveOrUpdateChangesWithResult(entity, dbContext, saveChanges);
 
-            result.Entity = entity;
-            result.Result = dbChanges > 0 ? CommandState.Success : CommandState.Warning;
-
-            return result;
+            return dbResult;
         }
 
-        public async Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] propertyNames)
+        public async Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] propertyNames, bool saveChanges = true)
         {
             var dbContext = GetDbContext();
 
@@ -224,7 +232,7 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
 
                 if (shouldSave)
                 {
-                    result = await UpdateAsync(databaseEntity);
+                    result = await SaveOrUpdateChangesWithResult(entity, dbContext, shouldSave);
                 }
                 else
                 {
@@ -245,11 +253,15 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
             return objectProperties.Where(x => propertiesToUpdate.Contains(x.Name)).ToArray();
         }
 
-        public async Task DeleteAsync(T entity)
+        public async Task DeleteAsync(T entity, bool saveChanges = true)
         {
             U dbContext = GetDbContext();
             dbContext.Set<T>().Remove(entity);
-            await dbContext.SaveChangesAsync();
+
+            if (saveChanges)
+            {
+                await dbContext.SaveChangesAsync();
+            }
         }
 
         private IQueryable<T> ApplySpecification(ISpecification<T> spec, U dbContext)
