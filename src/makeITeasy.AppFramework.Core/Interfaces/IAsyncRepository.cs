@@ -18,7 +18,7 @@ namespace makeITeasy.AppFramework.Core.Interfaces
         Task<T> AddAsync(T entity, bool saveChanges = true);
         Task<CommandResult<T>> UpdateAsync(T entity, bool saveChanges = true);
         Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] propertyNames, bool saveChanges = true);
-        Task DeleteAsync(T entity, bool saveChanges = true);
+        Task<int> DeleteAsync(T entity, bool saveChanges = true);
         Task<int> CountAsync(ISpecification<T> spec);
     }
 }

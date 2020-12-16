@@ -253,15 +253,16 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
             return objectProperties.Where(x => propertiesToUpdate.Contains(x.Name)).ToArray();
         }
 
-        public async Task DeleteAsync(T entity, bool saveChanges = true)
+        public async Task<int> DeleteAsync(T entity, bool saveChanges = true)
         {
             U dbContext = GetDbContext();
             dbContext.Set<T>().Remove(entity);
 
             if (saveChanges)
             {
-                await dbContext.SaveChangesAsync();
+                return await dbContext.SaveChangesAsync();
             }
+            return -1;
         }
 
         private IQueryable<T> ApplySpecification(ISpecification<T> spec, U dbContext)
