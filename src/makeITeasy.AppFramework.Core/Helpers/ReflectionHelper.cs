@@ -12,8 +12,15 @@ namespace makeITeasy.AppFramework.Core.Helpers
             List<Type> output = new List<Type>();
             if (assembly != null)
             {
-                output = assembly.GetExportedTypes()
-                    .Where(t => t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == type)).ToList();
+                try
+                {
+                    output = assembly.GetExportedTypes()
+                        .Where(t => t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == type)).ToList();
+                }
+                catch (Exception)
+                { 
+                    //need to check deeper why it's on error sometimes on GetExportedTypes
+                }
             }
 
             return output;

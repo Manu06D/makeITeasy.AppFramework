@@ -66,7 +66,7 @@ namespace makeITeasy.CarCatalog.Tests
         [Fact]
         public async Task CreateAndDeleteCommand_BasicTest()
         {
-            Car newCar = new Car()
+            Car car = new Car()
             {
                 Name = "C3",
                 ReleaseYear = 2011,
@@ -81,18 +81,20 @@ namespace makeITeasy.CarCatalog.Tests
                 }
             };
 
-            var resultCreate = await _mediator.Send(new CreateEntityCommand<Car>(newCar));
+            var resultCreate = await _mediator.Send(new CreateEntityCommand<Car>(car));
             resultCreate.Result.Should().Be(CommandState.Success);
-            newCar.Id.Should().BeGreaterThan(0);
-            newCar.Name.Should().Be("C3");
 
-            newCar.Name = "C4";
+            car.Id.Should().BeGreaterThan(0);
+            car.Name.Should().Be("C3");
 
-            var resultUpdate = await _mediator.Send(new DeleteEntityCommand<Car>(newCar));
+            var clonedCar = TestsHelper.Clone(car);
+
+            var resultUpdate = await _mediator.Send(new DeleteEntityCommand<Car>(clonedCar));
             resultUpdate.Result.Should().Be(CommandState.Success);
 
-            var query = await _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQuery() { ID = newCar.Id }));
+            var query = await _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQuery() { ID = car.Id }));
             query.Results.FirstOrDefault().Should().BeNull();
         }
+
     }
 }

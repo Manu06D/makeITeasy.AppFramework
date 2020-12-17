@@ -108,7 +108,7 @@ namespace makeITeasy.AppFramework.Core.Services
             return await EntityRepository.UpdatePropertiesAsync(entity, properties);
         }
 
-        public async Task<int> DeleteAsync(TEntity entity, bool saveChanges = true)
+        public async Task<CommandResult> DeleteAsync(TEntity entity, bool saveChanges = true)
         {
             return await EntityRepository.DeleteAsync(entity, saveChanges);
         }

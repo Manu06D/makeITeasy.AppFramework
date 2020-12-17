@@ -6,7 +6,7 @@ using MediatR;
 
 namespace makeITeasy.AppFramework.Core.Commands
 {
-    public class DeleteEntityCommandHandler<TEntity> : IRequestHandler<DeleteEntityCommand<TEntity>, CommandResult<TEntity>> where TEntity : class, IBaseEntity
+    public class DeleteEntityCommandHandler<TEntity> : IRequestHandler<DeleteEntityCommand<TEntity>, CommandResult> where TEntity : class, IBaseEntity
     {
         private readonly IBaseEntityService<TEntity> baseService;
 
@@ -14,17 +14,11 @@ namespace makeITeasy.AppFramework.Core.Commands
         {
             this.baseService = baseService;
         }
-        public async Task<CommandResult<TEntity>> Handle(DeleteEntityCommand<TEntity> request, CancellationToken cancellationToken)
+        public async Task<CommandResult> Handle(DeleteEntityCommand<TEntity> request, CancellationToken cancellationToken)
         {
-            int nb = await baseService.DeleteAsync(request.Entity);
-            if (nb > 0)
-            {
-                return new CommandResult<TEntity>() { Entity = request.Entity, Message = $"{nb} {(nb == 1 ? "entity" : "entities")} deleted.", Result = CommandState.Success };
-            }
-            else
-            {
-                return new CommandResult<TEntity>() { Entity = request.Entity, Message = "no entity deleted.", Result = CommandState.Warning };
-            }
+            CommandResult result = await baseService.DeleteAsync(request.Entity);
+
+            return result;           
         }
     }
 }
