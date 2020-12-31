@@ -62,5 +62,39 @@ namespace makeITeasy.CarCatalog.Tests
             var query = await _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQuery() { ID = newCar.Id }));
             query.Results.First().Name.Should().Be("C4");
         }
+
+        [Fact]
+        public async Task CreateAndDeleteCommand_BasicTest()
+        {
+            Car car = new Car()
+            {
+                Name = "C3",
+                ReleaseYear = 2011,
+                Brand = new Brand()
+                {
+                    Name = "Citroen",
+                    Country = new Country()
+                    {
+                        Name = "France",
+                        CountryCode = "FR"
+                    }
+                }
+            };
+
+            var resultCreate = await _mediator.Send(new CreateEntityCommand<Car>(car));
+            resultCreate.Result.Should().Be(CommandState.Success);
+
+            car.Id.Should().BeGreaterThan(0);
+            car.Name.Should().Be("C3");
+
+            var clonedCar = TestsHelper.Clone(car);
+
+            var resultUpdate = await _mediator.Send(new DeleteEntityCommand<Car>(clonedCar));
+            resultUpdate.Result.Should().Be(CommandState.Success);
+
+            var query = await _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQuery() { ID = car.Id }));
+            query.Results.FirstOrDefault().Should().BeNull();
+        }
+
     }
 }

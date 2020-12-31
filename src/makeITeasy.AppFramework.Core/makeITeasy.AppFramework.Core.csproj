@@ -14,8 +14,8 @@
     <Authors>Emmanuel D.</Authors>
     <Company>Make IT Easy</Company>
     <Description>Core module for makeITeasy.Appframework</Description>
-    <AssemblyVersion>1.0.2.0</AssemblyVersion>
-    <FileVersion>1.0.2.0</FileVersion>
+    <AssemblyVersion>1.0.3.0</AssemblyVersion>
+    <FileVersion>1.0.3.0</FileVersion>
     <Version>1.0.3</Version>
     <DebugType>embedded</DebugType>
     <EmbedAllSources>true</EmbedAllSources>

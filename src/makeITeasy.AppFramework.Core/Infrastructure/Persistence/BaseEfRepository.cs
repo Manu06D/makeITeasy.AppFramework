@@ -166,7 +166,6 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
 
         private async Task<CommandResult<T>> SaveOrUpdateChangesWithResult(T entity, U dbContext, bool saveChanges = true)
         {
-
             var result = new CommandResult<T>(); 
             
             int dbChanges = await SaveOrUpdateChanges(entity, dbContext, saveChanges);
@@ -253,15 +252,21 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
             return objectProperties.Where(x => propertiesToUpdate.Contains(x.Name)).ToArray();
         }
 
-        public async Task DeleteAsync(T entity, bool saveChanges = true)
+        public async Task<CommandResult> DeleteAsync(T entity, bool saveChanges = true)
         {
+            CommandResult result = new CommandResult();
+
             U dbContext = GetDbContext();
+
             dbContext.Set<T>().Remove(entity);
 
             if (saveChanges)
             {
-                await dbContext.SaveChangesAsync();
+                int dbResult = await dbContext.SaveChangesAsync();
+                result.Result = dbResult > 0 ? CommandState.Success : CommandState.Error;
             }
+
+            return result;
         }
 
         private IQueryable<T> ApplySpecification(ISpecification<T> spec, U dbContext)

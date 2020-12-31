@@ -13,7 +13,7 @@
     <Company>Make IT Easy</Company>
     <Description>Models for makeITeasy.Appframework</Description>
     <Version>1.0.3</Version>
-    <AssemblyVersion>1.0.2.0</AssemblyVersion>
+    <AssemblyVersion>1.0.3.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

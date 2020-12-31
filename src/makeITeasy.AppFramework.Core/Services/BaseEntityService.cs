@@ -108,6 +108,11 @@ namespace makeITeasy.AppFramework.Core.Services
             return await EntityRepository.UpdatePropertiesAsync(entity, properties);
         }
 
+        public async Task<CommandResult> DeleteAsync(TEntity entity, bool saveChanges = true)
+        {
+            return await EntityRepository.DeleteAsync(entity, saveChanges);
+        }
+
         public bool Validate(TEntity entity)
         {
             return ValidatorFactory.GetValidator<TEntity>()?.Validate(entity).IsValid ?? throw new ValidatorNotFoundException(typeof(TEntity));
