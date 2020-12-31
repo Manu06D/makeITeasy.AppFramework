@@ -1,9 +1,9 @@
-﻿function initDatatable(datatableID, searchFormID, columnRenderers) {
+﻿function initDatatable(datatableID, searchFormID, columnRenderers, parameters) {
 
     tableModel = this['tableObject' + datatableID];
     var datatableSelector = "#" + datatableID;
 
-    let options = buildOption(columnRenderers, tableModel);
+    let options = buildOption(columnRenderers, parameters, tableModel);
 
     if (searchFormID != null) {
 
@@ -57,12 +57,19 @@ function datatableReload(datatableID) {
     myDataTable.ajax.reload();
 }
 
-function buildOption(renderColumns, tableModel) {
+function buildOption(renderColumns, parameters, tableModel) {
 
-    var options = {
-        "order": [[0, 'asc']],
-        columns: [],
-    };
+    var options;
+    if (parameters != null) {
+        options = parameters;
+        options.columns = [];
+    }
+    else {
+        options = {
+            "order": [[0, 'asc']],
+            columns: [],
+        };
+    }
 
     tableModel.Columns.forEach(element => options.columns.push(convertToDatableColumn(element, renderColumns)));
 
