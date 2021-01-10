@@ -5,7 +5,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
+namespace makeITeasy.AppFramework.Infrastructure.Persistence
 {
     public class BaseUnitOfWork
     {

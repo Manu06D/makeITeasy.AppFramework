@@ -51,10 +51,15 @@
                     "infoEmpty": "Empty results",
                     "infoFiltered": "(filtered from _MAX_ total records)"
                 },
-                "order": [[2, 'asc']]
+                "order": [[2, 'asc']],
+                responsive: {
+                details: {
+                    type: 'column'
+                }
+    }
             };
 
-            initDatatable("@carDatatable.TableID", "#searchRequestForm", columnRenderers,options );
+            initDatatable("@carDatatable.TableID", "#searchRequestForm", columnRenderers, options );
 
             $("#@carDatatable.TableID").on("dblDrawEvent", '', function (event) {
                 $('#@carDatatable.TableID [data-toggle="ajax-modal"]').on("click", function (event) {

@@ -4,6 +4,8 @@
     "inputFiles": [
       "wwwroot/lib/jquery/jquery.min.js",
       "wwwroot/lib/datatables/js/jquery.dataTables.min.js",
+      "wwwroot/lib/datatables.net-responsive/js/dataTables.responsive.js",
+      "wwwroot/lib/datatables/js/dataTables.bootstrap4.js",
       "wwwroot/lib/jquery-validate/jquery.validate.js",
       "wwwroot/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js",
       "wwwroot/lib/twitter-bootstrap/js/bootstrap.js",

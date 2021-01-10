@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using makeITeasy.AppFramework.Core.Infrastructure.Persistence;
+using makeITeasy.AppFramework.Infrastructure.Persistence;
 using makeITeasy.CarCatalog.Core.Ports;
 using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Models;

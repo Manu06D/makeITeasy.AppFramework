@@ -11,6 +11,7 @@ namespace makeITeasy.CarCatalog.WebApp.Models.Datatables
             this.Options.LoadOnDisplay = true;
             this.Options.ActivateDoubleClickOnRow = true;
             this.Options.EnablePaging = true;
+            this.Options.Responsive = true;
         }
     }
 }

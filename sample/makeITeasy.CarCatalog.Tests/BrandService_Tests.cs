@@ -160,5 +160,32 @@ namespace makeITeasy.CarCatalog.Tests
             getResult.Results.Where(x => x.Cars.Count >= 1).Should().HaveCount(1);
             getResult.Results.First(x => x.Cars.Count >= 1).Cars.FirstOrDefault().Name.Should().Be("A3");
         }
+
+        public class CustomBrand : IMapFrom<Brand>
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+        }
+
+        [Fact]
+        public async Task EF5IncludeWithFunctionAndProjection_Test()
+        {
+            TestCarsCatalog.SaveCarsInDB(carService);
+
+            var getResult = await brandService.QueryWithProjectionAsync<CustomBrand>(
+                new BaseBrandQuery()
+                {
+                    Includes = 
+                        new List<System.Linq.Expressions.Expression<Func<Brand, object>>>() { 
+                            x => x.Cars.Where(x => x.Name.StartsWith("A3")),
+                            x => x.Cars
+                        },
+                    
+                }
+                , includeCount: true);
+
+            //getResult.Results.Where(x => x.Cars.Count >= 1).Should().HaveCount(1);
+            //getResult.Results.First(x => x.Cars.Count >= 1).Cars.FirstOrDefault().Name.Should().Be("A3");
+        }
     }
 }

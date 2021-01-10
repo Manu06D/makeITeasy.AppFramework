@@ -13,8 +13,9 @@ using makeITeasy.AppFramework.Core.Queries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using makeITeasy.AppFramework.Core.Commands;
+using makeITeasy.AppFramework.Infrastructure.Persistence;
 
-namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
+namespace makeITeasy.AppFramework.Infrastructure.Persistence
 {
     public abstract class BaseEfRepository<T, U> : IAsyncRepository<T> where T : class, IBaseEntity where U : DbContext
     {
@@ -166,8 +167,8 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
 
         private async Task<CommandResult<T>> SaveOrUpdateChangesWithResult(T entity, U dbContext, bool saveChanges = true)
         {
-            var result = new CommandResult<T>(); 
-            
+            var result = new CommandResult<T>();
+
             int dbChanges = await SaveOrUpdateChanges(entity, dbContext, saveChanges);
 
             result.Entity = entity;

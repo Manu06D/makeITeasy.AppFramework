@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using makeITeasy.AppFramework.Core.Infrastructure.Persistence;
+using makeITeasy.AppFramework.Infrastructure.Persistence;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.CarCatalog.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

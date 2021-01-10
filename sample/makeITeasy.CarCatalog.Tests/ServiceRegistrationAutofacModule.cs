@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using AutoMapper;
 using AutoMapper.Contrib.Autofac.DependencyInjection;
 using FluentValidation;
 using makeITeasy.AppFramework.Core.Helpers;
@@ -15,7 +14,6 @@ using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Infrastructure.Persistence;
 using makeITeasy.CarCatalog.Infrastructure.Repositories;
 using makeITeasy.CarCatalog.Models;
-using MediatR;
 using MediatR.Extensions.Autofac.DependencyInjection;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;

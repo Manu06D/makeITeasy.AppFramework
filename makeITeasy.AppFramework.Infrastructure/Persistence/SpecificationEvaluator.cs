@@ -1,10 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using makeITeasy.AppFramework.Models;
 using Microsoft.EntityFrameworkCore;
 using makeITeasy.AppFramework.Core.Extensions;
 
-namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
+namespace makeITeasy.AppFramework.Infrastructure.Persistence
 {
     public static class SpecificationEvaluator<T> where T : class, IBaseEntity
     {
@@ -47,9 +46,9 @@ namespace makeITeasy.AppFramework.Core.Infrastructure.Persistence
                 query = specification.OrderBy.Aggregate(sortedQuery,
                          (current, orderSpec) => orderSpec.SortDescending ? current.ThenByDescending(orderSpec.OrderBy) : current.ThenBy(orderSpec.OrderBy));
             }
-            else  if (specification?.OrderByStrings != null)
+            else if (specification?.OrderByStrings != null)
             {
-                query = specification.OrderByStrings.Aggregate(query, 
+                query = specification.OrderByStrings.Aggregate(query,
                     (current, orderSpec) => orderSpec.SortDescending ? current.OrderByDescending(orderSpec.OrderBy) : current.OrderBy(orderSpec.OrderBy));
             }
 

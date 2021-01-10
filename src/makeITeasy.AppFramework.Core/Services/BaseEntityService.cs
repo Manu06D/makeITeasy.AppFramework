@@ -9,6 +9,7 @@ using makeITeasy.AppFramework.Models;
 using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Models.Exceptions;
+using Microsoft.Extensions.Logging;
 
 namespace makeITeasy.AppFramework.Core.Services
 {
@@ -16,15 +17,17 @@ namespace makeITeasy.AppFramework.Core.Services
     {
         protected IValidatorFactory ValidatorFactory { get; set; }
         public IAsyncRepository<TEntity> EntityRepository { get; set; }
+        protected ILogger<BaseEntityService<TEntity>> _logger { get; set; }
 
         public BaseEntityService()
         {
         }
 
-        protected BaseEntityService(IAsyncRepository<TEntity> entityRepository, IValidatorFactory validatorFactory)
+        protected BaseEntityService(IAsyncRepository<TEntity> entityRepository, IValidatorFactory validatorFactory, ILogger<BaseEntityService<TEntity>> logger)
         {
             EntityRepository = entityRepository;
             ValidatorFactory = validatorFactory;
+            _logger = logger;
         }
 
         public void Dispose()
@@ -57,6 +60,11 @@ namespace makeITeasy.AppFramework.Core.Services
             where TTargetEntity : class
         {
             specification?.BuildQuery();
+
+            if(specification?.Includes?.Any(x => x.Body?.NodeType != ExpressionType.MemberAccess) ?? false)
+            {
+                _logger?.LogWarning("Query with projection will ignore include and especially function include");
+            }                   
 
             return await EntityRepository.ListWithProjectionAsync<TTargetEntity>(specification, includeCount);
         }

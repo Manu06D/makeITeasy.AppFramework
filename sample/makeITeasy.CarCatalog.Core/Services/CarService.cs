@@ -6,6 +6,7 @@ using makeITeasy.CarCatalog.Core.Ports;
 using System.Collections.Generic;
 using makeITeasy.CarCatalog.Models.Custom;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace makeITeasy.CarCatalog.Core.Services
 {
@@ -13,7 +14,7 @@ namespace makeITeasy.CarCatalog.Core.Services
     {
         private readonly ICarRepository _carRepository;
 
-        public CarService(ICarRepository carRepository, IValidatorFactory validatorFactory) : base(carRepository, validatorFactory)
+        public CarService(ICarRepository carRepository, IValidatorFactory validatorFactory, ILogger<CarService> logger) : base(carRepository, validatorFactory, logger)
         {
             _carRepository = carRepository;
         }
