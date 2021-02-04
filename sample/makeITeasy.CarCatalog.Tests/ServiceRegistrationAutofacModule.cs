@@ -14,6 +14,7 @@ using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Infrastructure.Persistence;
 using makeITeasy.CarCatalog.Infrastructure.Repositories;
 using makeITeasy.CarCatalog.Models;
+using MediatR;
 using MediatR.Extensions.Autofac.DependencyInjection;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -48,10 +49,20 @@ namespace makeITeasy.CarCatalog.Tests
             //services.AddDbContext<CarCatalogContext>(options =>
             _ = services.AddDbContextFactory<CarCatalogContext>(options =>
                         {
-                options.UseSqlite(sqlLiteMemoryConnection);
-                //options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CarCatalog2;Trusted_Connection=True;MultipleActiveResultSets=true");
-                options.EnableSensitiveDataLogging(true);
-            });
+                            options.UseSqlite(sqlLiteMemoryConnection);
+                            //options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CarCatalog2;Trusted_Connection=True;MultipleActiveResultSets=true");
+                            options.EnableSensitiveDataLogging(true);
+                        });
+
+            //_ = services.AddDbContextFactory<CarCatalogContext>(options =>
+            //{
+            //    options.UseCosmos(
+            //        "https://localhost:8081",
+            //        "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+            //        databaseName: "OrdersDB");
+            //    options.EnableSensitiveDataLogging(true);
+            //    options.EnableDetailedErrors();
+            //});
 
             builder.Populate(services);
 
@@ -60,6 +71,7 @@ namespace makeITeasy.CarCatalog.Tests
             builder.RegisterMediatR(assembliesToScan);
 
             builder.RegisterType<CarCatalogContext>();
+            builder.RegisterGeneric(typeof(LoggingBehavior<,>)).As(typeof(IPipelineBehavior<,>));
 
 
             builder.RegisterGeneric(typeof(CarCatalogRepository<>)).As(typeof(IAsyncRepository<>)).InstancePerLifetimeScope()

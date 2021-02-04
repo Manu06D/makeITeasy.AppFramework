@@ -68,6 +68,7 @@ namespace makeITeasy.CarCatalog.WebApp
                 options.UseSqlServer(Configuration.GetConnectionString("dbConnectionString"))
                 .EnableDetailedErrors()
                 .EnableSensitiveDataLogging()
+
                 ;
             });
 

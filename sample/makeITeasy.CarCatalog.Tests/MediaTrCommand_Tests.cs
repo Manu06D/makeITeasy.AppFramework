@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using makeITeasy.AppFramework.Core.Commands;
@@ -87,7 +84,7 @@ namespace makeITeasy.CarCatalog.Tests
             car.Id.Should().BeGreaterThan(0);
             car.Name.Should().Be("C3");
 
-            var clonedCar = TestsHelper.Clone(car);
+            var clonedCar = TestHelper.Clone(car);
 
             var resultUpdate = await _mediator.Send(new DeleteEntityCommand<Car>(clonedCar));
             resultUpdate.Result.Should().Be(CommandState.Success);
