@@ -71,8 +71,9 @@ namespace makeITeasy.CarCatalog.Tests
             builder.RegisterMediatR(assembliesToScan);
 
             builder.RegisterType<CarCatalogContext>();
-            builder.RegisterGeneric(typeof(LoggingBehavior<,>)).As(typeof(IPipelineBehavior<,>));
 
+            builder.RegisterGeneric(typeof(LoggingBehavior<,>)).As(typeof(IPipelineBehavior<,>));
+            builder.RegisterType<MediatRLog>().SingleInstance();
 
             builder.RegisterGeneric(typeof(CarCatalogRepository<>)).As(typeof(IAsyncRepository<>)).InstancePerLifetimeScope()
                 .PropertiesAutowired()

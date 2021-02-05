@@ -58,6 +58,9 @@ namespace makeITeasy.CarCatalog.Tests
 
             var query = await _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQuery() { ID = newCar.Id }));
             query.Results.First().Name.Should().Be("C4");
+
+            var mediatorLog = Resolve<MediatRLog>();
+            mediatorLog.Counter.Should().Be(4);
         }
 
         [Fact]
@@ -91,6 +94,9 @@ namespace makeITeasy.CarCatalog.Tests
 
             var query = await _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQuery() { ID = car.Id }));
             query.Results.FirstOrDefault().Should().BeNull();
+
+            var mediatorLog = Resolve<MediatRLog>();
+            mediatorLog.Counter.Should().Be(4);
         }
 
     }

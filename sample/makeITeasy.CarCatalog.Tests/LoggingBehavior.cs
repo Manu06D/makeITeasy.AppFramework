@@ -10,11 +10,14 @@ namespace makeITeasy.CarCatalog.Tests
     public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
         private readonly ILogger<LoggingBehavior<TRequest, TResponse>> _logger;
+        private readonly MediatRLog _mediatRLog;
 
-        public LoggingBehavior(ILogger<LoggingBehavior<TRequest, TResponse>> logger)
+        public LoggingBehavior(ILogger<LoggingBehavior<TRequest, TResponse>> logger, MediatRLog mediatRLog)
         {
             _logger = logger;
+            _mediatRLog = mediatRLog;
         }
+
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
@@ -23,6 +26,7 @@ namespace makeITeasy.CarCatalog.Tests
             {
                 var entity = request.GetType().GetInterfaces()[0].GetProperty("Entity")?.GetValue(request, null);
                 _logger.LogInformation($"Processing {typeof(TRequest).Name} with Entity {TestHelper.Dump(entity)}");
+                _mediatRLog.Counter++;
             }
 
             var response = await next();
@@ -31,6 +35,12 @@ namespace makeITeasy.CarCatalog.Tests
             {
                 var entityResponse = typeof(TResponse).GetProperty("Entity")?.GetValue(response, null);
                 _logger.LogInformation($"Processed {TestHelper.Dump(entityResponse)}");
+                _mediatRLog.Counter++;
+            } else if (typeof(TResponse) == typeof(CommandResult))
+            {
+                var entityResponse = typeof(TResponse).GetProperty("Result")?.GetValue(response, null);
+                _logger.LogInformation($"Processed with result = {TestHelper.Dump(entityResponse)}");
+                _mediatRLog.Counter++;
             }
 
             return response;
