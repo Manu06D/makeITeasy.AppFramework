@@ -13,21 +13,19 @@
    "SelectedToBeGenerated": 2,
    "Tables": [
       {
-         "HasPrimaryKey": true,
          "Name": "[dbo].[Brand]",
          "ObjectType": 0
       },
       {
-         "HasPrimaryKey": true,
          "Name": "[dbo].[Car]",
          "ObjectType": 0
       },
       {
-         "HasPrimaryKey": true,
          "Name": "[dbo].[Country]",
          "ObjectType": 0
       }
    ],
+   "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,
    "UseDbContextSplitting": false,
    "UseFluentApiOnly": true,

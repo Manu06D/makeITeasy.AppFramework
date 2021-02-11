@@ -13,18 +13,19 @@
    "SelectedToBeGenerated": 1,
    "Tables": [
       {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[Brand]"
+         "Name": "[dbo].[Brand]",
+         "ObjectType": 0
       },
       {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[Car]"
+         "Name": "[dbo].[Car]",
+         "ObjectType": 0
       },
       {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[Country]"
+         "Name": "[dbo].[Country]",
+         "ObjectType": 0
       }
    ],
+   "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,
    "UseDbContextSplitting": true,
    "UseFluentApiOnly": true,
@@ -32,6 +33,5 @@
    "UseInflector": true,
    "UseLegacyPluralizer": false,
    "UseNodaTime": false,
-   "UseSpatial": false,
-   "UseStoredProcedures": false
+   "UseSpatial": false
 }

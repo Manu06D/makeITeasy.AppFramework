@@ -19,5 +19,11 @@ namespace makeITeasy.CarCatalog.WebApp.Models
         public int BrandID { get; set; }
 
         public int ReleaseYear { get; set; }
+        public byte[] RowVersion { get; set; }
+        public string DatabaseRowVersion
+        {
+            get { return Convert.ToBase64String(RowVersion); }
+            set { RowVersion = Convert.FromBase64String(value); }
+        }
     }
 }

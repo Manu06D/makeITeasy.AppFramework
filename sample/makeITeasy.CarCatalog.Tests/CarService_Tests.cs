@@ -427,7 +427,6 @@ namespace makeITeasy.CarCatalog.Tests
         [Fact]
         public async Task BrandGroupByCarCount_BasicTest()
         {
-
             var getResult = await carService.GetBrandWithCountAsync();
 
             getResult.Should().HaveCountGreaterThan(0);
@@ -443,6 +442,23 @@ namespace makeITeasy.CarCatalog.Tests
             );
 
             getResult.Results.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public async Task RowVersion_Test()
+        {
+            //This will not work on sql server but work here on sql lite cause lack of support of rowversion
+            var firstCar = (await carService.QueryAsync(new BaseCarQuery())).Results.FirstOrDefault();
+
+            var secondCar = (await carService.QueryAsync(new BaseCarQuery())).Results.FirstOrDefault();
+
+            firstCar.Name += "Test";
+            await carService.UpdateAsync(firstCar);
+
+            secondCar.Name += " 2";
+            var updateResultProperty = await carService.UpdateAsync(secondCar);
+
+            updateResultProperty.Result.Should().Be(CommandState.Success);
         }
     }
 }

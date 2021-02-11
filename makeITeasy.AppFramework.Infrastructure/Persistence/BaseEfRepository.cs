@@ -13,7 +13,6 @@ using makeITeasy.AppFramework.Core.Queries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using makeITeasy.AppFramework.Core.Commands;
-using makeITeasy.AppFramework.Infrastructure.Persistence;
 
 namespace makeITeasy.AppFramework.Infrastructure.Persistence
 {
@@ -86,6 +85,8 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
             return result;
         }
+
+
 
         public async Task<QueryResult<X>> ListWithProjectionAsync<X>(ISpecification<T> spec, bool includeCount = false) where X : class
         {

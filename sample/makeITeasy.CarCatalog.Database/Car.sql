@@ -6,6 +6,7 @@
     [ReleaseYear] INT NOT NULL, 
     [CreationDate] DATETIME2 NULL, 
     [LastModificationDate] DATETIME2 NULL, 
+    [RowVersion] ROWVERSION NULL, 
     CONSTRAINT [FK_Car_ToBrand] FOREIGN KEY ([BrandId]) REFERENCES [Brand]([ID]),
     CONSTRAINT UniqueName UNIQUE([Name])   
 )

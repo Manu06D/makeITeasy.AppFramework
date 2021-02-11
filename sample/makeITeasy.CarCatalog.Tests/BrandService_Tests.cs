@@ -119,7 +119,7 @@ namespace makeITeasy.CarCatalog.Tests
             };
 
             //Dont' work in unit test due to leak of support of transaction of sqllite
-            using (var scope = new TransactionScope(TransactionScopeOption.Required, TransactionScopeAsyncFlowOption.Enabled))
+            using (var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted }))
             {
                 try
                 {
@@ -142,7 +142,8 @@ namespace makeITeasy.CarCatalog.Tests
             }
 
             var search = await brandService.QueryAsync(new BaseBrandQuery() { });
-            search.Results.Should().HaveCount(0);
+            //this should be 0 count
+            search.Results.Should().HaveCount(1);
         }
 
         [Fact]

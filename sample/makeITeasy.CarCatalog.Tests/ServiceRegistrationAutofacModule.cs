@@ -18,6 +18,7 @@ using MediatR;
 using MediatR.Extensions.Autofac.DependencyInjection;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Module = Autofac.Module;
@@ -50,8 +51,9 @@ namespace makeITeasy.CarCatalog.Tests
             _ = services.AddDbContextFactory<CarCatalogContext>(options =>
                         {
                             options.UseSqlite(sqlLiteMemoryConnection);
-                            //options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CarCatalog2;Trusted_Connection=True;MultipleActiveResultSets=true");
+                            //options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CarCatalog3;Trusted_Connection=True;MultipleActiveResultSets=true");
                             options.EnableSensitiveDataLogging(true);
+                            options.ConfigureWarnings(x => x.Ignore(RelationalEventId.AmbientTransactionWarning));
                         });
 
             //_ = services.AddDbContextFactory<CarCatalogContext>(options =>
