@@ -86,8 +86,6 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             return result;
         }
 
-
-
         public async Task<QueryResult<X>> ListWithProjectionAsync<X>(ISpecification<T> spec, bool includeCount = false) where X : class
         {
             QueryResult<X> result = new QueryResult<X>();

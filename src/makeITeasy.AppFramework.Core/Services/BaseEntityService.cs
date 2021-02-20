@@ -49,14 +49,14 @@ namespace makeITeasy.AppFramework.Core.Services
             return await EntityRepository.GetByIdAsync(id, includes);
         }
 
-        public async Task<QueryResult<TEntity>> QueryAsync(BaseQuery<TEntity> specification, bool includeCount = false)
+        public async Task<QueryResult<TEntity>> QueryAsync(ISpecification<TEntity> specification, bool includeCount = false)
         {
             specification?.BuildQuery();
 
             return await EntityRepository.ListAsync(specification, includeCount);
         }
 
-        public async Task<QueryResult<TTargetEntity>> QueryWithProjectionAsync<TTargetEntity>(BaseQuery<TEntity> specification, bool includeCount = false)
+        public async Task<QueryResult<TTargetEntity>> QueryWithProjectionAsync<TTargetEntity>(ISpecification<TEntity> specification, bool includeCount = false)
             where TTargetEntity : class
         {
             specification?.BuildQuery();
