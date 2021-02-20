@@ -14,6 +14,6 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
         IDictionary<string, object> AdditionalParameters { get; }
         (string, bool) SortInformation { get; }
 
-        ISpecification<U> GetSearchInformation<T, U>() where T : IDatatableBaseConfiguration where U : IBaseEntity;
+        V GetSearchInformation<T, U, V>() where T : IDatatableBaseConfiguration where U : IBaseEntity where V : ISpecification<U>;
     }
 }

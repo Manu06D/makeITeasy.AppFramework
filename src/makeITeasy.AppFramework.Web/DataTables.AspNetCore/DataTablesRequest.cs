@@ -49,7 +49,7 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
             AdditionalParameters = additionalParameters;
         }
 
-        public ISpecification<U> GetSearchInformation<T,U>() where T : IDatatableBaseConfiguration where U:IBaseEntity
+        public V GetSearchInformation<T,U,V>() where T : IDatatableBaseConfiguration where U:IBaseEntity where V: ISpecification<U>
         {
             Type searchType = typeof(T).BaseType.GetGenericArguments()[0];
 
@@ -79,7 +79,7 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
                 orderBySpecification.OrderBy = filterColum.SortDataSource;
             }
 
-            return (ISpecification<U>)searchResult;
+            return (V)searchResult;
         }
 
         private bool IsTypeImplementInterface(Type type, Type searchInterface)
