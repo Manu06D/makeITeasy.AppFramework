@@ -1,7 +1,9 @@
-﻿namespace makeITeasy.AppFramework.Models
+﻿using System.Transactions;
+
+namespace makeITeasy.AppFramework.Models
 {
     public interface ITransactionSpecification<T> : ISpecification<T>
     {
-        bool ReadDirty { get; set; }
+        IsolationLevel? IsolationLevel{ get; set; }
     }
 }

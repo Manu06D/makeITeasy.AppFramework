@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.AppFramework.Web.DataTables.AspNetCore;
@@ -27,6 +24,8 @@ namespace makeITeasy.CarCatalog.WebApp.ApiControllers
         public async Task<IActionResult> CarDatatableSearchRequest(IDataTablesRequest request)
         {
             var searchQuery = request?.GetSearchInformation<CarDatatable, Car, ITransactionSpecification<Car>>();
+
+            searchQuery.IsolationLevel = System.Transactions.IsolationLevel.ReadUncommitted;
 
             QueryResult<CarDatatableViewModel> output = await _mediator.Send(new GenericQueryWithProjectCommand<Car, CarDatatableViewModel>(searchQuery));
 
