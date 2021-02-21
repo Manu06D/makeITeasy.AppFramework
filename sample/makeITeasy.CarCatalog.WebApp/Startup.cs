@@ -84,7 +84,7 @@ namespace makeITeasy.CarCatalog.WebApp
 
             builder.RegisterType<CarCatalogContext>();
 
-            builder.RegisterGeneric(typeof(CarCatalogRepository<>)).As(typeof(IAsyncRepository<>)).InstancePerLifetimeScope()
+            builder.RegisterGeneric(typeof(TransactionCarCatalogRepository<>)).As(typeof(IAsyncRepository<>)).InstancePerLifetimeScope()
                     .PropertiesAutowired()
                     .OnActivated(args => AutofacHelper.InjectProperties(args.Context, args.Instance, true));
 

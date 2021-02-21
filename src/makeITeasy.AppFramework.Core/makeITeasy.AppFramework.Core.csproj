@@ -10,7 +10,8 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
     <PackageTags>framework ef</PackageTags>
-    <PackageReleaseNotes>1.1.0 : Add new package makeITeasy.AppFramework.Infrastructure
+    <PackageReleaseNotes>1.1.1 : Add IsolationLevel to query
+      1.1.0 : Add new package makeITeasy.AppFramework.Infrastructure
 1.0.2 : Remove unwanted EF Core dependencies</PackageReleaseNotes>
     <Authors>Emmanuel D.</Authors>
     <Company>Make IT Easy</Company>

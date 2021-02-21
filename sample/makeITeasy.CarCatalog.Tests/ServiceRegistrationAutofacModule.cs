@@ -77,7 +77,7 @@ namespace makeITeasy.CarCatalog.Tests
             builder.RegisterGeneric(typeof(LoggingBehavior<,>)).As(typeof(IPipelineBehavior<,>));
             builder.RegisterType<MediatRLog>().SingleInstance();
 
-            builder.RegisterGeneric(typeof(CarCatalogRepository<>)).As(typeof(IAsyncRepository<>)).InstancePerLifetimeScope()
+            builder.RegisterGeneric(typeof(TransactionCarCatalogRepository<>)).As(typeof(IAsyncRepository<>)).InstancePerLifetimeScope()
                 .PropertiesAutowired()
                 .OnActivated(args => AutofacHelper.InjectProperties(args.Context, args.Instance, true));
 

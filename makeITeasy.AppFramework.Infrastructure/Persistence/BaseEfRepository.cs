@@ -67,13 +67,13 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             return await GetByIdAsync(id);
         }
 
-        public async Task<IList<T>> ListAllAsync()
+        public virtual async Task<IList<T>> ListAllAsync()
         {
             U dbContext = GetDbContext();
             return await dbContext.Set<T>().ToListAsync();
         }
 
-        public async Task<QueryResult<T>> ListAsync(ISpecification<T> spec, bool includeCount = false)
+        public virtual async Task<QueryResult<T>> ListAsync(ISpecification<T> spec, bool includeCount = false)
         {
             QueryResult<T> result = new QueryResult<T>();
 
@@ -86,9 +86,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             return result;
         }
 
-
-
-        public async Task<QueryResult<X>> ListWithProjectionAsync<X>(ISpecification<T> spec, bool includeCount = false) where X : class
+        public virtual async Task<QueryResult<X>> ListWithProjectionAsync<X>(ISpecification<T> spec, bool includeCount = false) where X : class
         {
             QueryResult<X> result = new QueryResult<X>();
 

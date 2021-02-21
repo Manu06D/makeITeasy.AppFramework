@@ -19,5 +19,6 @@ namespace makeITeasy.AppFramework.Models
         void AddFunctionToCriteria(Expression<Func<T, bool>> funcToAdd, FunctionAggregatorEnum type = FunctionAggregatorEnum.And);
         void AddInclude(Expression<Func<T, object>> spec);
         void AddInclude(string spec);
+        void BuildQuery();
     }
 }
