@@ -18,13 +18,15 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
         {
             async Task<QueryResult<T>> functionToExecute() => await base.ListAsync(spec, includeCount);
 
-            IsolationLevel? isolationLevel = GetIsolationLevelFromSpec(spec).GetValueOrDefault();
+            IsolationLevel? isolationLevel = GetIsolationLevelFromSpec(spec);
 
             if (isolationLevel.HasValue)
             {
                 using (var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = isolationLevel.Value }))
                 {
-                    return await functionToExecute();
+                    var result = await functionToExecute();
+                    scope.Complete();
+                    return result;
                 }
             }
             else
