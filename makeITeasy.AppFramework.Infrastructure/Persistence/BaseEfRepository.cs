@@ -112,11 +112,11 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             return (totalItems, filteredSet);
         }
 
-        private async Task<int> ApplyCountIfNeededAsync(IQueryable<T> filteredSet, bool includeCount)
+        public virtual async Task<int> ApplyCountIfNeededAsync(IQueryable<T> filteredSet, bool includeCount)
         {
             if (includeCount)
             {
-                return await filteredSet.CountAsync();
+                return await filteredSet.CountAsync().ConfigureAwait(false);
             }
 
             return 0;

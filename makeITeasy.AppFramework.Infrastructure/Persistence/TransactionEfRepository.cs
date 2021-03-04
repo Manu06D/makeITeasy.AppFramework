@@ -14,6 +14,17 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
         {
         }
 
+        public override async Task<int> ApplyCountIfNeededAsync(IQueryable<T> filteredSet, bool includeCount)
+        {
+            if (includeCount)
+            {
+                //Can't async/await otherwise the error "A TransactionScope must be disposed on the same thread that it was created"  will pop
+                return filteredSet.CountAsync().Result;
+            }
+
+            return 0;
+        }
+
         public override async Task<QueryResult<T>> ListAsync(ISpecification<T> spec, bool includeCount = false)
         {
             async Task<QueryResult<T>> functionToExecute() => await base.ListAsync(spec, includeCount);
@@ -22,7 +33,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
             if (isolationLevel.HasValue)
             {
-                using (var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = isolationLevel.Value }))
+                using (var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = isolationLevel.Value }, TransactionScopeAsyncFlowOption.Enabled))
                 {
                     var result = await functionToExecute();
                     scope.Complete();
@@ -43,9 +54,11 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
             if (isolationLevel.HasValue)
             {
-                using (var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = isolationLevel.Value }))
+                using (var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = isolationLevel.Value }, TransactionScopeAsyncFlowOption.Enabled))
                 {
-                    return await functionToExecute();
+                    var result = await functionToExecute();
+                    scope.Complete();
+                    return result;
                 }
             }
             else

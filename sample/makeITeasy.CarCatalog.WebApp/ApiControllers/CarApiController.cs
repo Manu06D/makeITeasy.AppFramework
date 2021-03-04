@@ -27,7 +27,7 @@ namespace makeITeasy.CarCatalog.WebApp.ApiControllers
 
             searchQuery.IsolationLevel = System.Transactions.IsolationLevel.ReadUncommitted;
 
-            QueryResult<CarDatatableViewModel> output = await _mediator.Send(new GenericQueryWithProjectCommand<Car, CarDatatableViewModel>(searchQuery));
+            QueryResult<CarDatatableViewModel> output = await _mediator.Send(new GenericQueryWithProjectCommand<Car, CarDatatableViewModel>(searchQuery, true));
 
             var response = DataTablesResponse.Create(request, output.TotalItems, output.TotalItems, output.Results);
 
