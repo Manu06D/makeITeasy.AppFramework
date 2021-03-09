@@ -9,6 +9,7 @@ using makeITeasy.AppFramework.Core.Helpers;
 using makeITeasy.AppFramework.Core.Infrastructure.Autofac;
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Models;
+using makeITeasy.AppFramework.Web.Filters;
 using makeITeasy.AppFramework.Web.Helpers;
 using makeITeasy.CarCatalog.Core.Ports;
 using makeITeasy.CarCatalog.Core.Services;
@@ -50,6 +51,7 @@ namespace makeITeasy.CarCatalog.WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             _ = services.AddOptions();
+            services.AddScoped<DatatableExceptionFilter>();
 
             services.AddControllersWithViews().AddNewtonsoftJson();
 

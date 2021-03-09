@@ -195,9 +195,6 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
             AdditionalParameters = additionalParameters;
         }
 
-
-
-
         /// <summary>
         /// Creates a new response instance.
         /// </summary>
@@ -208,8 +205,9 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
         /// <returns>The response object.</returns>
         public static DataTablesResponse Create(IDataTablesRequest request, int totalRecords, int totalRecordsFiltered, object data)
         {
-            return DataTablesResponse.Create(request, totalRecords, totalRecordsFiltered, data, null);
+            return Create(request, totalRecords, totalRecordsFiltered, data, null);
         }
+
         /// <summary>
         /// Creates a new response instance.
         /// </summary>

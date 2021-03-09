@@ -2,6 +2,7 @@
 using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.AppFramework.Web.DataTables.AspNetCore;
+using makeITeasy.AppFramework.Web.Filters;
 using makeITeasy.CarCatalog.Models;
 using makeITeasy.CarCatalog.WebApp.Models.Datatables;
 using MediatR;
@@ -20,6 +21,8 @@ namespace makeITeasy.CarCatalog.WebApp.ApiControllers
             this._mediator = mediator;
         }
 
+
+        [ServiceFilter(typeof(DatatableExceptionFilter))]
         [HttpPost("/api/car/search", Name = nameof(CarDatatableSearchRequest))]
         public async Task<IActionResult> CarDatatableSearchRequest(IDataTablesRequest request)
         {
