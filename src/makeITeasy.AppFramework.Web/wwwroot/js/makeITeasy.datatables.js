@@ -50,11 +50,11 @@
     });
 }
 
-function datatableReload(datatableID) {
+function datatableReload(datatableID, callback, resetPaging) {
     tableModel = this['tableObject' + datatableID];
     var datatableSelector = "#" + datatableID;
     var myDataTable = $(datatableSelector).DataTable();
-    myDataTable.ajax.reload();
+    myDataTable.ajax.reload(callback, resetPaging == null ? true : resetPaging);
 }
 
 function buildOption(renderColumns, parameters, tableModel) {

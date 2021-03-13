@@ -65,7 +65,7 @@
                 $('#@carDatatable.TableID [data-toggle="ajax-modal"]').on("click", function (event) {
                     var modal = new saveModal();
                     modal.initModal(this);
-                    $(this).on("saveDataEvent", function (event) { datatableReload("@carDatatable.TableID"); });
+                    $(this).on("saveDataEvent", function (event) { datatableReload("@carDatatable.TableID", null, false); });
                 });
             });
 
