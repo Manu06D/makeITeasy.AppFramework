@@ -21,6 +21,7 @@ namespace makeITeasy.AppFramework.Web.Filters
         public void OnException(ExceptionContext context)
         {
             context.Result = new JsonResult(DataTablesResponse.Create(new DataTablesRequest(1,0,0,null, null), context.Exception?.Message));
+            context.ExceptionHandled = true;
         }
     }
 }
