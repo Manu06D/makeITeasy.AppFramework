@@ -19,6 +19,9 @@ public CarCatalogContext(DbContextOptions<CarCatalogContext> options) : base(opt
 
 protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 {
+if (!optionsBuilder.IsConfigured)
+{
+ }
  }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -18,5 +18,8 @@ namespace makeITeasy.AppFramework.Core.Interfaces
         Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] properties);
         Task<CommandResult> DeleteAsync(T entity, bool saveChanges = true);
         bool Validate(T entity);
+        Task<ICollection<CommandResult<T>>> CreateRangeAsync(ICollection<T> entities, bool saveChanges = true);
+
+        Task<ICollection<CommandResult<T>>> UpdateRangeAsync(ICollection<T> entities, bool saveChanges = true);
     }
 }
