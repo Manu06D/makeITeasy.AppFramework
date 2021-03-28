@@ -13,6 +13,7 @@ using makeITeasy.AppFramework.Core.Queries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using makeITeasy.AppFramework.Core.Commands;
+using EFCore.BulkExtensions;
 
 namespace makeITeasy.AppFramework.Infrastructure.Persistence
 {
@@ -130,32 +131,31 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
         public async Task<T> AddAsync(T entity, bool saveChanges = true)
         {
             U dbContext = GetDbContext();
+
+            PrepareEntityForDbOperation(entity, EntityState.Added);
+
             await dbContext.Set<T>().AddAsync(entity);
 
-            await SaveOrUpdateChanges(entity, dbContext, saveChanges);
+            await SaveOrUpdateChanges(dbContext, saveChanges);
 
             return entity;
         }
 
-        private async Task<int> SaveOrUpdateChanges(T entity, U dbContext, bool saveChanges = true)
+        public async Task<ICollection<T>> AddRangeAsync(ICollection<T> entities, bool saveChanges = true)
         {
-            var entries =
-                dbContext.ChangeTracker.Entries().Where(e => e.Entity is ITimeTrackingEntity && (e.State == EntityState.Added || e.State == EntityState.Modified));
+            U dbContext = GetDbContext();
 
-            foreach (var entry in entries)
-            {
-                DateTime now = DateTime.Now;
+            PrepareEntitiesForDbOperation(entities, EntityState.Added);
 
-                ((ITimeTrackingEntity)entry.Entity).LastModificationDate = now;
-                ((ITimeTrackingEntity)entity).LastModificationDate = now;
+            await dbContext.Set<T>().AddRangeAsync(entities);
 
-                if (entry.State == EntityState.Added)
-                {
-                    ((ITimeTrackingEntity)entry.Entity).CreationDate = now;
-                    ((ITimeTrackingEntity)entity).CreationDate = now;
-                }
-            }
+            await SaveOrUpdateChanges(dbContext, saveChanges);
 
+            return entities;
+        }
+
+        private async Task<int> SaveOrUpdateChanges(U dbContext, bool saveChanges = true)
+        {
             if (saveChanges)
             {
                 return await dbContext.SaveChangesAsync();
@@ -164,11 +164,78 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             return -1;
         }
 
+        private void PrepareEntityForDbOperation(T entity, EntityState state)
+        {
+            DateTime now = DateTime.Now;
+
+            (var action, bool recursive) = GetITimeTrackingAction(state, now);
+
+            UpdateITimeTrackingEntities(entity, action, recursive);
+        }
+
+        private (Action<ITimeTrackingEntity> action, bool recursive) GetITimeTrackingAction(EntityState state, DateTime date)
+        {
+            Action<ITimeTrackingEntity> action = null;
+            bool recursive = false;
+
+            if (state == EntityState.Added)
+            {
+                action = (x) => { x.CreationDate = date; x.LastModificationDate = date; };
+                recursive = true;
+            }
+            else if (state == EntityState.Modified)
+            {
+                action = (x) => { x.LastModificationDate = date; };
+            }
+
+            return (action, recursive);
+        }
+
+        private void PrepareEntitiesForDbOperation(ICollection<T> entities, EntityState state)
+        {
+            DateTime now = DateTime.Now;
+
+            (var action, bool recursive) = GetITimeTrackingAction(state, now);
+
+            UpdateITimeTrackingEntities(entities, action, recursive);
+        }
+
+        private void UpdateITimeTrackingEntities(ICollection<T> entities, Action<ITimeTrackingEntity> action, bool recursive = true)
+        {
+            foreach(var entity in entities)
+            {
+                UpdateITimeTrackingEntities(entity, action, recursive);
+            }
+        }
+
+        private void UpdateITimeTrackingEntities(IBaseEntity entity, Action<ITimeTrackingEntity> action, bool recursive = true)
+        {
+            if (entity == null || action == null)
+            {
+                return;
+            }
+
+            Type iTimeTrackingType = typeof(ITimeTrackingEntity);
+
+            if (iTimeTrackingType.IsAssignableFrom(entity.GetType()))
+            {
+                action(((ITimeTrackingEntity)entity));
+            }
+
+            foreach(var property in entity.GetType().GetProperties())
+            {
+                if (recursive && property.PropertyType.IsClass && typeof(IBaseEntity).IsAssignableFrom(property.PropertyType))
+                {
+                    UpdateITimeTrackingEntities((IBaseEntity)property.GetValue(entity), action);
+                }
+            }
+        }
+
         private async Task<CommandResult<T>> SaveOrUpdateChangesWithResult(T entity, U dbContext, bool saveChanges = true)
         {
             var result = new CommandResult<T>();
 
-            int dbChanges = await SaveOrUpdateChanges(entity, dbContext, saveChanges);
+            int dbChanges = await SaveOrUpdateChanges(dbContext, saveChanges);
 
             result.Entity = entity;
             result.Result = dbChanges > 0 ? CommandState.Success : CommandState.Warning;
@@ -176,6 +243,12 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             return result;
         }
 
+        /// <summary>
+        /// Update Entity. Only entity will be 
+        /// </summary>'
+        /// <param name="entity"></param>
+        /// <param name="saveChanges"></param>
+        /// <returns></returns>
         public async Task<CommandResult<T>> UpdateAsync(T entity, bool saveChanges = true)
         {
             var dbContext = GetDbContext();
@@ -184,8 +257,11 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             {
                 //This can be an issue if input entity is not fully filled with database value. Data can be lost !!
                 T databaseEntity = await GetByIdAsync(entity.DatabaseID);
+
                 if (databaseEntity != null)
                 {
+                    PrepareEntityForDbOperation(entity, EntityState.Modified);
+
                     EntityEntry<T> ee = dbContext.Entry(databaseEntity);
 
                     ee.CurrentValues.SetValues(entity);
@@ -199,12 +275,20 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             return dbResult;
         }
 
+        public async Task<int> UpdateRangeAsync(Expression<Func<T,bool>> entityPredicate, Expression<Func<T, T>> updateExpression)
+        {
+
+            return await GetDbContext().Set<T>().Where(entityPredicate).BatchUpdateAsync(updateExpression);
+        }
+
         public async Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] propertyNames, bool saveChanges = true)
         {
             var dbContext = GetDbContext();
 
             var result = new CommandResult<T>();
             T databaseEntity = await GetByIdAsync(entity.DatabaseID);
+
+            PrepareEntityForDbOperation(entity, EntityState.Modified);
 
             if (databaseEntity != null)
             {

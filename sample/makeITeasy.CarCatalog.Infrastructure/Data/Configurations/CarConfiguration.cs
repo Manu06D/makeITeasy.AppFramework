@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore;
 using System;
 
-#nullable disable
 
 namespace makeITeasy.CarCatalog.Infrastructure.Data.Configurations
 {

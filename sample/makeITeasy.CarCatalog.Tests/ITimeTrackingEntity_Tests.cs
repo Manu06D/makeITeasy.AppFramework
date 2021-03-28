@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.CarCatalog.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Models;
+using makeITeasy.CarCatalog.Tests.Catalogs;
 using Xunit;
 
 namespace makeITeasy.CarCatalog.Tests
@@ -51,6 +53,7 @@ namespace makeITeasy.CarCatalog.Tests
             newCar.CreationDate.Should().NotBeNull().And.BeAfter(creationDateTime);
 
             creationResult.Entity.CreationDate.Should().NotBeNull().And.BeAfter(creationDateTime);
+            creationResult.Entity.Brand.Country.CreationDate.Should().NotBeNull().And.BeAfter(creationDateTime);
 
             DateTime modificationDate = DateTime.Now;
 
@@ -63,9 +66,21 @@ namespace makeITeasy.CarCatalog.Tests
 
             newCar.LastModificationDate.Should().NotBeNull().And.Be(modificationResult.Entity.LastModificationDate).And.BeAfter(modificationDate);
 
+            newCar.Brand.Country.LastModificationDate.Should().NotBeNull().And.Be(modificationResult.Entity.Brand.Country.CreationDate);
+
             Car latestCar = await carService.GetByIdAsync(newCar.Id);
 
-            latestCar.LastModificationDate.Should().NotBeNull().And.Be(latestCar.LastModificationDate).And.BeAfter(modificationDate);
+            latestCar.LastModificationDate.Should().NotBeNull().And.BeAfter(modificationDate);
+        }
+
+        [Fact]
+        public async Task CreationRangeDate_BasicTest()
+        {
+            var carList = TestCarsCatalog.GetCars();
+
+            var dbCreation = await carService.CreateRangeAsync(carList);
+
+            dbCreation.Should().Match(x => x.All(y => y.Entity.CreationDate.HasValue));            
         }
     }
 }

@@ -8,15 +8,18 @@ using makeITeasy.AppFramework.Core.Commands;
 
 namespace makeITeasy.AppFramework.Core.Interfaces
 {
-    public interface IBaseEntityService<T> where T : class, IBaseEntity
+    public interface IBaseEntityService<TEntity> where TEntity : class, IBaseEntity
     {
-        Task<T> GetByIdAsync(object id, List<Expression<Func<T, object>>> includes = null);
-        Task<QueryResult<T>> QueryAsync(ISpecification<T> specification, bool includeCount = false);
-        Task<QueryResult<TTarget>> QueryWithProjectionAsync<TTarget>(ISpecification<T> specification, bool includeCount = false) where TTarget : class;
-        Task<CommandResult<T>> CreateAsync(T entity, bool saveChanges = true);
-        Task<CommandResult<T>> UpdateAsync(T entity);
-        Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] properties);
-        Task<CommandResult> DeleteAsync(T entity, bool saveChanges = true);
-        bool Validate(T entity);
+        Task<TEntity> GetByIdAsync(object id, List<Expression<Func<TEntity, object>>> includes = null);
+        Task<QueryResult<TEntity>> QueryAsync(ISpecification<TEntity> specification, bool includeCount = false);
+        Task<QueryResult<TTarget>> QueryWithProjectionAsync<TTarget>(ISpecification<TEntity> specification, bool includeCount = false) where TTarget : class;
+        Task<CommandResult<TEntity>> CreateAsync(TEntity entity, bool saveChanges = true);
+        Task<CommandResult<TEntity>> UpdateAsync(TEntity entity);
+        Task<CommandResult<TEntity>> UpdatePropertiesAsync(TEntity entity, string[] properties);
+        Task<CommandResult> DeleteAsync(TEntity entity, bool saveChanges = true);
+        bool Validate(TEntity entity);
+        Task<ICollection<CommandResult<TEntity>>> CreateRangeAsync(ICollection<TEntity> entities, bool saveChanges = true);
+
+        Task<int> UpdateRangeAsync(Expression<Func<TEntity, bool>> entityPredicate, Expression<Func<TEntity, TEntity>> updateExpression);
     }
 }

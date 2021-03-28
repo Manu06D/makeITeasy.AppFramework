@@ -71,15 +71,25 @@ namespace makeITeasy.AppFramework.Core.Services
 
         public virtual async Task<CommandResult<TEntity>> CreateAsync(TEntity entity, bool saveChanges = true)
         {
-            return await SaveOrUpdate(entity, async (x) => await InnerAddAsync(x));
+            return await ValidateAndProcess(entity, async (x) => await InnerAddAsync(x));
+        }
+
+        public virtual async Task<ICollection<CommandResult<TEntity>>> CreateRangeAsync(ICollection<TEntity> entities, bool saveChanges = true)
+        {
+            return await ValidateAndProcess(entities, async (x) => await InnerAddRangeAsync(x));
+        }
+
+        public virtual async Task<int> UpdateRangeAsync(Expression<Func<TEntity, bool>> entityPredicate, Expression<Func<TEntity, TEntity>> updateExpression)
+        {
+            return await EntityRepository.UpdateRangeAsync(entityPredicate, updateExpression);
         }
 
         public async Task<CommandResult<TEntity>> UpdateAsync(TEntity entity)
         {
-            return await SaveOrUpdate(entity, async (x) => await InnerUpdateAsync(x));
+            return await ValidateAndProcess(entity, async (x) => await InnerUpdateAsync(x));
         }
 
-        private async Task<CommandResult<TEntity>> SaveOrUpdate(TEntity entity, Func<TEntity, Task<CommandResult<TEntity>>> action)
+        private async Task<CommandResult<TEntity>> ValidateAndProcess(TEntity entity, Func<TEntity, Task<CommandResult<TEntity>>> action)
         {
             var entityValidator = ValidatorFactory?.GetValidator<TEntity>();
 
@@ -89,12 +99,49 @@ namespace makeITeasy.AppFramework.Core.Services
 
                 if (!validationResult.IsValid)
                 {
-                    string validationErrorMessage = String.Join(",", validationResult.Errors.Select(x => x.ErrorMessage).ToArray());
+                    string validationErrorMessage = string.Join(",", validationResult.Errors.Select(x => x.ErrorMessage).ToArray());
+
                     return new CommandResult<TEntity>() { Entity = entity, Result = CommandState.Error, Message = $"Validation has failed :  {validationErrorMessage}" };
                 }
             }
 
             return await action(entity);
+        }
+
+        private async Task<ICollection<CommandResult<TEntity>>> ValidateAndProcess(ICollection<TEntity> entities, Func<ICollection<TEntity>, Task<ICollection<CommandResult<TEntity>>>> action)
+        {
+            var entityValidator = ValidatorFactory?.GetValidator<TEntity>();
+
+            List<CommandResult<TEntity>> results = new List<CommandResult<TEntity>>();
+
+            ICollection<TEntity> entitiesToHandle = new List<TEntity>();
+
+            if (entityValidator != null)
+            {
+                foreach(var entity in entities)
+                {
+                    var validationResult = entityValidator.Validate(entity);
+
+                    if (!validationResult.IsValid)
+                    {
+                        string validationErrorMessage = string.Join(",", validationResult.Errors.Select(x => x.ErrorMessage).ToArray());
+
+                        results.Add(new CommandResult<TEntity>() { Entity = entity, Result = CommandState.Error, Message = $"Validation has failed :  {validationErrorMessage}" });
+                    }
+                    else
+                    {
+                        entitiesToHandle.Add(entity);
+                    }
+                }
+            }
+            else
+            {
+                entitiesToHandle = entities;
+            }
+
+            results.AddRange(await action(entitiesToHandle));
+
+            return results;
         }
 
         private async Task<CommandResult<TEntity>> InnerUpdateAsync(TEntity entity)
@@ -110,6 +157,20 @@ namespace makeITeasy.AppFramework.Core.Services
 
             return new CommandResult<TEntity>() { Entity = result, Result = CommandState.Success };
         }
+
+        private async Task<ICollection<CommandResult<TEntity>>> InnerAddRangeAsync(ICollection<TEntity> entities)
+        {
+            await EntityRepository.AddRangeAsync(entities);
+
+            return entities.Select(x => new CommandResult<TEntity>(CommandState.Success) { Entity = x}).ToList();
+        }
+
+        //private async Task<ICollection<CommandResult<TEntity>>> InnerUpdateRangeAsync(ICollection<TEntity> entities)
+        //{
+        //    await EntityRepository.UpdateRangeAsync(entities);
+
+        //    return entities.Select(x => new CommandResult<TEntity>(CommandState.Success) { Entity = x }).ToList();
+        //}
 
         public async Task<CommandResult<TEntity>> UpdatePropertiesAsync(TEntity entity, string[] properties)
         {
