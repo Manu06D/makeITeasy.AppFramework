@@ -13,6 +13,7 @@ using makeITeasy.AppFramework.Core.Queries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using makeITeasy.AppFramework.Core.Commands;
+using EFCore.BulkExtensions;
 
 namespace makeITeasy.AppFramework.Infrastructure.Persistence
 {
@@ -274,17 +275,10 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             return dbResult;
         }
 
-        public async Task<ICollection<T>> UpdateRangeAsync(ICollection<T> entities, bool saveChanges = true)
+        public async Task<int> UpdateRangeAsync(Expression<Func<T,bool>> entityPredicate, Expression<Func<T, T>> updateExpression)
         {
-            U dbContext = GetDbContext();
 
-            PrepareEntitiesForDbOperation(entities, EntityState.Modified);
-
-            dbContext.UpdateRange(entities);
-
-            await SaveOrUpdateChanges(dbContext, saveChanges);
-
-            return entities;
+            return await GetDbContext().Set<T>().Where(entityPredicate).BatchUpdateAsync(updateExpression);
         }
 
         public async Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] propertyNames, bool saveChanges = true)

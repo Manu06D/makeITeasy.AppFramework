@@ -79,9 +79,9 @@ namespace makeITeasy.AppFramework.Core.Services
             return await ValidateAndProcess(entities, async (x) => await InnerAddRangeAsync(x));
         }
 
-        public virtual async Task<ICollection<CommandResult<TEntity>>> UpdateRangeAsync(ICollection<TEntity> entities, bool saveChanges = true)
+        public virtual async Task<int> UpdateRangeAsync(Expression<Func<TEntity, bool>> entityPredicate, Expression<Func<TEntity, TEntity>> updateExpression)
         {
-            return await ValidateAndProcess(entities, async (x) => await InnerUpdateRangeAsync(x));
+            return await EntityRepository.UpdateRangeAsync(entityPredicate, updateExpression);
         }
 
         public async Task<CommandResult<TEntity>> UpdateAsync(TEntity entity)
@@ -165,12 +165,12 @@ namespace makeITeasy.AppFramework.Core.Services
             return entities.Select(x => new CommandResult<TEntity>(CommandState.Success) { Entity = x}).ToList();
         }
 
-        private async Task<ICollection<CommandResult<TEntity>>> InnerUpdateRangeAsync(ICollection<TEntity> entities)
-        {
-            await EntityRepository.UpdateRangeAsync(entities);
+        //private async Task<ICollection<CommandResult<TEntity>>> InnerUpdateRangeAsync(ICollection<TEntity> entities)
+        //{
+        //    await EntityRepository.UpdateRangeAsync(entities);
 
-            return entities.Select(x => new CommandResult<TEntity>(CommandState.Success) { Entity = x }).ToList();
-        }
+        //    return entities.Select(x => new CommandResult<TEntity>(CommandState.Success) { Entity = x }).ToList();
+        //}
 
         public async Task<CommandResult<TEntity>> UpdatePropertiesAsync(TEntity entity, string[] properties)
         {
