@@ -18,7 +18,7 @@
     <Description>Core module for makeITeasy.Appframework</Description>
     <AssemblyVersion>1.1.2.0</AssemblyVersion>
     <FileVersion>1.1.2.0</FileVersion>
-    <Version>1.1.5</Version>
+    <Version>1.1.6</Version>
     <DebugType>embedded</DebugType>
     <EmbedAllSources>true</EmbedAllSources>
   </PropertyGroup>
@@ -29,7 +29,7 @@
     <PackageReference Include="DelegateDecompiler" Version="0.29.1" />
     <PackageReference Include="FluentValidation" Version="9.5.3" />
     <PackageReference Include="MediatR" Version="9.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.14" />
   </ItemGroup>
 
   <ItemGroup>
