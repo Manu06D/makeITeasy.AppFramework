@@ -47,6 +47,25 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
         public virtual async Task<T> GetByIdAsync(object id)
         {
+            if (id.GetType().IsArray)
+            {
+                //not so elegant, need to investigate on more suitable solution
+                Array a = (Array)id;
+
+                switch (a.Length)
+                {
+                    case 1:
+                        return await GetDbContext().Set<T>().FindAsync(a.GetValue(0));
+                    case 2:
+                        return await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1));
+                    case 3:
+                        return await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1), a.GetValue(2));
+                    case 4:
+                        return await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1), a.GetValue(2), a.GetValue(3));
+                }
+            }
+
+
             return await GetDbContext().Set<T>().FindAsync(id);
         }
 
