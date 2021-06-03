@@ -40,7 +40,7 @@ namespace makeITeasy.AppFramework.Core.Services
         {
             if (disposing)
             {
-                EntityRepository.Dispose();
+                EntityRepository?.Dispose();
             }
         }
 
