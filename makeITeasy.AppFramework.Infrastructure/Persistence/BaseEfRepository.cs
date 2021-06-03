@@ -63,7 +63,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
                     case 4:
                         return await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1), a.GetValue(2), a.GetValue(3));
                     case 5:
-                        return await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1), a.GetValue(2), a.GetValue(3), a.GetValue(3));
+                        return await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1), a.GetValue(2), a.GetValue(3), a.GetValue(4));
                     default:
                         throw new Exception("Composite key with more than 5 columns are not supported");
                 }
