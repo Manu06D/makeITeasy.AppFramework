@@ -69,7 +69,7 @@ namespace makeITeasy.CarCatalog.Tests
 
             Func<Task> act = async () => await carService.CreateAsync(car2);
 
-            act.Should().Throw<DbUpdateException>();
+            act.Should().ThrowAsync<DbUpdateException>();
         }
 
         [Fact]

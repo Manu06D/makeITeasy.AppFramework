@@ -51,6 +51,7 @@ namespace makeITeasy.CarCatalog.Tests
             _ = services.AddDbContextFactory<CarCatalogContext>(options =>
                         {
                             options.UseSqlite(sqlLiteMemoryConnection);
+                            options.AddInterceptors(new DatabaseInterceptor());
                             //options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CarCatalog3;Trusted_Connection=True;MultipleActiveResultSets=true");
                             options.EnableSensitiveDataLogging(true);
                             options.ConfigureWarnings(x => x.Ignore(RelationalEventId.AmbientTransactionWarning));

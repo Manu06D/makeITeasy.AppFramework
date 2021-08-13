@@ -68,10 +68,11 @@ namespace makeITeasy.CarCatalog.WebApp
             _ = services.AddDbContextFactory<CarCatalogContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("dbConnectionString"))
+
                 .EnableDetailedErrors()
                 .EnableSensitiveDataLogging()
-
                 ;
+                options.AddInterceptors(new DatabaseInterceptor());
             });
 
             DatatableHelpers.RegisterDatatableService(services);

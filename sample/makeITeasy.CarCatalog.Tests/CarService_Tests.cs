@@ -80,7 +80,7 @@ namespace makeITeasy.CarCatalog.Tests
                 Name = "xxx"
             };
 
-            carService.Invoking(y => y.CreateAsync(newCar)).Should().Throw<DbUpdateException>();
+            carService.Invoking(y => y.CreateAsync(newCar)).Should().ThrowAsync<DbUpdateException>();
         }
 
         [Fact]

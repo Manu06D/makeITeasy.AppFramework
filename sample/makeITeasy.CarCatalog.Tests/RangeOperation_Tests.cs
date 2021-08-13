@@ -53,7 +53,7 @@ namespace makeITeasy.CarCatalog.Tests
 
             Func<Task> action = async () => await carService.CreateRangeAsync(carList);
 
-            action.Should().Throw<Exception>();
+            action.Should().ThrowAsync<Exception>();
 
             IList<Car> dbQueryResult = (await carService.QueryAsync(new BaseCarQuery() { Includes = new List<System.Linq.Expressions.Expression<Func<Car, object>>>() {x => x.Brand } })).Results;
 
