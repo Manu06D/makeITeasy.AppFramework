@@ -82,5 +82,36 @@ namespace makeITeasy.CarCatalog.Tests
 
             dbCreation.Should().Match(x => x.All(y => y.Entity.CreationDate.HasValue));            
         }
+
+        [Fact]
+        public async Task UpdateProperties_LastModificationDateChanged()
+        {
+            Car newCar = new Car()
+            {
+                Name = "C3",
+                ReleaseYear = 2011,
+                Brand = new Brand()
+                {
+                    Name = "Citroen",
+                    Country = new Country()
+                    {
+                        Name = "France",
+                        CountryCode = "FR"
+                    }
+                }
+            };
+
+            DateTime creationDateTime = DateTime.Now;
+
+            CommandResult<Car> creationResult = await carService.CreateAsync(newCar);
+
+            newCar.Name += "X";
+
+            await carService.UpdatePropertiesAsync(newCar, new string[] { "Name"});
+
+            var tt = await carService.GetByIdAsync(newCar.Id);
+
+            tt.LastModificationDate.GetValueOrDefault().Should().BeAfter(creationDateTime);
+        }
     }
 }

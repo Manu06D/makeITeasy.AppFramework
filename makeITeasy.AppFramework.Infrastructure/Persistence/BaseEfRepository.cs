@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using makeITeasy.AppFramework.Core.Commands;
 using EFCore.BulkExtensions;
+using System.CodeDom;
 
 namespace makeITeasy.AppFramework.Infrastructure.Persistence
 {
@@ -187,13 +188,15 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             return -1;
         }
 
-        private void PrepareEntityForDbOperation(T entity, EntityState state)
+        private bool PrepareEntityForDbOperation(T entity, EntityState state)
         {
             DateTime now = DateTime.Now;
 
             (var action, bool recursive) = GetITimeTrackingAction(state, now);
 
-            UpdateITimeTrackingEntities(entity, action, recursive);
+            bool dateTimeUpdated = UpdateITimeTrackingEntities(entity, action, recursive);
+
+            return dateTimeUpdated;
         }
 
         private (Action<ITimeTrackingEntity> action, bool recursive) GetITimeTrackingAction(EntityState state, DateTime date)
@@ -231,11 +234,13 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             }
         }
 
-        private void UpdateITimeTrackingEntities(IBaseEntity entity, Action<ITimeTrackingEntity> action, bool recursive = true)
+        private bool UpdateITimeTrackingEntities(IBaseEntity entity, Action<ITimeTrackingEntity> action, bool recursive = true)
         {
+            bool result = false;
+
             if (entity == null || action == null)
             {
-                return;
+                return result;
             }
 
             Type iTimeTrackingType = typeof(ITimeTrackingEntity);
@@ -243,8 +248,11 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             if (iTimeTrackingType.IsAssignableFrom(entity.GetType()))
             {
                 action(((ITimeTrackingEntity)entity));
+
+                result = true;
             }
 
+            //deep dive in child to set date
             foreach(var property in entity.GetType().GetProperties())
             {
                 if (recursive && property.PropertyType.IsClass && typeof(IBaseEntity).IsAssignableFrom(property.PropertyType))
@@ -252,6 +260,8 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
                     UpdateITimeTrackingEntities((IBaseEntity)property.GetValue(entity), action);
                 }
             }
+
+            return result;
         }
 
         private async Task<CommandResult<T>> SaveOrUpdateChangesWithResult(T entity, U dbContext, bool saveChanges = true)
@@ -311,7 +321,11 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             var result = new CommandResult<T>();
             T databaseEntity = await GetByIdAsync(entity.DatabaseID);
 
-            PrepareEntityForDbOperation(entity, EntityState.Modified);
+            if(PrepareEntityForDbOperation(entity, EntityState.Modified))
+            {
+                Array.Resize(ref propertyNames, propertyNames.Length + 1);
+                propertyNames[propertyNames.Length - 1] = nameof(ITimeTrackingEntity.LastModificationDate);
+            }
 
             if (databaseEntity != null)
             {

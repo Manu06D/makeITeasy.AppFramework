@@ -30,6 +30,11 @@
                     initFormControls(formID, contentChangedKey, submitButton);
                 });
 
+                var formAction = $(form).attr("action");
+                if (!isNullOrEmpty(formAction)) {
+                    url = formAction;
+                }
+
                 if (submitButton.length > 0) {
                     submitButton.bind("click", function () {
                         $('#modalAlert').hide();
