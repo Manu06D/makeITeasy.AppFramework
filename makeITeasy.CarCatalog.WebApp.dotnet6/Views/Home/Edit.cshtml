@@ -1,0 +1,25 @@
+﻿@model makeITeasy.CarCatalog.WebApp.dotnet6.Models.CarEditViewModel
+
+@{
+    Layout = "_Modal";
+}
+
+<form action="@Url.Action("Edit", "Car")" id="editCarInformationForm" method="post" class="form-horizontal">
+    <div asp-validation-summary="All" class="alert alert-danger">
+        <i class="fa fa-exclamation-circle fa-3x validation-summary-errorBlock"></i>
+    </div>
+    <div class="form-group">
+        <input asp-for="Id" hidden="hidden" />
+        <input asp-for="DatabaseRowVersion" hidden="hidden" />
+        <label asp-for="Name" class="control-label">Nom</label>
+        <input type="text" asp-for="Name" class="form-control" />
+        <select asp-for="BrandID"
+                class="form-control"
+                asp-items="@(new SelectList(Model.Brands,"Id","Name"))">
+            <option>Choississez une marque</option>
+        </select>
+
+        <label asp-for="ReleaseYear" class="control-label">Année</label>
+        <input asp-for="ReleaseYear" class="form-control" />
+    </div>
+</form>
