@@ -15,6 +15,16 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
         public ISearch Search { get; private set; }
         public int Start { get; private set; }
 
+        public List<(string, bool)> SortsInformation
+        {
+            get
+            {
+                return
+                    Columns?.Where(x => x.Sort != null).ToList()
+                        .ConvertAll(y => (y.Field, y.Sort.Direction == SortDirection.Ascending));
+            }
+        }
+
         public (string, bool) SortInformation
         {
             get
@@ -49,13 +59,13 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
             AdditionalParameters = additionalParameters;
         }
 
-        public V GetSearchInformation<T,U,V>() where T : IDatatableBaseConfiguration where U:IBaseEntity where V: ISpecification<U>
+        public V GetSearchInformation<T, U, V>() where T : IDatatableBaseConfiguration where U : IBaseEntity where V : ISpecification<U>
         {
             Type searchType = typeof(T).BaseType.GetGenericArguments()[0];
 
             var searchResult = createObjectWithDefaultConstructor(searchType);
 
-            var orderBySpecification = new OrderBySpecification<string>(SortInformation.Item1, !SortInformation.Item2);
+            List<OrderBySpecification<string>> sortOrders = SortsInformation.ConvertAll(x => new OrderBySpecification<string>(x.Item1, !x.Item2));
 
             if (searchResult != null && IsTypeImplementInterface(searchType, typeof(ISpecification<U>)))
             {
@@ -66,17 +76,20 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
 
                 ((ISpecification<U>)searchResult).Skip = Start;
                 ((ISpecification<U>)searchResult).Take = Length;
-                
-                ((ISpecification<U>)searchResult).OrderByStrings = new List<OrderBySpecification<string>>() {orderBySpecification};
+
+                ((ISpecification<U>)searchResult).OrderByStrings = sortOrders;
             }
 
             var instance = createObjectWithDefaultConstructor(typeof(T)) as IDatatableBaseConfiguration;
 
-            var filterColum = instance.Columns.FirstOrDefault(x => string.Compare(orderBySpecification.OrderBy, x.Name, true) == 0  && !string.IsNullOrEmpty(x.SortDataSource));
-
-            if (filterColum != null)
+            foreach (var sortOrder in sortOrders)
             {
-                orderBySpecification.OrderBy = filterColum.SortDataSource;
+                var filterColum = instance.Columns.FirstOrDefault(x => string.Compare(sortOrder.OrderBy, x.Name, true) == 0 && !string.IsNullOrEmpty(x.SortDataSource));
+
+                if (filterColum != null)
+                {
+                    sortOrder.OrderBy = filterColum.SortDataSource;
+                }
             }
 
             return (V)searchResult;
