@@ -1,0 +1,7 @@
+﻿CREATE TABLE [dbo].[CarDetails]
+(
+	[ID] BIGINT NOT NULL PRIMARY KEY IDENTITY, 
+    [CarID] BIGINT NOT NULL, 
+    [DynamicCarDetails] NVARCHAR(MAX) NOT NULL, 
+    CONSTRAINT [FK_CarDetails_ToCar] FOREIGN KEY ([CarID]) REFERENCES [Car]([ID])
+)

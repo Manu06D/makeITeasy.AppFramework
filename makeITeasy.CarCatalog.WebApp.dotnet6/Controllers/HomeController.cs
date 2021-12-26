@@ -33,6 +33,11 @@ namespace makeITeasy.CarCatalog.WebApp.dotnet6.Controllers
             return View();
         }
 
+        public IActionResult IndexWithBlazor()
+        {
+            return View();
+        }
+
         public async Task<IActionResult> Edit(int id)
         {
             if (id > 0)

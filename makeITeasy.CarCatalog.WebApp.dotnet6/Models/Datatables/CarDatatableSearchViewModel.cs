@@ -4,5 +4,7 @@ namespace makeITeasy.CarCatalog.WebApp.dotnet6.Models.Datatables
 {
     public class CarDatatableSearchViewModel : BaseCarQuery
     {
+        //Has to set this variable cause checkbox can't bind to nullable bool (tri-state)
+        public bool IsModernCarSearch { get { return IsModernCar.GetValueOrDefault(); } set { IsModernCar = value ? true : null; } }
     }
 }

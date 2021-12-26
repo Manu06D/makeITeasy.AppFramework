@@ -62,8 +62,13 @@
     <Build Include="Car.sql" />
     <Build Include="Brand.sql" />
     <Build Include="Country.sql" />
+    <Build Include="TemporalCar.sql" />
+    <Build Include="CarDetails.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="feed.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="makeITeasy.CarCatalog.Database.refactorlog" />
   </ItemGroup>
 </Project>

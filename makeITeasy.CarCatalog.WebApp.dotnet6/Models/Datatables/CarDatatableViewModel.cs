@@ -11,21 +11,25 @@ namespace makeITeasy.CarCatalog.WebApp.dotnet6.Models.Datatables
         [TableColumn(Name = nameof(ID), Title = "ID", IsRowId = true, Priority = 1, Visible = false)]
         public long ID { get; set; }
 
-        [TableColumn(Name = nameof(Name), Title = "Nom", Priority = 2)]
+        [TableColumn(Name = nameof(Name), Title = "Name", Priority = 2)]
         public string Name { get; set; }
 
-        [TableColumn(Name = nameof(BrandName), Title = "Marque", SortDataSource = "Brand.Name", Priority = 3)]
+        [TableColumn(Name = nameof(BrandName), Title = "Brand", SortDataSource = "Brand.Name", Priority = 3)]
 
         public string BrandName { get; set; }
 
-        [TableColumn(Name = nameof(BrandCountryCountryCode), Title = "Pays", SortDataSource = "Brand.Country.CountryCode")]
+        [TableColumn(Name = nameof(ReleaseYear), Title = "Year", SortDataSource = "Brand.Country.Name")]
 
-        public string BrandCountryCountryCode { get; set; }
+        public string ReleaseYear { get; set; }
 
-        [TableColumn(Name = nameof(IsModernCar), Title = "Actual", Sortable = false, Priority = 4)]
+        [TableColumn(Name = nameof(BrandCountryName), Title = "Country", SortDataSource = "Brand.Country.Name")]
+
+        public string BrandCountryName { get; set; }
+
+        [TableColumn(Name = nameof(IsModernCar), Title = "Is Actual", Sortable = false, Priority = 4)]
         public bool IsModernCar { get; set; }
 
-        [TableColumn(Name = nameof(IsItalianCar), Title = "Italian", Sortable = false, Priority = 5)]
+        [TableColumn(Name = nameof(IsItalianCar), Title = "Is Italian", Sortable = false, Priority = 5)]
         public bool IsItalianCar { get; set; }
 
         [TableColumn(Name = nameof(Edit), Title = "", Priority = 2)]

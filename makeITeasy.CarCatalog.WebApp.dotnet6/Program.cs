@@ -24,6 +24,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 using System.Reflection;
+using Microsoft.AspNetCore.ResponseCompression;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,8 +47,14 @@ builder.Services.AddDbContextFactory<CarCatalogContext>(options =>
 
     .EnableDetailedErrors()
     .EnableSensitiveDataLogging()
-    ;
+;
     options.AddInterceptors(new DatabaseInterceptor());
+});
+builder.Services.AddServerSideBlazor( o => { o.DetailedErrors = true; }).AddCircuitOptions(o => { o.DetailedErrors = true; /* _environment.IsDevelopment(); */ });
+
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/octet-stream" });
 });
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
@@ -86,6 +93,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseResponseCompression();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -96,5 +104,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapBlazorHub();
 
 app.Run();
