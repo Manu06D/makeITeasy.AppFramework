@@ -11,7 +11,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
     {
         protected readonly IMapper _mapper;
         protected DbContext _context;
-        protected Dictionary<Type, object> _repositories = new();
+        protected Dictionary<Type, object> _repositories = new Dictionary<Type, object>();
         protected ILogger<BaseUnitOfWork<T>> _logger;
 
         public BaseUnitOfWork(IDbContextFactory<T> dbFactory, IMapper mapper, ILogger<BaseUnitOfWork<T>> logger)
