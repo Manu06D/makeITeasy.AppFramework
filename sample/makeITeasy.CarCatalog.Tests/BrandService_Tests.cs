@@ -166,7 +166,9 @@ namespace makeITeasy.CarCatalog.Tests
         {
             public int Id { get; set; }
             public string Name { get; set; }
+
         }
+
 
         [Fact]
         public async Task EF5IncludeWithFunctionAndProjection_Test()

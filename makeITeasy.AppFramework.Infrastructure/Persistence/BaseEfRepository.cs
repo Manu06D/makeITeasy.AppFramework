@@ -100,7 +100,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
         public virtual async Task<QueryResult<T>> ListAsync(ISpecification<T> spec, bool includeCount = false)
         {
-            QueryResult<T> result = new QueryResult<T>();
+            var result = new QueryResult<T>();
 
             (int nbResult, IQueryable<T> filteredSet) = await CreateQueryableFromSpec(spec, GetDbContext(), includeCount);
 
@@ -113,7 +113,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
         public virtual async Task<QueryResult<X>> ListWithProjectionAsync<X>(ISpecification<T> spec, bool includeCount = false) where X : class
         {
-            QueryResult<X> result = new QueryResult<X>();
+            var result = new QueryResult<X>();
 
             (int nbResult, IQueryable<T> filteredSet) = await CreateQueryableFromSpec(spec, GetDbContext(), includeCount);
 
@@ -125,6 +125,11 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
         private async Task<(int, IQueryable<T>)> CreateQueryableFromSpec(ISpecification<T> spec, U dbContext, bool includeCount = false)
         {
+            if (typeof(IIsValidSpecification).IsAssignableFrom(spec.GetType()) && ! ((IIsValidSpecification)spec).IsValid())
+            {
+                throw new InvalidQueryException();
+            }
+
             IQueryable<T> filteredSet = ApplySpecification(spec, dbContext);
 
             int totalItems = await ApplyCountIfNeededAsync(filteredSet, includeCount);

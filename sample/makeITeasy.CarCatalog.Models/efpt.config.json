@@ -1,5 +1,5 @@
 ﻿{
-   "CodeGenerationMode": 0,
+   "CodeGenerationMode": 2,
    "ContextClassName": "CarCatalogContext",
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
@@ -22,11 +22,15 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[CarDetails]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Country]",
          "ObjectType": 0
       }
    ],
-   "UiHint": "D:\\dev\\Repos\\github\\makeITeasy.AppFramework\\sample\\makeITeasy.CarCatalog.Database\\makeITeasy.CarCatalog.Database.sqlproj",
+   "UiHint": "makeITeasy.CarCatalog.Database\\makeITeasy.CarCatalog.Database.sqlproj",
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,
    "UseDbContextSplitting": false,
@@ -34,10 +38,13 @@
    "UseHandleBars": true,
    "UseInflector": true,
    "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
    "UseNoConstructor": false,
+   "UseNoDefaultConstructor": false,
    "UseNoNavigations": false,
    "UseNoObjectFilter": false,
    "UseNodaTime": false,
    "UseNullableReferences": false,
+   "UseSchemaFolders": false,
    "UseSpatial": false
 }

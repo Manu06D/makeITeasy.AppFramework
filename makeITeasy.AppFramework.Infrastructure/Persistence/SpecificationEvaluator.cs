@@ -39,17 +39,19 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
         private static IQueryable<T> HandQueryForOrder(ISpecification<T> specification, IQueryable<T> query)
         {
-            if (specification?.OrderBy != null)
+            if (specification?.OrderBy?.Count > 0)
             {
                 var sortedQuery = specification.OrderBy.First().SortDescending ? query.OrderByDescending(specification.OrderBy.First().OrderBy) : query.OrderBy(specification.OrderBy.First().OrderBy);
 
                 query = specification.OrderBy.Aggregate(sortedQuery,
                          (current, orderSpec) => orderSpec.SortDescending ? current.ThenByDescending(orderSpec.OrderBy) : current.ThenBy(orderSpec.OrderBy));
             }
-            else if (specification?.OrderByStrings != null)
+            else if (specification?.OrderByStrings?.Count > 0)
             {
-                query = specification.OrderByStrings.Aggregate(query,
-                    (current, orderSpec) => orderSpec.SortDescending ? current.OrderByDescending(orderSpec.OrderBy) : current.OrderBy(orderSpec.OrderBy));
+                var sortedQuery = specification.OrderByStrings.First().SortDescending ? query.OrderByDescending(specification.OrderByStrings.First().OrderBy) : query.OrderBy(specification.OrderByStrings.First().OrderBy);
+
+                query = specification.OrderByStrings.Aggregate(sortedQuery,
+                    (current, orderSpec) => orderSpec.SortDescending ? current.ThenByDescending(orderSpec.OrderBy) : current.OrderBy(orderSpec.OrderBy));
             }
 
             return query;

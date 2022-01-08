@@ -7,14 +7,14 @@ using Microsoft.Extensions.Logging;
 
 namespace makeITeasy.AppFramework.Infrastructure.Persistence
 {
-    public class BaseUnitOfWork
+    public class BaseUnitOfWork<T> where T: DbContext
     {
         protected readonly IMapper _mapper;
         protected DbContext _context;
         protected Dictionary<Type, object> _repositories = new Dictionary<Type, object>();
-        protected ILogger<BaseUnitOfWork> _logger;
+        protected ILogger<BaseUnitOfWork<T>> _logger;
 
-        public BaseUnitOfWork(IDbContextFactory<DbContext> dbFactory, IMapper mapper, ILogger<BaseUnitOfWork> logger)
+        public BaseUnitOfWork(IDbContextFactory<T> dbFactory, IMapper mapper, ILogger<BaseUnitOfWork<T>> logger)
         {
             _context = dbFactory.CreateDbContext();
             _mapper = mapper;

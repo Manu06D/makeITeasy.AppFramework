@@ -1,0 +1,14 @@
+﻿@{
+    Layout = "_Layout";
+}
+<component type="typeof(makeITeasy.CarCatalog.WebApp.dotnet6.WebAppElements.Components.Cars.CarList)" render-mode="Server" />
+
+<section Scripts>
+    <script src="~/_framework/blazor.server.js" autostart="false"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+                console.log("starting blazor");
+                Blazor.start();
+        });
+    </script>
+</section>
