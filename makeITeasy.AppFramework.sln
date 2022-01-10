@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9E17E052-009
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "makeITeasy.AppFramework.Core", "src\makeITeasy.AppFramework.Core\makeITeasy.AppFramework.Core.csproj", "{B79A01A4-2436-4E50-A905-3BDE190E2096}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{8EAA7041-3FC7-4D29-B880-1394201E0AA3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample.dotnet5", "sample.dotnet5", "{8EAA7041-3FC7-4D29-B880-1394201E0AA3}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "makeITeasy.CarCatalog.Database", "sample\makeITeasy.CarCatalog.Database\makeITeasy.CarCatalog.Database.sqlproj", "{7E0391C7-E4DC-4F33-A912-11FD18194D3F}"
 EndProject
@@ -34,8 +34,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "makeITeasy.AppFramework.Infrastructure", "makeITeasy.AppFramework.Infrastructure\makeITeasy.AppFramework.Infrastructure.csproj", "{328AA635-C337-4E43-B8DF-B40FF093E2F6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "makeITeasy.CarCatalog.WebApp.dotnet6", "makeITeasy.CarCatalog.WebApp.dotnet6\makeITeasy.CarCatalog.WebApp.dotnet6.csproj", "{DC7168F2-569D-4DCF-95A1-A6B194103D3E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,10 +83,6 @@ Global
 		{328AA635-C337-4E43-B8DF-B40FF093E2F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{328AA635-C337-4E43-B8DF-B40FF093E2F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{328AA635-C337-4E43-B8DF-B40FF093E2F6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DC7168F2-569D-4DCF-95A1-A6B194103D3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DC7168F2-569D-4DCF-95A1-A6B194103D3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DC7168F2-569D-4DCF-95A1-A6B194103D3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DC7168F2-569D-4DCF-95A1-A6B194103D3E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,7 +98,6 @@ Global
 		{2ACBF4D1-3F1B-4E6A-9BBB-519138951A65} = {8EAA7041-3FC7-4D29-B880-1394201E0AA3}
 		{995A1A21-3448-4058-A17F-BE17B29978D2} = {9E17E052-0091-4B8C-BA9C-1DCF26F0D0F0}
 		{328AA635-C337-4E43-B8DF-B40FF093E2F6} = {9E17E052-0091-4B8C-BA9C-1DCF26F0D0F0}
-		{DC7168F2-569D-4DCF-95A1-A6B194103D3E} = {8EAA7041-3FC7-4D29-B880-1394201E0AA3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0C3977D6-0D6B-40FF-BF97-481316AA2FB9}
