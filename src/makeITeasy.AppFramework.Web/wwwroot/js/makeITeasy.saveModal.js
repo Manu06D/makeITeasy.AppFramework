@@ -31,7 +31,7 @@
                 });
 
                 var formAction = $(form).attr("action");
-                if (!isNullOrEmpty(formAction)) {
+                if (!isNullOrUndefined(formAction)) {
                     url = formAction;
                 }
 
