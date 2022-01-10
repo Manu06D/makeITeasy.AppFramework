@@ -13,8 +13,7 @@ using makeITeasy.AppFramework.Core.Queries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using makeITeasy.AppFramework.Core.Commands;
-using EFCore.BulkExtensions;
-using System.CodeDom;
+//using EFCore.BulkExtensions;
 
 namespace makeITeasy.AppFramework.Infrastructure.Persistence
 {

@@ -63,7 +63,7 @@ builder.Host.ConfigureContainer<ContainerBuilder>(
     builder =>
     {
         builder.RegisterModule(new RegisterAutofacModule() { Assemblies = assembliesToScan });
-        builder.RegisterAutoMapper(false, assembliesToScan);
+        builder.RegisterAutoMapper(assembliesToScan);
         builder.RegisterMediatR(assembliesToScan);
 
         builder.RegisterType<CarCatalogContext>();
