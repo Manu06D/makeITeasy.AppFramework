@@ -61,15 +61,15 @@ namespace makeITeasy.CarCatalog.dotnet6.WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit([FromBody] CarEditViewModel model)
         {
-            if (ModelState.IsValid)
-            {
+            //if (ModelState.IsValid)
+            //{
                 CommandResult<Car> result = await _mediator.Send(new UpdateEntityCommand<Car>(_mapper.Map<Car>(model)));
 
                 if (result.Result == CommandState.Success)
                 {
                     return Ok(model);
                 }
-            }
+            //}
 
             return StatusCode(StatusCodes.Status500InternalServerError, "An error has occured");
         }
