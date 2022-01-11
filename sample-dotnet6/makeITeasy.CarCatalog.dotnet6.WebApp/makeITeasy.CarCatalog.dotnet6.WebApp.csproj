@@ -27,6 +27,8 @@
 
   <ItemGroup>
 
+    <ProjectReference Include="..\..\src\makeITeasy.AppFramework.Infrastructure.EF6\makeITeasy.AppFramework.Infrastructure.EF6.csproj" />
+
     <ProjectReference Include="..\makeITeasy.CarCatalog.dotnet6.Core\makeITeasy.CarCatalog.dotnet6.Core.csproj" />
 
     <ProjectReference Include="..\makeITeasy.CarCatalog.dotnet6.Infrastructure\makeITeasy.CarCatalog.dotnet6.Infrastructure.csproj" />
