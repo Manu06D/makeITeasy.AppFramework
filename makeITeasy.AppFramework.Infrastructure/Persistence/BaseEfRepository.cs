@@ -13,7 +13,7 @@ using makeITeasy.AppFramework.Core.Queries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using makeITeasy.AppFramework.Core.Commands;
-//using EFCore.BulkExtensions;
+using EFCore.BulkExtensions;
 
 namespace makeITeasy.AppFramework.Infrastructure.Persistence
 {
@@ -312,7 +312,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             return dbResult;
         }
 
-        public async Task<int> UpdateRangeAsync(Expression<Func<T,bool>> entityPredicate, Expression<Func<T, T>> updateExpression)
+        public async Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, Expression<Func<T, T>> updateExpression)
         {
 
             return await GetDbContext().Set<T>().Where(entityPredicate).BatchUpdateAsync(updateExpression);

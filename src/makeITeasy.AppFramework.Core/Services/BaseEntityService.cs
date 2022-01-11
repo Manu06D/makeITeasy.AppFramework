@@ -162,7 +162,7 @@ namespace makeITeasy.AppFramework.Core.Services
         {
             await EntityRepository.AddRangeAsync(entities);
 
-            return entities.Select(x => new CommandResult<TEntity>(CommandState.Success) { Entity = x}).ToList();
+            return entities.Select(x => new CommandResult<TEntity>(CommandState.Success) { Entity = x }).ToList();
         }
 
         //private async Task<ICollection<CommandResult<TEntity>>> InnerUpdateRangeAsync(ICollection<TEntity> entities)
