@@ -24,11 +24,20 @@ namespace makeITeasy.CarCatalog.Infrastructure.Persistence
 
         public int SavedChanges(SaveChangesCompletedEventData eventData, int result)
         {
+            var context = eventData.Context;
+            context.ChangeTracker.DetectChanges();
+
+            var t= context.ChangeTracker.Entries();
             return result;
         }
 
         public ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result, CancellationToken cancellationToken = default)
         {
+            var context = eventData.Context;
+            context.ChangeTracker.DetectChanges();
+
+            var t = context.ChangeTracker.Entries();
+
             return new ValueTask<int>(result);
         }
 

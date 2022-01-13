@@ -293,7 +293,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
             if (dbContext.Entry(entity).State == EntityState.Detached)
             {
                 //This can be an issue if input entity is not fully filled with database value. Data can be lost !!
-                T databaseEntity = await GetByIdAsync(entity.DatabaseID);
+                T databaseEntity = await dbContext.FindAsync<T>(entity.DatabaseID);
 
                 if (databaseEntity != null)
                 {
@@ -303,7 +303,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
 
                     ee.CurrentValues.SetValues(entity);
 
-                    ee.State = EntityState.Modified;
+                    //ee.State = EntityState.Modified;
                 }
             }
 
