@@ -14,7 +14,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using makeITeasy.AppFramework.Core.Commands;
 using EFCore.BulkExtensions;
-using System.CodeDom;
 
 namespace makeITeasy.AppFramework.Infrastructure.Persistence
 {
@@ -294,7 +293,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             if (dbContext.Entry(entity).State == EntityState.Detached)
             {
                 //This can be an issue if input entity is not fully filled with database value. Data can be lost !!
-                T databaseEntity = await GetByIdAsync(entity.DatabaseID);
+                T databaseEntity = await dbContext.FindAsync<T>(entity.DatabaseID);
 
                 if (databaseEntity != null)
                 {
@@ -304,7 +303,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
                     ee.CurrentValues.SetValues(entity);
 
-                    ee.State = EntityState.Modified;
+                    //ee.State = EntityState.Modified;
                 }
             }
 
@@ -313,7 +312,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             return dbResult;
         }
 
-        public async Task<int> UpdateRangeAsync(Expression<Func<T,bool>> entityPredicate, Expression<Func<T, T>> updateExpression)
+        public async Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, Expression<Func<T, T>> updateExpression)
         {
 
             return await GetDbContext().Set<T>().Where(entityPredicate).BatchUpdateAsync(updateExpression);

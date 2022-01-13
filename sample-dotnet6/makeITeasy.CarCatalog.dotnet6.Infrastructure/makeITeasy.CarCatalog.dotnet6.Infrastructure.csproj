@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.1" />
+    <PackageReference Include="Serilog" Version="2.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\makeITeasy.AppFramework.Core\makeITeasy.AppFramework.Core.csproj" />
+    <ProjectReference Include="..\..\src\makeITeasy.AppFramework.Infrastructure.EF6\makeITeasy.AppFramework.Infrastructure.EF6.csproj" />
+    <ProjectReference Include="..\..\src\makeITeasy.AppFramework.Models\makeITeasy.AppFramework.Models.csproj" />
+    <ProjectReference Include="..\makeITeasy.CarCatalog.dotnet6.Core\makeITeasy.CarCatalog.dotnet6.Core.csproj" />
+    <ProjectReference Include="..\makeITeasy.CarCatalog.dotnet6.Models\makeITeasy.CarCatalog.dotnet6.Models.csproj" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.1.1" />
+  </ItemGroup>
+
+</Project>

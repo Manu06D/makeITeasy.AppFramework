@@ -47,12 +47,11 @@ namespace makeITeasy.CarCatalog.Tests
             var sqlLiteMemoryConnection = new SqliteConnection("DataSource=:memory:");
             sqlLiteMemoryConnection.Open();
 
-            //services.AddDbContext<CarCatalogContext>(options =>
             _ = services.AddDbContextFactory<CarCatalogContext>(options =>
                         {
                             options.UseSqlite(sqlLiteMemoryConnection);
-                            options.AddInterceptors(new DatabaseInterceptor());
                             //options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CarCatalog3;Trusted_Connection=True;MultipleActiveResultSets=true");
+                            options.AddInterceptors(new DatabaseInterceptor());
                             options.EnableSensitiveDataLogging(true);
                             options.ConfigureWarnings(x => x.Ignore(RelationalEventId.AmbientTransactionWarning));
                         });

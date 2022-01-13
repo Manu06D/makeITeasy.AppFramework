@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	  <Version>6.0.0</Version>
+	  <Authors>Emmanuel D.</Authors>
+	  <Company>Make IT Easy</Company>
+	  <Description>Infrastructure module for makeITeasy.Appframework for Entity Framework 6</Description>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	  <RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
+	  <PackageTags>framework ef</PackageTags>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="10.1.1" />
+		<PackageReference Include="DelegateDecompiler.EntityFrameworkCore5" Version="0.30" />
+		<PackageReference Include="EFCore.BulkExtensions" Version="6.2.8" />
+		<PackageReference Include="EntityFramework" Version="6.4.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\makeITeasy.AppFramework.Core\makeITeasy.AppFramework.Core.csproj" />
+	  <ProjectReference Include="..\makeITeasy.AppFramework.Models\makeITeasy.AppFramework.Models.csproj" />
+	</ItemGroup>
+
+</Project>

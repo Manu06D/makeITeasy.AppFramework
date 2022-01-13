@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9E17E052-009
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "makeITeasy.AppFramework.Core", "src\makeITeasy.AppFramework.Core\makeITeasy.AppFramework.Core.csproj", "{B79A01A4-2436-4E50-A905-3BDE190E2096}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample.dotnet5", "sample.dotnet5", "{8EAA7041-3FC7-4D29-B880-1394201E0AA3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample-dotnet5", "sample-dotnet5", "{8EAA7041-3FC7-4D29-B880-1394201E0AA3}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "makeITeasy.CarCatalog.Database", "sample\makeITeasy.CarCatalog.Database\makeITeasy.CarCatalog.Database.sqlproj", "{7E0391C7-E4DC-4F33-A912-11FD18194D3F}"
 EndProject
@@ -34,6 +34,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "makeITeasy.AppFramework.Infrastructure", "makeITeasy.AppFramework.Infrastructure\makeITeasy.AppFramework.Infrastructure.csproj", "{328AA635-C337-4E43-B8DF-B40FF093E2F6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "makeITeasy.CarCatalog.dotnet6.WebApp", "sample-dotnet6\makeITeasy.CarCatalog.dotnet6.WebApp\makeITeasy.CarCatalog.dotnet6.WebApp.csproj", "{7B466739-626A-43C3-9478-71A2E5A7C1D7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample-dotnet6", "sample-dotnet6", "{53C000FC-9912-48F0-A94F-5887CC8FBD6A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "makeITeasy.CarCatalog.dotnet6.Models", "sample-dotnet6\makeITeasy.CarCatalog.dotnet6.Models\makeITeasy.CarCatalog.dotnet6.Models.csproj", "{F989224C-7EBA-4790-8F43-201CC76DA49E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "makeITeasy.CarCatalog.dotnet6.Infrastructure", "sample-dotnet6\makeITeasy.CarCatalog.dotnet6.Infrastructure\makeITeasy.CarCatalog.dotnet6.Infrastructure.csproj", "{5F61E502-318E-49B3-B573-9D6C52F7F461}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "makeITeasy.CarCatalog.dotnet6.Core", "sample-dotnet6\makeITeasy.CarCatalog.dotnet6.Core\makeITeasy.CarCatalog.dotnet6.Core.csproj", "{6C14BC4E-5D57-47F2-8AD9-D29E34FE4494}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "makeITeasy.CarCatalog.dotnet6.Tests", "sample-dotnet6\makeITeasy.CarCatalog.dotnet6.Tests\makeITeasy.CarCatalog.dotnet6.Tests.csproj", "{CF0C9B55-46F8-4FBE-A713-BD5FD60582AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "makeITeasy.AppFramework.Infrastructure.EF6", "src\makeITeasy.AppFramework.Infrastructure.EF6\makeITeasy.AppFramework.Infrastructure.EF6.csproj", "{78DC2486-1736-469A-9A0E-2F1409369F81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +97,30 @@ Global
 		{328AA635-C337-4E43-B8DF-B40FF093E2F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{328AA635-C337-4E43-B8DF-B40FF093E2F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{328AA635-C337-4E43-B8DF-B40FF093E2F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B466739-626A-43C3-9478-71A2E5A7C1D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B466739-626A-43C3-9478-71A2E5A7C1D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B466739-626A-43C3-9478-71A2E5A7C1D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B466739-626A-43C3-9478-71A2E5A7C1D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F989224C-7EBA-4790-8F43-201CC76DA49E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F989224C-7EBA-4790-8F43-201CC76DA49E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F989224C-7EBA-4790-8F43-201CC76DA49E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F989224C-7EBA-4790-8F43-201CC76DA49E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F61E502-318E-49B3-B573-9D6C52F7F461}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F61E502-318E-49B3-B573-9D6C52F7F461}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F61E502-318E-49B3-B573-9D6C52F7F461}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F61E502-318E-49B3-B573-9D6C52F7F461}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C14BC4E-5D57-47F2-8AD9-D29E34FE4494}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C14BC4E-5D57-47F2-8AD9-D29E34FE4494}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C14BC4E-5D57-47F2-8AD9-D29E34FE4494}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C14BC4E-5D57-47F2-8AD9-D29E34FE4494}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF0C9B55-46F8-4FBE-A713-BD5FD60582AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF0C9B55-46F8-4FBE-A713-BD5FD60582AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF0C9B55-46F8-4FBE-A713-BD5FD60582AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF0C9B55-46F8-4FBE-A713-BD5FD60582AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78DC2486-1736-469A-9A0E-2F1409369F81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78DC2486-1736-469A-9A0E-2F1409369F81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78DC2486-1736-469A-9A0E-2F1409369F81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78DC2486-1736-469A-9A0E-2F1409369F81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -98,6 +136,12 @@ Global
 		{2ACBF4D1-3F1B-4E6A-9BBB-519138951A65} = {8EAA7041-3FC7-4D29-B880-1394201E0AA3}
 		{995A1A21-3448-4058-A17F-BE17B29978D2} = {9E17E052-0091-4B8C-BA9C-1DCF26F0D0F0}
 		{328AA635-C337-4E43-B8DF-B40FF093E2F6} = {9E17E052-0091-4B8C-BA9C-1DCF26F0D0F0}
+		{7B466739-626A-43C3-9478-71A2E5A7C1D7} = {53C000FC-9912-48F0-A94F-5887CC8FBD6A}
+		{F989224C-7EBA-4790-8F43-201CC76DA49E} = {53C000FC-9912-48F0-A94F-5887CC8FBD6A}
+		{5F61E502-318E-49B3-B573-9D6C52F7F461} = {53C000FC-9912-48F0-A94F-5887CC8FBD6A}
+		{6C14BC4E-5D57-47F2-8AD9-D29E34FE4494} = {53C000FC-9912-48F0-A94F-5887CC8FBD6A}
+		{CF0C9B55-46F8-4FBE-A713-BD5FD60582AD} = {53C000FC-9912-48F0-A94F-5887CC8FBD6A}
+		{78DC2486-1736-469A-9A0E-2F1409369F81} = {9E17E052-0091-4B8C-BA9C-1DCF26F0D0F0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0C3977D6-0D6B-40FF-BF97-481316AA2FB9}
