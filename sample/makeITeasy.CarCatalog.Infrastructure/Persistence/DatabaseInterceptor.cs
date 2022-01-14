@@ -66,6 +66,11 @@ namespace makeITeasy.CarCatalog.Infrastructure.Persistence
 
         public ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
         {
+
+            var context = eventData.Context;
+            context.ChangeTracker.DetectChanges();
+
+            var t = context.ChangeTracker.Entries();
             return new ValueTask<InterceptionResult<int>>(result);
         }
     }

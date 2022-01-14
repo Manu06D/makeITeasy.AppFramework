@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	  <Version>6.0.0</Version>
+	  <Version>6.0.0-beta01</Version>
 	  <Authors>Emmanuel D.</Authors>
 	  <Company>Make IT Easy</Company>
 	  <Description>Infrastructure module for makeITeasy.Appframework for Entity Framework 6</Description>
