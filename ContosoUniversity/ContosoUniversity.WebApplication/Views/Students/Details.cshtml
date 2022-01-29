@@ -1,0 +1,13 @@
+﻿@using ContosoUniversity.WebApplication.Models.Students
+@model StudentDetailsViewModel
+@{
+    Layout = "_Modal";
+    ViewBag.PageTitle = "Student Details";
+}
+
+<div>
+Name : @Model.FirstName @Model.LastName
+</div>
+<div>
+Enrollment Date : @Model.EnrollmentDate.ToLongDateString()
+</div>

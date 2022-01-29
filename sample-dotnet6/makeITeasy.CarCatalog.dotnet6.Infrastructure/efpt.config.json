@@ -22,6 +22,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[CarDetails]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Country]",
          "ObjectType": 0
       }

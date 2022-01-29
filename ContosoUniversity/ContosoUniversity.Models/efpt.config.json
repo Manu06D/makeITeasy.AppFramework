@@ -1,0 +1,62 @@
+﻿{
+   "CodeGenerationMode": 2,
+   "ContextClassName": "ContosoUniversityDatabasesContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": null,
+   "ProjectRootNamespace": "ContosoUniversity.Models",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 0,
+   "SelectedToBeGenerated": 2,
+   "Tables": [
+      {
+         "Name": "[dbo].[Course]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CourseAssignment]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Department]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Enrollment]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Instructor]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[OfficeAssignment]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Student]",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": "ContosoUniversity.Databases\\ContosoUniversity.Databases.sqlproj",
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDbContextSplitting": false,
+   "UseFluentApiOnly": true,
+   "UseHandleBars": true,
+   "UseInflector": true,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": true,
+   "UseNoConstructor": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UseSchemaFolders": false,
+   "UseSpatial": false
+}

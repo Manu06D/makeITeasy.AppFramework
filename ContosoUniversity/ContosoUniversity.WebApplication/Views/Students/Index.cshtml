@@ -1,0 +1,59 @@
+﻿@using ContosoUniversity.WebApplication.ApiControllers
+@using ContosoUniversity.WebApplication.Controllers
+@using ContosoUniversity.WebApplication.Models.Datatables
+@{
+    ViewData["Title"] = "Home Page";
+
+    var studentDatatable = new StudentDatatable(Url?.RouteUrl(nameof(StudentApiController.StudentDatatableSearchRequest)));
+}
+
+<div id="modalEdit"></div>
+
+<form asp-antiforgery="false" onsubmit="event.preventDefault();" id="searchRequestForm">
+</form>
+
+<vc:datatable configuration="studentDatatable"></vc:datatable>
+
+@section Scripts
+{
+<script>
+        $(document).ready(function () {
+            initDatatable("@studentDatatable.TableID", "#searchRequestForm", columnRenderers, null);
+        });
+
+        var columnRenderers = {
+             'enrollmentDate': (data) => {
+                return new Date(data).toLocaleDateString();
+            },
+            'edit': (data, type, row) => {
+                return '<button type="button" class="btn btn-primary mr-2" data-toggle="ajax-modal" data-target="#modalEdit" data-url="@Url.ActionLink(nameof(Students.Edit), nameof(Students))/' + row.id + '"><i class="fas fa-edit mr-2"></i>Edit</button>' 
+                    +
+                    '<button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#modalEdit" data-url="@Url.ActionLink(nameof(Students.Details), nameof(Students))/' + row.id + '"><i class="fas fa-eye mr-2"></i>Details</button>';
+            }
+        }
+
+        //datatables draw => add modal handlers for rows
+        $("#@studentDatatable.TableID").on("dblDrawEvent", '', function (event) {
+            $('#@studentDatatable.TableID [data-toggle="ajax-modal"]').on("click", function (event) {
+                var modal = new saveModal();
+                modal.initModal(this);
+            });
+        });
+
+        //reload datatable on save
+        $("#@studentDatatable.TableID").on("saveDataEvent", 
+            function (event) { 
+                datatableReload("@studentDatatable.TableID", null, false); 
+                toastr.success('student has been saved / updated', 'Success', {timeOut: 5000})
+        });
+
+        //$("#@studentDatatable.TableID").on("dblClickEvent", '', function (event, arg1, arg2) {
+        //    $.slidePanel.show({
+        //        url: '@Url.Action("CarDetails", "Home")' + "/" + arg2,
+        //        settings: {
+        //        method: 'GET'
+        //        }
+        //    });
+        //});
+</script>
+}

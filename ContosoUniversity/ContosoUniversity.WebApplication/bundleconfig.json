@@ -1,0 +1,27 @@
+[
+  {
+    "outputFileName": "wwwroot/dist/contosouniversity.min.js",
+    "inputFiles": [
+      "wwwroot/lib/jquery/jquery.min.js",
+      "wwwroot/lib/datatables/js/jquery.dataTables.min.js",
+      "wwwroot/lib/datatables.net-responsive/js/dataTables.responsive.js",
+      "wwwroot/lib/datatables/js/dataTables.bootstrap4.js",
+      "wwwroot/lib/jquery-validate/jquery.validate.js",
+      "wwwroot/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js",
+      "wwwroot/lib/twitter-bootstrap/js/bootstrap.js",
+      "wwwroot/lib/toastr.js/toastr.min.js",
+      "wwwroot/lib/font-awesome/js/all.js"
+    ],
+    "minify": { "enabled": false }
+  },
+  {
+    "outputFileName": "wwwroot/dist/contosouniversity.min.css",
+    "inputFiles": [
+      "wwwroot/lib/twitter-bootstrap/css/bootstrap.css",
+      "wwwroot/lib/toastr.js/toastr.css",
+      "wwwroot/css/site.css",
+      "wwwroot/lib/datatables/css/jquery.dataTables.css",
+      "wwwroot/lib/font-awesome/css/all.css"
+    ]
+  }
+]

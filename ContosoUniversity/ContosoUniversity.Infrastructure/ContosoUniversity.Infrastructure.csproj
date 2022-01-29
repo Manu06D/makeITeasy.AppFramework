@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\makeITeasy.AppFramework.Infrastructure.EF6\makeITeasy.AppFramework.Infrastructure.EF6.csproj" />
+    <ProjectReference Include="..\ContosoUniversity.Core\ContosoUniversity.Core.csproj" />
+    <ProjectReference Include="..\ContosoUniversity.Models\ContosoUniversity.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Persistence\" />
+    <Folder Include="Repositories\" />
+  </ItemGroup>
+
+</Project>

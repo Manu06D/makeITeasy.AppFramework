@@ -22,6 +22,9 @@
          "ObjectType": 0
       },
       {
+         "ExcludedColumns": [
+            "DynamicCarDetails"
+         ],
          "Name": "[dbo].[CarDetails]",
          "ObjectType": 0
       },

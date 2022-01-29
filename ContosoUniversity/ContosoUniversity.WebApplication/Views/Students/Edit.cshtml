@@ -1,0 +1,21 @@
+﻿@using ContosoUniversity.WebApplication.Models.Students
+@model StudentEditViewModel
+@{
+    Layout = "_Modal";
+    ViewBag.PageTitle = "Edit Student";
+}
+
+<form action="@Url.Action("Edit", "Students")" id="editStudentInformationForm" method="post" class="form-horizontal">
+    <div asp-validation-summary="All" class="alert alert-danger">
+        <i class="fa fa-exclamation-circle fa-3x validation-summary-errorBlock"></i>
+    </div>
+    <div class="form-group">
+        <input asp-for="Id" hidden="hidden" />
+        <label asp-for="FirstName" class="control-label">FirstName</label>
+        <input type="text" asp-for="FirstName" class="form-control" />
+        <label asp-for="LastName" class="control-label">LastName</label>
+        <input type="text" asp-for="LastName" class="form-control" />
+        <label asp-for="EnrollmentDate" class="control-label">EnrollmentDate</label>
+        <input type="date" asp-for="EnrollmentDate" class="form-control" />
+    </div>
+</form>
