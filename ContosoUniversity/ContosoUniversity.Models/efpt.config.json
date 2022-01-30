@@ -26,6 +26,9 @@
          "ObjectType": 0
       },
       {
+         "ExcludedColumns": [
+            "Grade"
+         ],
          "Name": "[dbo].[Enrollment]",
          "ObjectType": 0
       },

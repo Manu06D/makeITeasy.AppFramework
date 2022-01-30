@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ContosoUniversity.Models.Enums;
 
 namespace ContosoUniversity.Models
 {
     public partial class Enrollment
     {
         public object DatabaseID => EnrollmentId;
+
+        public Grade? Grade { get; set; }
     }
 }

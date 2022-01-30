@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ContosoUniversity.WebApplication.Models.Students
+namespace ContosoUniversity.WebApplication.Models.StudentModels
 {
     public abstract class BaseStudentViewModel
     {
