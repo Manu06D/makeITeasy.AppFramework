@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Reflection;
-using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using DelegateDecompiler.EntityFrameworkCore;
@@ -22,6 +18,8 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
         private readonly IDbContextFactory<U> _dbFactory;
         private readonly IMapper _mapper;
         private U _dbContext = null;
+
+        public ICurrentDateProvider DateProvider { get; set; }
 
         protected BaseEfRepository(IDbContextFactory<U> dbFactory, IMapper mapper)
         {
@@ -194,7 +192,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
 
         private bool PrepareEntityForDbOperation(T entity, EntityState state)
         {
-            DateTime now = DateTime.Now;
+            DateTime now = DateProvider?.Now ?? DateTime.Now;
 
             (var action, bool recursive) = GetITimeTrackingAction(state, now);
 
@@ -223,7 +221,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
 
         private void PrepareEntitiesForDbOperation(ICollection<T> entities, EntityState state)
         {
-            DateTime now = DateTime.Now;
+            DateTime now = DateProvider?.Now ?? DateTime.Now;
 
             (var action, bool recursive) = GetITimeTrackingAction(state, now);
 

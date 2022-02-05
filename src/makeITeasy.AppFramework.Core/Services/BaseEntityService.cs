@@ -15,7 +15,9 @@ namespace makeITeasy.AppFramework.Core.Services
 {
     public class BaseEntityService<TEntity> : IBaseEntityService<TEntity>, IDisposable where TEntity : class, IBaseEntity
     {
+        //injected by autofac by propertieswired
         protected IValidatorFactory ValidatorFactory { get; set; }
+        //injected by autofac by propertieswired
         public IAsyncRepository<TEntity> EntityRepository { get; set; }
         protected ILogger<BaseEntityService<TEntity>> _logger { get; set; }
 

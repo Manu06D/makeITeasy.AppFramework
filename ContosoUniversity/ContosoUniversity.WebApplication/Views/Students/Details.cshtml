@@ -16,7 +16,7 @@ Name : @Model.FirstName @Model.LastName
 Enrollment Date : @Model.EnrollmentDate.ToLongDateString()
 </div>
 
-<h2>Enrollments</h2>
+<h4>Enrollments</h4>
 <form asp-antiforgery="false" onsubmit="event.preventDefault();" id="enrollmentSearchRequestForm">
     <input type="text" class="form-control" name="StudentId" hidden="hidden" value="@Model.Id"/>
 </form>

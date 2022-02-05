@@ -23,6 +23,8 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
         private readonly IMapper _mapper;
         private U _dbContext = null;
 
+        public ICurrentDateProvider DateProvider { get; set; }
+
         protected BaseEfRepository(IDbContextFactory<U> dbFactory, IMapper mapper)
         {
             _dbFactory = dbFactory;
@@ -194,7 +196,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
         private bool PrepareEntityForDbOperation(T entity, EntityState state)
         {
-            DateTime now = DateTime.Now;
+            DateTime now = _dateProvider?.Now ?? DateTime.Now;
 
             (var action, bool recursive) = GetITimeTrackingAction(state, now);
 
@@ -223,7 +225,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
         private void PrepareEntitiesForDbOperation(ICollection<T> entities, EntityState state)
         {
-            DateTime now = DateTime.Now;
+            DateTime now = _dateProvider?.Now ?? DateTime.Now;
 
             (var action, bool recursive) = GetITimeTrackingAction(state, now);
 
