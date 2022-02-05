@@ -196,7 +196,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
         private bool PrepareEntityForDbOperation(T entity, EntityState state)
         {
-            DateTime now = _dateProvider?.Now ?? DateTime.Now;
+            DateTime now = DateProvider?.Now ?? DateTime.Now;
 
             (var action, bool recursive) = GetITimeTrackingAction(state, now);
 
@@ -225,7 +225,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
         private void PrepareEntitiesForDbOperation(ICollection<T> entities, EntityState state)
         {
-            DateTime now = _dateProvider?.Now ?? DateTime.Now;
+            DateTime now = DateProvider?.Now ?? DateTime.Now;
 
             (var action, bool recursive) = GetITimeTrackingAction(state, now);
 

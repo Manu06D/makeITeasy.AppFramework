@@ -1,8 +1,12 @@
 ﻿using System.Reflection;
+
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+
 using AutoMapper.Contrib.Autofac.DependencyInjection;
+
 using FluentValidation;
+
 using makeITeasy.AppFramework.Core.Helpers;
 using makeITeasy.AppFramework.Core.Infrastructure.Autofac;
 using makeITeasy.AppFramework.Core.Interfaces;
@@ -14,13 +18,16 @@ using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Infrastructure.Persistence;
 using makeITeasy.CarCatalog.Infrastructure.Repositories;
 using makeITeasy.CarCatalog.Models;
+
 using MediatR;
 using MediatR.Extensions.Autofac.DependencyInjection;
+
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+
 using Module = Autofac.Module;
 
 namespace makeITeasy.CarCatalog.Tests
@@ -47,11 +54,12 @@ namespace makeITeasy.CarCatalog.Tests
             var sqlLiteMemoryConnection = new SqliteConnection("DataSource=:memory:");
             sqlLiteMemoryConnection.Open();
 
+            //services.AddDbContext<CarCatalogContext>(options =>
             _ = services.AddDbContextFactory<CarCatalogContext>(options =>
                         {
                             options.UseSqlite(sqlLiteMemoryConnection);
-                            //options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CarCatalog3;Trusted_Connection=True;MultipleActiveResultSets=true");
                             options.AddInterceptors(new DatabaseInterceptor());
+                            //options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CarCatalog3;Trusted_Connection=True;MultipleActiveResultSets=true");
                             options.EnableSensitiveDataLogging(true);
                             options.ConfigureWarnings(x => x.Ignore(RelationalEventId.AmbientTransactionWarning));
                         });
@@ -82,7 +90,10 @@ namespace makeITeasy.CarCatalog.Tests
                 .OnActivated(args => AutofacHelper.InjectProperties(args.Context, args.Instance, true));
 
             //specific service/repository
-            builder.RegisterType<CarService>().As<ICarService>();
+            builder.RegisterType<CarService>().As<ICarService>()
+                //let's inject the properties (IDateTimeProvider)
+                .OnActivated(args => AutofacHelper.InjectProperties(args.Context, args.Instance, true));
+            ;
             builder.RegisterType<CarRepository>().As<ICarRepository>();
 
             builder.RegisterAssemblyTypes(CarCatalogModels.Assembly).Where(t => t.IsClosedTypeOf(typeof(IValidator<>))).AsImplementedInterfaces();
