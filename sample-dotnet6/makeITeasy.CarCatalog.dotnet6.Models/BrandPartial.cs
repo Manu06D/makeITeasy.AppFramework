@@ -2,7 +2,7 @@
 
 namespace makeITeasy.CarCatalog.dotnet6.Models
 {
-    public partial class Brand
+    public partial class Brand : ITimeTrackingEntity
     {
         public object DatabaseID { get => Id; }
     }

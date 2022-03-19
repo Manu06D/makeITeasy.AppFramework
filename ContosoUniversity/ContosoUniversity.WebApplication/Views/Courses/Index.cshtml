@@ -1,0 +1,56 @@
+﻿@using ContosoUniversity.WebApplication.ApiControllers
+@using ContosoUniversity.WebApplication.Controllers
+@using ContosoUniversity.WebApplication.Models.Datatables
+@{
+    ViewData["Title"] = "Courses";
+
+    var courseDatatable = new CourseDatatable(Url?.RouteUrl(nameof(DatatablesApiController.CoursesDatatableSearchRequest)));
+}
+
+<div id="modalEdit"></div>
+
+<form asp-antiforgery="false" onsubmit="event.preventDefault();" id="searchRequestForm">
+</form>
+
+<vc:datatable configuration="courseDatatable"></vc:datatable>
+
+@section Scripts
+{
+<script>
+        $(document).ready(function () {
+            initDatatable("@courseDatatable.TableID", "#searchRequestForm", columnRenderers, null);
+        });
+
+        var columnRenderers = {
+            'edit': (data, type, row) => {
+                return '<button type="button" class="btn btn-primary mr-2" data-toggle="ajax-modal" data-target="#modalEdit" data-url="@Url.ActionLink(nameof(CoursesController.Edit), "Courses")/' + row.courseId + '"><i class="fas fa-edit mr-2"></i>Edit</button>' 
+                    +
+                    '<button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#modalEdit" data-url="@Url.ActionLink(nameof(CoursesController.Details), "Courses")/' + row.courseId + '"><i class="fas fa-eye mr-2"></i>Details</button>';
+            }
+        }
+
+        //datatables draw => add modal handlers for rows
+        $("#@courseDatatable.TableID").on("dblDrawEvent", '', function (event) {
+            $('#@courseDatatable.TableID [data-toggle="ajax-modal"]').on("click", function (event) {
+                var modal = new saveModal();
+                modal.initModal(this);
+            });
+        });
+
+        //reload datatable on save
+        $("#@courseDatatable.TableID").on("saveDataEvent", 
+            function (event) { 
+                datatableReload("@courseDatatable.TableID", null, false); 
+                toastr.success('student has been saved / updated', 'Success', {timeOut: 5000})
+        });
+
+        //$("#@courseDatatable.TableID").on("dblClickEvent", '', function (event, arg1, arg2) {
+        //    $.slidePanel.show({
+        //        url: '@Url.Action("CarDetails", "Home")' + "/" + arg2,
+        //        settings: {
+        //        method: 'GET'
+        //        }
+        //    });
+        //});
+</script>
+}

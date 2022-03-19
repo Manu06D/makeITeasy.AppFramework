@@ -90,7 +90,10 @@ namespace makeITeasy.CarCatalog.dotnet6.Tests
                 .OnActivated(args => AutofacHelper.InjectProperties(args.Context, args.Instance, true));
 
             //specific service/repository
-            builder.RegisterType<CarService>().As<ICarService>();
+            builder.RegisterType<CarService>().As<ICarService>()
+                //let's inject the properties (IDateTimeProvider)
+                .OnActivated(args => AutofacHelper.InjectProperties(args.Context, args.Instance, true));
+            ;
             builder.RegisterType<CarRepository>().As<ICarRepository>();
 
             builder.RegisterAssemblyTypes(CarCatalogModels.Assembly).Where(t => t.IsClosedTypeOf(typeof(IValidator<>))).AsImplementedInterfaces();
