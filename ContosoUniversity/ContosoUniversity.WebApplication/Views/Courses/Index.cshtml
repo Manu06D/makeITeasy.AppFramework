@@ -23,9 +23,9 @@
 
         var columnRenderers = {
             'edit': (data, type, row) => {
-                return '<button type="button" class="btn btn-primary mr-2" data-toggle="ajax-modal" data-target="#modalEdit" data-url="@Url.ActionLink(nameof(CoursesController.Edit), "Courses")/' + row.id + '"><i class="fas fa-edit mr-2"></i>Edit</button>' 
+                return '<button type="button" class="btn btn-primary mr-2" data-toggle="ajax-modal" data-target="#modalEdit" data-url="@Url.ActionLink(nameof(CoursesController.Edit), "Courses")/' + row.courseId + '"><i class="fas fa-edit mr-2"></i>Edit</button>' 
                     +
-                    '<button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#modalEdit" data-url="@Url.ActionLink(nameof(CoursesController.Details), "Courses")/' + row.id + '"><i class="fas fa-eye mr-2"></i>Details</button>';
+                    '<button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#modalEdit" data-url="@Url.ActionLink(nameof(CoursesController.Details), "Courses")/' + row.courseId + '"><i class="fas fa-eye mr-2"></i>Details</button>';
             }
         }
 

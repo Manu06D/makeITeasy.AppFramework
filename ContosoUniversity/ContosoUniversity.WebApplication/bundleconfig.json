@@ -10,7 +10,8 @@
       "wwwroot/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js",
       "wwwroot/lib/twitter-bootstrap/js/bootstrap.js",
       "wwwroot/lib/toastr.js/toastr.min.js",
-      "wwwroot/lib/font-awesome/js/all.js"
+      "wwwroot/lib/font-awesome/js/all.js",
+      "wwwroot/lib/vue/vue.global.min.js"
     ],
     "minify": { "enabled": false }
   },

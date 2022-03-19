@@ -126,7 +126,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
         private async Task<(int, IQueryable<T>)> CreateQueryableFromSpec(ISpecification<T> spec, U dbContext, bool includeCount = false)
         {
-            if (typeof(IIsValidSpecification).IsAssignableFrom(spec.GetType()) && ! ((IIsValidSpecification)spec).IsValid())
+            if (typeof(IIsValidSpecification).IsAssignableFrom(spec.GetType()) && !((IIsValidSpecification)spec).IsValid())
             {
                 throw new InvalidQueryException();
             }
@@ -200,7 +200,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
             (var action, bool recursive) = GetITimeTrackingAction(state, now);
 
-            bool dateTimeUpdated = UpdateITimeTrackingEntities(entity, action, recursive);
+            bool dateTimeUpdated = UpdateITimeTrackingEntity(entity, action, recursive);
 
             return dateTimeUpdated;
         }
@@ -234,13 +234,13 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
         private void UpdateITimeTrackingEntities(ICollection<T> entities, Action<ITimeTrackingEntity> action, bool recursive = true)
         {
-            foreach(var entity in entities)
+            foreach (var entity in entities)
             {
-                UpdateITimeTrackingEntities(entity, action, recursive);
+                UpdateITimeTrackingEntity(entity, action, recursive);
             }
         }
 
-        private bool UpdateITimeTrackingEntities(IBaseEntity entity, Action<ITimeTrackingEntity> action, bool recursive = true)
+        private bool UpdateITimeTrackingEntity(IBaseEntity entity, Action<ITimeTrackingEntity> action, bool recursive = true)
         {
             bool result = false;
 
@@ -253,17 +253,27 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
             if (iTimeTrackingType.IsAssignableFrom(entity.GetType()))
             {
-                action(((ITimeTrackingEntity)entity));
+                action((ITimeTrackingEntity)entity);
 
                 result = true;
             }
 
             //deep dive in child to set date
-            foreach(var property in entity.GetType().GetProperties())
+            foreach (var property in entity.GetType().GetProperties())
             {
                 if (recursive && property.PropertyType.IsClass && typeof(IBaseEntity).IsAssignableFrom(property.PropertyType))
                 {
-                    UpdateITimeTrackingEntities((IBaseEntity)property.GetValue(entity), action);
+                    UpdateITimeTrackingEntity((IBaseEntity)property.GetValue(entity), action);
+                }
+                else if (property.PropertyType.IsGenericType && property.PropertyType.GetInterface(nameof(System.Collections.IEnumerable)) != null)
+                {
+                    if (property.PropertyType.GetGenericArguments().Any(x => iTimeTrackingType.IsAssignableFrom(x)))
+                    {
+                        foreach (var x in (System.Collections.IEnumerable)property.GetValue(entity))
+                        {
+                            UpdateITimeTrackingEntity(x as IBaseEntity, action);
+                        }
+                    }
                 }
             }
 
@@ -327,7 +337,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             var result = new CommandResult<T>();
             T databaseEntity = await GetByIdAsync(entity.DatabaseID);
 
-            if(PrepareEntityForDbOperation(entity, EntityState.Modified))
+            if (PrepareEntityForDbOperation(entity, EntityState.Modified))
             {
                 Array.Resize(ref propertyNames, propertyNames.Length + 1);
                 propertyNames[propertyNames.Length - 1] = nameof(ITimeTrackingEntity.LastModificationDate);
@@ -345,9 +355,9 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
                         object newValue = property.GetValue(entity);
 
                         if (
-                            (oldValue?.Equals(newValue) == false)
+                            oldValue?.Equals(newValue) == false
                             ||
-                            (oldValue == null && newValue != null))
+                            oldValue == null && newValue != null)
                         {
                             property.SetValue(databaseEntity, newValue);
                             dbContext.Entry(databaseEntity).Property(property.Name).IsModified = true;

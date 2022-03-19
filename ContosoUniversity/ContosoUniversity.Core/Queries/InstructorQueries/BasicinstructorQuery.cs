@@ -2,9 +2,9 @@
 
 using makeITeasy.AppFramework.Models;
 
-namespace ContosoUniversity.Core.Queries.StudentQueries
+namespace ContosoUniversity.Core.Queries.InstructorQueries
 {
-    public class BasicinstructorQuery : BaseTransactionQuery<Student>
+    public class BasicInstructorQuery : BaseTransactionQuery<Instructor>
     {
         public int? ID { get; set; }
 

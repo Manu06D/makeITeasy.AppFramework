@@ -11,12 +11,14 @@ using makeITeasy.CarCatalog.dotnet6.Infrastructure.Data;
 using makeITeasy.CarCatalog.dotnet6.Models;
 
 using Xunit;
+using System.Collections.Generic;
 
 namespace makeITeasy.CarCatalog.dotnet6.Tests
 {
     public class ITimeTrackingEntity_Tests : UnitTestAutofacService<ServiceRegistrationAutofacModule>
     {
         private ICarService carService;
+        private ICountryService countryService;
 
         public ITimeTrackingEntity_Tests()
         {
@@ -24,11 +26,13 @@ namespace makeITeasy.CarCatalog.dotnet6.Tests
 
             t.Database.EnsureCreated();
             carService = Resolve<ICarService>();
+            countryService = Resolve<ICountryService>();
         }
 
         ~ITimeTrackingEntity_Tests()
         {
             carService = null;
+            countryService = null;
         }
 
         [Fact]
@@ -115,6 +119,20 @@ namespace makeITeasy.CarCatalog.dotnet6.Tests
             var tt = await carService.GetByIdAsync(newCar.Id);
 
             tt.LastModificationDate.GetValueOrDefault().Should().BeAfter(creationDateTime);
+        }
+
+        [Fact]
+        public async Task CreationRangeDate_RecursiveTest()
+        {
+            DateTime dateTimeOfTest = DateTime.Now;
+
+            Country country = new () { Name = "MyCountry", CountryCode = "MC", Brands = new List<Brand>() };
+
+            country.Brands.Add(new Brand() { Name = "MyBrand", Cars = new List<Car>() { new Car() { Name = "MyCar" } } });
+
+            var dbCreation = await countryService.CreateAsync(country);
+
+            dbCreation.Entity.Brands.Should().Match(x => x.All(y => y.CreationDate.HasValue && y.CreationDate > dateTimeOfTest));
         }
     }
 }

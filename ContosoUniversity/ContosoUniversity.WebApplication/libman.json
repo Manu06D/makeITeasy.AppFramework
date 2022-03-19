@@ -84,6 +84,13 @@
         "webfonts/fa-solid-900.woff",
         "webfonts/fa-solid-900.woff2"
       ]
+    },
+    {
+      "library": "vue@3.2.31",
+      "destination": "wwwroot/lib/vue/",
+      "files": [
+        "vue.global.min.js"
+      ]
     }
   ]
 }

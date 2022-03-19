@@ -15,10 +15,13 @@ namespace ContosoUniversity.WebApplication.Models.Datatables
         [TableColumn(Name = nameof(Title), Title = "Title", Priority = 2)]
         public string? Title { get; set; }
 
+        [TableColumn(Name = nameof(DepartmentName), Title = "Department", SortDataSource ="Department.Name",  Priority = 2)]
+        public string? DepartmentName { get; set; }
+
         [TableColumn(Name = nameof(Credits), Title = "Credits", Priority = 2)]
         public int Credits { get; set; }
 
-        [TableColumn(Name = nameof(EnrollmentCount), Title = "EnrollementCount", Priority = 2)]
+        [TableColumn(Name = nameof(EnrollmentCount), Title = "Students", SortDataSource = "Enrollments.Count",  Priority = 2)]
         public int EnrollmentCount { get; set; }
 
         [TableColumn(Name = nameof(Edit), Title = "", Priority = 2, Sortable = false)]

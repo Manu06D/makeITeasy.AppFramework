@@ -36,6 +36,7 @@
    "UseDbContextSplitting": false,
    "UseFluentApiOnly": true,
    "UseHandleBars": true,
+   "UseHierarchyId": false,
    "UseInflector": true,
    "UseLegacyPluralizer": false,
    "UseManyToManyEntity": false,

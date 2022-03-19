@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -196,7 +197,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
 
             (var action, bool recursive) = GetITimeTrackingAction(state, now);
 
-            bool dateTimeUpdated = UpdateITimeTrackingEntities(entity, action, recursive);
+            bool dateTimeUpdated = UpdateITimeTrackingEntity(entity, action, recursive);
 
             return dateTimeUpdated;
         }
@@ -232,11 +233,11 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
         {
             foreach (var entity in entities)
             {
-                UpdateITimeTrackingEntities(entity, action, recursive);
+                UpdateITimeTrackingEntity(entity, action, recursive);
             }
         }
 
-        private bool UpdateITimeTrackingEntities(IBaseEntity entity, Action<ITimeTrackingEntity> action, bool recursive = true)
+        private bool UpdateITimeTrackingEntity(IBaseEntity entity, Action<ITimeTrackingEntity> action, bool recursive = true)
         {
             bool result = false;
 
@@ -259,7 +260,17 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
             {
                 if (recursive && property.PropertyType.IsClass && typeof(IBaseEntity).IsAssignableFrom(property.PropertyType))
                 {
-                    UpdateITimeTrackingEntities((IBaseEntity)property.GetValue(entity), action);
+                    UpdateITimeTrackingEntity((IBaseEntity)property.GetValue(entity), action);
+                }
+                else if (property.PropertyType.IsGenericType && property.PropertyType.GetInterface(nameof(System.Collections.IEnumerable)) != null)
+                {
+                    if(property.PropertyType.GetGenericArguments().Any(x => iTimeTrackingType.IsAssignableFrom(x)))
+                    {
+                        foreach(var x in (System.Collections.IEnumerable)property.GetValue(entity))
+                        {
+                            UpdateITimeTrackingEntity(x as IBaseEntity, action);
+                        }                      
+                    }                    
                 }
             }
 

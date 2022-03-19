@@ -55,5 +55,11 @@ namespace ContosoUniversity.WebApplication.ApiControllers
         {
             return await buildGenericDatatableQuery<StudentEnrollmentDatatable, StudentEnrollmentDatatableViewModel, Enrollment>(request);
         }
+
+        [HttpPost("/api/datatables/instructors/search", Name = nameof(InstructorsDatatableSearchRequest))]
+        public async Task<IActionResult> InstructorsDatatableSearchRequest(IDataTablesRequest request)
+        {
+            return await buildGenericDatatableQuery<InstructorDatatable, InstructorDatatableViewModel, Instructor>(request);
+        }
     }
 }

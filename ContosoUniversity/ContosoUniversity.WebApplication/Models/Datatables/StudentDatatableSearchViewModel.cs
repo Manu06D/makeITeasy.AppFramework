@@ -2,7 +2,7 @@
 
 namespace ContosoUniversity.WebApplication.Models.Datatables
 {
-    public class StudentDatatableSearchViewModel : BasicStudentQuery
+    public class StudentDatatableSearchViewModel : BasicinstructorQuery
     {
     }
 }

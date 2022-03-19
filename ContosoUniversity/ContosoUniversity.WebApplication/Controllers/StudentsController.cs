@@ -38,7 +38,7 @@ namespace ContosoUniversity.WebApplication.Controllers
             if (id > 0)
             {
                 var students =
-                    await _mediator.Send(new GenericQueryWithProjectCommand<Student, StudentEditViewModel>(new BasicStudentQuery() { ID = id }));
+                    await _mediator.Send(new GenericQueryWithProjectCommand<Student, StudentEditViewModel>(new BasicinstructorQuery() { ID = id }));
 
                 StudentEditViewModel? model = students.Results.FirstOrDefault();
 
@@ -67,7 +67,7 @@ namespace ContosoUniversity.WebApplication.Controllers
         public async Task<IActionResult> Details(int id)
         {
             QueryResult<StudentDetailsViewModel> result = 
-                await _mediator.Send(new GenericQueryWithProjectCommand<Student, StudentDetailsViewModel>(new BasicStudentQuery() { ID = id }));
+                await _mediator.Send(new GenericQueryWithProjectCommand<Student, StudentDetailsViewModel>(new BasicinstructorQuery() { ID = id }));
 
             return PartialView(result.Results.FirstOrDefault());
         }

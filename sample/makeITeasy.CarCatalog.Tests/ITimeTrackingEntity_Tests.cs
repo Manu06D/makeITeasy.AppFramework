@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -14,6 +15,7 @@ namespace makeITeasy.CarCatalog.Tests
     public class ITimeTrackingEntity_Tests : UnitTestAutofacService<ServiceRegistrationAutofacModule>
     {
         private ICarService carService;
+        private ICountryService countryService;
 
         public ITimeTrackingEntity_Tests()
         {
@@ -21,11 +23,13 @@ namespace makeITeasy.CarCatalog.Tests
 
             t.Database.EnsureCreated();
             carService = Resolve<ICarService>();
+            countryService = Resolve<ICountryService>();
         }
 
         ~ITimeTrackingEntity_Tests()
         {
             carService = null;
+            countryService = null;
         }
 
         [Fact]
@@ -80,7 +84,7 @@ namespace makeITeasy.CarCatalog.Tests
 
             var dbCreation = await carService.CreateRangeAsync(carList);
 
-            dbCreation.Should().Match(x => x.All(y => y.Entity.CreationDate.HasValue));            
+            dbCreation.Should().Match(x => x.All(y => y.Entity.CreationDate.HasValue));
         }
 
         [Fact]
@@ -107,11 +111,25 @@ namespace makeITeasy.CarCatalog.Tests
 
             newCar.Name += "X";
 
-            await carService.UpdatePropertiesAsync(newCar, new string[] { "Name"});
+            await carService.UpdatePropertiesAsync(newCar, new string[] { "Name" });
 
             var tt = await carService.GetByIdAsync(newCar.Id);
 
             tt.LastModificationDate.GetValueOrDefault().Should().BeAfter(creationDateTime);
+        }
+
+        [Fact]
+        public async Task CreationRangeDate_RecursiveTest()
+        {
+            DateTime dateTimeOfTest = DateTime.Now;
+
+            Country country = new() { Name = "MyCountry", CountryCode = "MC", Brands = new List<Brand>() };
+
+            country.Brands.Add(new Brand() { Name = "MyBrand", Cars = new List<Car>() { new Car() { Name = "MyCar" } } });
+
+            var dbCreation = await countryService.CreateAsync(country);
+
+            dbCreation.Entity.Brands.Should().Match(x => x.All(y => y.CreationDate.HasValue && y.CreationDate > dateTimeOfTest));
         }
     }
 }
