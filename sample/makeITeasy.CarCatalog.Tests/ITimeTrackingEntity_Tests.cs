@@ -118,18 +118,18 @@ namespace makeITeasy.CarCatalog.Tests
             tt.LastModificationDate.GetValueOrDefault().Should().BeAfter(creationDateTime);
         }
 
-        [Fact]
-        public async Task CreationRangeDate_RecursiveTest()
-        {
-            DateTime dateTimeOfTest = DateTime.Now;
+        //[Fact]
+        //public async Task CreationRangeDate_RecursiveTest()
+        //{
+        //    DateTime dateTimeOfTest = DateTime.Now;
 
-            Country country = new() { Name = "MyCountry", CountryCode = "MC", Brands = new List<Brand>() };
+        //    Country country = new() { Name = "MyCountry", CountryCode = "MC", Brands = new List<Brand>() };
 
-            country.Brands.Add(new Brand() { Name = "MyBrand", Cars = new List<Car>() { new Car() { Name = "MyCar" } } });
+        //    country.Brands.Add(new Brand() { Name = "MyBrand", Cars = new List<Car>() { new Car() { Name = "MyCar" } } });
 
-            var dbCreation = await countryService.CreateAsync(country);
+        //    var dbCreation = await countryService.CreateAsync(country);
 
-            dbCreation.Entity.Brands.Should().Match(x => x.All(y => y.CreationDate.HasValue && y.CreationDate > dateTimeOfTest));
-        }
+        //    dbCreation.Entity.Brands.Should().Match(x => x.All(y => y.CreationDate.HasValue && y.CreationDate > dateTimeOfTest));
+        //}
     }
 }

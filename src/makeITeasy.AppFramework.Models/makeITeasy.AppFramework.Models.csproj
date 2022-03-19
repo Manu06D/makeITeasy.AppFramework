@@ -11,9 +11,12 @@
     <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
     <Authors>Emmanuel D.</Authors>
     <Company>Make IT Easy</Company>
-    <Description>Models for makeITeasy.Appframework</Description>
-	  <Version>1.1.4</Version>
-    <AssemblyVersion>1.1.3.0</AssemblyVersion>
+    <Description>
+		Models for makeITeasy.Appframework
+		1.1.5 : Add ICurrentDateProvider model
+	</Description>
+    <Version>1.1.5</Version>
+    <AssemblyVersion></AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

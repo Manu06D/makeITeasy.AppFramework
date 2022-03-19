@@ -265,16 +265,17 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
                 {
                     UpdateITimeTrackingEntity((IBaseEntity)property.GetValue(entity), action);
                 }
-                else if (property.PropertyType.IsGenericType && property.PropertyType.GetInterface(nameof(System.Collections.IEnumerable)) != null)
-                {
-                    if (property.PropertyType.GetGenericArguments().Any(x => iTimeTrackingType.IsAssignableFrom(x)))
-                    {
-                        foreach (var x in (System.Collections.IEnumerable)property.GetValue(entity))
-                        {
-                            UpdateITimeTrackingEntity(x as IBaseEntity, action);
-                        }
-                    }
-                }
+                //else if (recursive && property.PropertyType.IsGenericType && property.PropertyType.GetInterface(nameof(System.Collections.IEnumerable)) != null)
+                //{
+                //    if (property.PropertyType.GetGenericArguments().Any(x => iTimeTrackingType.IsAssignableFrom(x)))
+                //    {
+                //        foreach (var x in (System.Collections.IEnumerable)property.GetValue(entity))
+                //        {
+                //            //set to false otherwise we can go into an infinite loop
+                //            UpdateITimeTrackingEntity(x as IBaseEntity, action, false);
+                //        }
+                //    }
+                //}
             }
 
             return result;
