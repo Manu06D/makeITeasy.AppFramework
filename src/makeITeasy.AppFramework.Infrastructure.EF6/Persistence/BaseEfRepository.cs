@@ -159,7 +159,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
         {
             U dbContext = GetDbContext();
 
-            //PrepareEntityForDbOperation(entity, EntityState.Added);
+            PrepareEntityForDbOperation(entity, EntityState.Added);
 
             await dbContext.Set<T>().AddAsync(entity);
 
@@ -172,7 +172,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
         {
             U dbContext = GetDbContext();
 
-            //PrepareEntitiesForDbOperation(entities, EntityState.Added);
+            PrepareEntitiesForDbOperation(entities, EntityState.Added);
 
             await dbContext.Set<T>().AddRangeAsync(entities);
 
@@ -206,43 +206,43 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
             return -1;
         }
 
-        //private bool PrepareEntityForDbOperation(T entity, EntityState state)
-        //{
-        //    DateTime now = DateProvider?.Now ?? DateTime.Now;
+        private bool PrepareEntityForDbOperation(T entity, EntityState state)
+        {
+            DateTime now = DateProvider?.Now ?? DateTime.Now;
 
-        //    (var action, bool recursive) = GetITimeTrackingAction(state, now);
+            (var action, bool recursive) = GetITimeTrackingAction(state, now);
 
-        //    bool dateTimeUpdated = UpdateITimeTrackingEntity(entity, action, recursive);
+            bool dateTimeUpdated = UpdateITimeTrackingEntity(entity, action, recursive);
 
-        //    return dateTimeUpdated;
-        //}
+            return dateTimeUpdated;
+        }
 
-        //private (Action<ITimeTrackingEntity> action, bool recursive) GetITimeTrackingAction(EntityState state, DateTime date)
-        //{
-        //    Action<ITimeTrackingEntity> action = null;
-        //    bool recursive = false;
+        private (Action<ITimeTrackingEntity> action, bool recursive) GetITimeTrackingAction(EntityState state, DateTime date)
+        {
+            Action<ITimeTrackingEntity> action = null;
+            bool recursive = false;
 
-        //    if (state == EntityState.Added)
-        //    {
-        //        action = (x) => { x.CreationDate = date; x.LastModificationDate = date; };
-        //        recursive = true;
-        //    }
-        //    else if (state == EntityState.Modified)
-        //    {
-        //        action = (x) => { x.LastModificationDate = date; };
-        //    }
+            if (state == EntityState.Added)
+            {
+                action = (x) => { x.CreationDate = date; x.LastModificationDate = date; };
+                recursive = true;
+            }
+            else if (state == EntityState.Modified)
+            {
+                action = (x) => { x.LastModificationDate = date; };
+            }
 
-        //    return (action, recursive);
-        //}
+            return (action, recursive);
+        }
 
-        //private void PrepareEntitiesForDbOperation(ICollection<T> entities, EntityState state)
-        //{
-        //    DateTime now = DateProvider?.Now ?? DateTime.Now;
+        private void PrepareEntitiesForDbOperation(ICollection<T> entities, EntityState state)
+        {
+            DateTime now = DateProvider?.Now ?? DateTime.Now;
 
-        //    //(var action, bool recursive) = GetITimeTrackingAction(state, now);
+            (var action, bool recursive) = GetITimeTrackingAction(state, now);
 
-        //    //UpdateITimeTrackingEntities(entities, action, recursive);
-        //}
+            UpdateITimeTrackingEntities(entities, action, recursive);
+        }
 
         private void UpdateITimeTrackingEntities(ICollection<T> entities, Action<ITimeTrackingEntity> action, bool recursive = true)
         {
@@ -270,25 +270,25 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
                 result = true;
             }
 
-            //deep dive in child to set date
-            foreach (var property in entity.GetType().GetProperties())
-            {
-                if (recursive && property.PropertyType.IsClass && typeof(IBaseEntity).IsAssignableFrom(property.PropertyType))
-                {
-                    UpdateITimeTrackingEntity((IBaseEntity)property.GetValue(entity), action);
-                }
-                //else if (recursive && property.PropertyType.IsGenericType && property.PropertyType.GetInterface(nameof(System.Collections.IEnumerable)) != null)
-                //{
-                //    if (property.PropertyType.GetGenericArguments().Any(x => iTimeTrackingType.IsAssignableFrom(x)))
-                //    {
-                //        foreach (var x in (System.Collections.IEnumerable)property.GetValue(entity))
-                //        {
-                //            //set to false otherwise we can go into an infinite loop
-                //            UpdateITimeTrackingEntity(x as IBaseEntity, action, false);
-                //        }
-                //    }
-                //}
-            }
+            ////deep dive in child to set date
+            //foreach (var property in entity.GetType().GetProperties())
+            //{
+            //    if (recursive && property.PropertyType.IsClass && typeof(IBaseEntity).IsAssignableFrom(property.PropertyType))
+            //    {
+            //        UpdateITimeTrackingEntity((IBaseEntity)property.GetValue(entity), action);
+            //    }
+            //    //else if (recursive && property.PropertyType.IsGenericType && property.PropertyType.GetInterface(nameof(System.Collections.IEnumerable)) != null)
+            //    //{
+            //    //    if (property.PropertyType.GetGenericArguments().Any(x => iTimeTrackingType.IsAssignableFrom(x)))
+            //    //    {
+            //    //        foreach (var x in (System.Collections.IEnumerable)property.GetValue(entity))
+            //    //        {
+            //    //            //set to false otherwise we can go into an infinite loop
+            //    //            UpdateITimeTrackingEntity(x as IBaseEntity, action, false);
+            //    //        }
+            //    //    }
+            //    //}
+            //}
 
             return result;
         }
@@ -322,7 +322,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
 
                 if (databaseEntity != null)
                 {
-                    //PrepareEntityForDbOperation(entity, EntityState.Modified);
+                    PrepareEntityForDbOperation(entity, EntityState.Modified);
 
                     EntityEntry<T> ee = dbContext.Entry(databaseEntity);
 
@@ -350,11 +350,11 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
             var result = new CommandResult<T>();
             T databaseEntity = await GetByIdAsync(entity.DatabaseID);
 
-            //if (PrepareEntityForDbOperation(entity, EntityState.Modified))
-            //{
-            //    Array.Resize(ref propertyNames, propertyNames.Length + 1);
-            //    propertyNames[propertyNames.Length - 1] = nameof(ITimeTrackingEntity.LastModificationDate);
-            //}
+            if (PrepareEntityForDbOperation(entity, EntityState.Modified))
+            {
+                Array.Resize(ref propertyNames, propertyNames.Length + 1);
+                propertyNames[propertyNames.Length - 1] = nameof(ITimeTrackingEntity.LastModificationDate);
+            }
 
             if (databaseEntity != null)
             {
