@@ -162,7 +162,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
         {
             U dbContext = GetDbContext();
 
-            PrepareEntityForDbOperation(entity, EntityState.Added);
+            //PrepareEntityForDbOperation(entity, EntityState.Added);
 
             await dbContext.Set<T>().AddAsync(entity);
 
@@ -175,7 +175,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
         {
             U dbContext = GetDbContext();
 
-            PrepareEntitiesForDbOperation(entities, EntityState.Added);
+            //PrepareEntitiesForDbOperation(entities, EntityState.Added);
 
             await dbContext.Set<T>().AddRangeAsync(entities);
 
@@ -209,16 +209,16 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             return -1;
         }
 
-        private bool PrepareEntityForDbOperation(T entity, EntityState state)
-        {
-            DateTime now = DateProvider?.Now ?? DateTime.Now;
+        //private bool PrepareEntityForDbOperation(T entity, EntityState state)
+        //{
+        //    DateTime now = DateProvider?.Now ?? DateTime.Now;
 
-            (var action, bool recursive) = GetITimeTrackingAction(state, now);
+        //    //(var action, bool recursive) = GetITimeTrackingAction(state, now);
 
-            bool dateTimeUpdated = UpdateITimeTrackingEntity(entity, action, recursive);
+        //    //bool dateTimeUpdated = UpdateITimeTrackingEntity(entity, action, recursive);
 
-            return dateTimeUpdated;
-        }
+        //    //return dateTimeUpdated;
+        //}
 
         private (Action<ITimeTrackingEntity> action, bool recursive) GetITimeTrackingAction(EntityState state, DateTime date)
         {
@@ -238,22 +238,22 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             return (action, recursive);
         }
 
-        private void PrepareEntitiesForDbOperation(ICollection<T> entities, EntityState state)
-        {
-            DateTime now = DateProvider?.Now ?? DateTime.Now;
+        //private void PrepareEntitiesForDbOperation(ICollection<T> entities, EntityState state)
+        //{
+        //    DateTime now = DateProvider?.Now ?? DateTime.Now;
 
-            (var action, bool recursive) = GetITimeTrackingAction(state, now);
+        //    //(var action, bool recursive) = GetITimeTrackingAction(state, now);
 
-            //UpdateITimeTrackingEntities(entities, action, recursive);
-        }
+        //    //UpdateITimeTrackingEntities(entities, action, recursive);
+        //}
 
-        private void UpdateITimeTrackingEntities(ICollection<T> entities, Action<ITimeTrackingEntity> action, bool recursive = true)
-        {
-            foreach (var entity in entities)
-            {
-                UpdateITimeTrackingEntity(entity, action, recursive);
-            }
-        }
+        //private void UpdateITimeTrackingEntities(ICollection<T> entities, Action<ITimeTrackingEntity> action, bool recursive = true)
+        //{
+        //    foreach (var entity in entities)
+        //    {
+        //        UpdateITimeTrackingEntity(entity, action, recursive);
+        //    }
+        //}
 
         private bool UpdateITimeTrackingEntity(IBaseEntity entity, Action<ITimeTrackingEntity> action, bool recursive = true)
         {
@@ -325,7 +325,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
                 if (databaseEntity != null)
                 {
-                    PrepareEntityForDbOperation(entity, EntityState.Modified);
+                    //PrepareEntityForDbOperation(entity, EntityState.Modified);
 
                     EntityEntry<T> ee = dbContext.Entry(databaseEntity);
 
@@ -353,11 +353,11 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             var result = new CommandResult<T>();
             T databaseEntity = await GetByIdAsync(entity.DatabaseID);
 
-            if (PrepareEntityForDbOperation(entity, EntityState.Modified))
-            {
-                Array.Resize(ref propertyNames, propertyNames.Length + 1);
-                propertyNames[propertyNames.Length - 1] = nameof(ITimeTrackingEntity.LastModificationDate);
-            }
+            //if (PrepareEntityForDbOperation(entity, EntityState.Modified))
+            //{
+            //    Array.Resize(ref propertyNames, propertyNames.Length + 1);
+            //    propertyNames[propertyNames.Length - 1] = nameof(ITimeTrackingEntity.LastModificationDate);
+            //}
 
             if (databaseEntity != null)
             {

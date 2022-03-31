@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.1.15</Version>
+    <Version>1.1.16</Version>
     <Authors>Emmanuel D.</Authors>
     <Company>Make IT Easy</Company>
     <Description>Infrastructure module for makeITeasy.Appframework</Description>
