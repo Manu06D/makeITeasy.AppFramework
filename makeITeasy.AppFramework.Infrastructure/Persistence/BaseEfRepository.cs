@@ -186,6 +186,21 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
         private async Task<int> SaveOrUpdateChanges(U dbContext, bool saveChanges = true)
         {
+            var entries =
+                dbContext.ChangeTracker.Entries().Where(e => e.Entity is ITimeTrackingEntity && (e.State == EntityState.Added || e.State == EntityState.Modified));
+
+            foreach (var entry in entries)
+            {
+                DateTime now = DateProvider?.Now ?? DateTime.Now;
+
+                ((ITimeTrackingEntity)entry.Entity).LastModificationDate = now;
+
+                if (entry.State == EntityState.Added)
+                {
+                    ((ITimeTrackingEntity)entry.Entity).CreationDate = now;
+                }
+            }
+
             if (saveChanges)
             {
                 return await dbContext.SaveChangesAsync();
@@ -229,7 +244,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
             (var action, bool recursive) = GetITimeTrackingAction(state, now);
 
-            UpdateITimeTrackingEntities(entities, action, recursive);
+            //UpdateITimeTrackingEntities(entities, action, recursive);
         }
 
         private void UpdateITimeTrackingEntities(ICollection<T> entities, Action<ITimeTrackingEntity> action, bool recursive = true)
