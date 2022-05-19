@@ -13,9 +13,10 @@
     <Company>Make IT Easy</Company>
     <Description>
 		Models for makeITeasy.Appframework
+		1.1.6 : Add ReadUncommitedQuery
 		1.1.5 : Add ICurrentDateProvider model
 	</Description>
-    <Version>1.1.5</Version>
+    <Version>1.1.6</Version>
     <AssemblyVersion></AssemblyVersion>
   </PropertyGroup>
 
