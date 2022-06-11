@@ -3,20 +3,21 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.1.16</Version>
+    <Version>1.1.17-beta01</Version>
     <Authors>Emmanuel D.</Authors>
     <Company>Make IT Easy</Company>
     <Description>Infrastructure module for makeITeasy.Appframework</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
     <PackageTags>framework ef</PackageTags>
+    <PackageReleaseNotes>1.1.17 : Update packages dependencies</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="DelegateDecompiler.EntityFrameworkCore5" Version="0.30" />
-    <PackageReference Include="EFCore.BulkExtensions" Version="5.4.1"/>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.13" />
+    <PackageReference Include="EFCore.BulkExtensions" Version="5.4.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.17" />
   </ItemGroup>
 
   <ItemGroup>

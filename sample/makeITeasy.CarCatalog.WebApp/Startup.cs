@@ -82,7 +82,7 @@ namespace makeITeasy.CarCatalog.WebApp
         {
 
             builder.RegisterModule(new RegisterAutofacModule() { Assemblies = assembliesToScan });
-            builder.RegisterAutoMapper(assembliesToScan);
+            builder.RegisterAutoMapper(assemblies: assembliesToScan);
             builder.RegisterMediatR(assembliesToScan);
 
             builder.RegisterType<CarCatalogContext>();

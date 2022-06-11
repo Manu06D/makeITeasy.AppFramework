@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace makeITeasy.CarCatalog.Tests
 {
-    public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
     {
         private readonly ILogger<LoggingBehavior<TRequest, TResponse>> _logger;
         private readonly MediatRLog _mediatRLog;
@@ -18,10 +18,10 @@ namespace makeITeasy.CarCatalog.Tests
             _mediatRLog = mediatRLog;
         }
 
-
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
             bool IsFrameworkCommandResult = request.GetType().GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(ICommandEntity<>));
+
             if (IsFrameworkCommandResult)
             {
                 var entity = request.GetType().GetInterfaces()[0].GetProperty("Entity")?.GetValue(request, null);

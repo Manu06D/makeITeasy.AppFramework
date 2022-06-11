@@ -10,24 +10,25 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
     <PackageTags>framework ef</PackageTags>
-    <PackageReleaseNotes>1.1.1 : Add IsolationLevel to query
-    1.1.0 : Add new package makeITeasy.AppFramework.Infrastructure
-    1.0.2 : Remove unwanted EF Core dependencies
+    <PackageReleaseNotes>1.1.11 : Update packages dependencies
+1.1.1 : Add IsolationLevel to query
+1.1.0 : Add new package makeITeasy.AppFramework.Infrastructure
+1.0.2 : Remove unwanted EF Core dependencies
     </PackageReleaseNotes>
     <Authors>Emmanuel D.</Authors>
     <Company>Make IT Easy</Company>
     <Description>Core module for makeITeasy.Appframework</Description>
-    <Version>1.1.10</Version>
+    <Version>1.1.11-beta01</Version>
     <DebugType>embedded</DebugType>
     <EmbedAllSources>true</EmbedAllSources>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="6.3.0" />
-    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="Autofac" Version="6.4.0" />
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="DelegateDecompiler" Version="0.30.0" />
-    <PackageReference Include="FluentValidation" Version="10.3.4" />
-    <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="FluentValidation" Version="11.0.3" />
+    <PackageReference Include="MediatR" Version="10.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
   </ItemGroup>
 
