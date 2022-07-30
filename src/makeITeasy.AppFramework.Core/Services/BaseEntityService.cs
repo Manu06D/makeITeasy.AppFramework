@@ -51,14 +51,14 @@ namespace makeITeasy.AppFramework.Core.Services
             return await EntityRepository.GetByIdAsync(id, includes);
         }
 
-        public async Task<QueryResult<TEntity>> QueryAsync(ISpecification<TEntity> specification, bool includeCount = false)
+        public virtual async Task<QueryResult<TEntity>> QueryAsync(ISpecification<TEntity> specification, bool includeCount = false)
         {
             specification?.BuildQuery();
 
             return await EntityRepository.ListAsync(specification, includeCount);
         }
 
-        public async Task<QueryResult<TTargetEntity>> QueryWithProjectionAsync<TTargetEntity>(ISpecification<TEntity> specification, bool includeCount = false)
+        public virtual async Task<QueryResult<TTargetEntity>> QueryWithProjectionAsync<TTargetEntity>(ISpecification<TEntity> specification, bool includeCount = false)
             where TTargetEntity : class
         {
             specification?.BuildQuery();
@@ -86,7 +86,7 @@ namespace makeITeasy.AppFramework.Core.Services
             return await EntityRepository.UpdateRangeAsync(entityPredicate, updateExpression);
         }
 
-        public async Task<CommandResult<TEntity>> UpdateAsync(TEntity entity)
+        public virtual async Task<CommandResult<TEntity>> UpdateAsync(TEntity entity)
         {
             return await ValidateAndProcess(entity, async (x) => await InnerUpdateAsync(x));
         }
@@ -174,12 +174,12 @@ namespace makeITeasy.AppFramework.Core.Services
         //    return entities.Select(x => new CommandResult<TEntity>(CommandState.Success) { Entity = x }).ToList();
         //}
 
-        public async Task<CommandResult<TEntity>> UpdatePropertiesAsync(TEntity entity, string[] properties)
+        public virtual async Task<CommandResult<TEntity>> UpdatePropertiesAsync(TEntity entity, string[] properties)
         {
             return await EntityRepository.UpdatePropertiesAsync(entity, properties);
         }
 
-        public async Task<CommandResult> DeleteAsync(TEntity entity, bool saveChanges = true)
+        public virtual async Task<CommandResult> DeleteAsync(TEntity entity, bool saveChanges = true)
         {
             return await EntityRepository.DeleteAsync(entity, saveChanges);
         }
