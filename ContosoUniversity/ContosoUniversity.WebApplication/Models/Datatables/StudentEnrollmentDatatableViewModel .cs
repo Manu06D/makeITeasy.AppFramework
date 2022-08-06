@@ -11,7 +11,7 @@ namespace ContosoUniversity.WebApplication.Models.Datatables
         [TableColumn(Name = nameof(EnrollmentId), Title = "EnrollmentId", IsRowId = true, Priority = 1, Visible = false)]
         public int EnrollmentId { get; set; }
 
-        [TableColumn(Name = nameof(CourseTitle), Title = "Course Title", Priority = 2)]
+        [TableColumn(Name = nameof(CourseTitle), Title = "Course Title",  SortDataSource = "Course.Title", Priority = 2)]
         public string CourseTitle { get; set; }
 
         [TableColumn(Name = nameof(Grade), Title = "Grade", Priority = 2)]

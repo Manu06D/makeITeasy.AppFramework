@@ -43,11 +43,9 @@ namespace makeITeasy.CarCatalog.WebApp.Controllers
         {
             if (id > 0)
             {
-                var cars =
-                    await _mediator.Send(new GenericQueryWithProjectCommand<Car, CarEditViewModel>(
+                CarEditViewModel model =
+                    await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, CarEditViewModel>(
                             new BaseCarQuery() { ID = id, Includes = new List<System.Linq.Expressions.Expression<Func<Car, object>>>() { x => x.Brand } }));
-
-                CarEditViewModel model = cars.Results.FirstOrDefault();
 
                 QueryResult<Brand> output = await _mediator.Send(new GenericQueryCommand<Brand>(new BaseBrandQuery()));
 
@@ -77,9 +75,9 @@ namespace makeITeasy.CarCatalog.WebApp.Controllers
 
         public async Task<IActionResult> CarDetails(int id)
         {
-            QueryResult<Car> result = await _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQuery() { ID = id, IncludeStrings = new List<string>() { "Brand" } }));
+            Car result = await _mediator.Send(new GenericFindUniqueCommand<Car>(new BaseCarQuery() { ID = id, IncludeStrings = new List<string>() { "Brand" } }));
 
-            return PartialView(result.Results.FirstOrDefault());
+            return PartialView(result);
         }
     }
 }

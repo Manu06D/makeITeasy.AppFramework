@@ -4,7 +4,7 @@ using makeITeasy.AppFramework.Web.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((context, config) => config.WriteTo.Console());
+builder.Host.UseSerilog((context, config) => config.WriteTo.Console().WriteTo.Debug());
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddOptions();
@@ -12,7 +12,6 @@ builder.Services.RegisterDatatablesService();
 
 builder.ConfigureDatabase();
 builder.ConfigureAutofac();
-
 
 var app = builder.Build();
 

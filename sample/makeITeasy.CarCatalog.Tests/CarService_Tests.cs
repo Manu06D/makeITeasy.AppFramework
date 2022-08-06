@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+
 using FluentAssertions;
+
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Models;
@@ -12,7 +14,9 @@ using makeITeasy.CarCatalog.Core.Services.Queries.CarQueries;
 using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Models;
 using makeITeasy.CarCatalog.Tests.Catalogs;
+
 using Microsoft.EntityFrameworkCore;
+
 using Xunit;
 
 namespace makeITeasy.CarCatalog.Tests
@@ -183,7 +187,7 @@ namespace makeITeasy.CarCatalog.Tests
         [Fact]
         public async Task CreateAndGet_ListWithMappingTest()
         {
-            var getResult = await carService.QueryWithProjectionAsync<SmallCarInfo>(new BaseCarQuery() { }, includeCount : true);
+            var getResult = await carService.QueryWithProjectionAsync<SmallCarInfo>(new BaseCarQuery() { }, includeCount: true);
 
             getResult.TotalItems.Should().Be(carList.Count);
 
@@ -201,10 +205,10 @@ namespace makeITeasy.CarCatalog.Tests
         [Fact]
         public async Task CreateAndGet_SelectWithFunctionTest()
         {
-           var getResult = await carService.QueryAsync(QueryBuilder.Create<BaseCarQuery, Car>().Where(Car.ModernCarFunction).Build());
+            var getResult = await carService.QueryAsync(QueryBuilder.Create<BaseCarQuery, Car>().Where(Car.ModernCarFunction).Build());
 
             getResult.Results.Where(x => x.ReleaseYear >= 2000).Should().HaveCount(getResult.Results.Count(x => x.CurrentCentury));
-            getResult.Results.Where(x => x.ReleaseYear < 2000).Should().HaveCount(getResult.Results.Count(x => ! x.CurrentCentury));
+            getResult.Results.Where(x => x.ReleaseYear < 2000).Should().HaveCount(getResult.Results.Count(x => !x.CurrentCentury));
         }
 
 
@@ -459,6 +463,64 @@ namespace makeITeasy.CarCatalog.Tests
             var updateResultProperty = await carService.UpdateAsync(secondCar);
 
             updateResultProperty.Result.Should().Be(CommandState.Success);
+        }
+
+        [Fact]
+        public async Task GetFirstByQueryAsync_BasicTest()
+        {
+            Car result =
+                await carService.GetFirstByQueryAsync(
+                    QueryBuilder.Create(new BaseCarQuery()).Where(x => x.Brand.Name == "Audi")
+                    .OrderBy("Id", true)
+                    .Build());
+
+            result.Should().NotBeNull();
+            result.Name.Should().Be("A3");
+
+            result =
+                await carService.GetFirstByQueryAsync(
+                    QueryBuilder.Create(new BaseCarQuery()).Where(x => x.Brand.Name == "Audi")
+                    .OrderBy("Id", false)
+                    .Build());
+
+            result.Should().NotBeNull();
+            result.Name.Should().Be("R8");
+
+            result =
+            await carService.GetFirstByQueryAsync(
+                QueryBuilder.Create(new BaseCarQuery()).Where(x => x.Brand.Name == "XXXX")
+                .Build());
+
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task GetFirstByQueryWithProjectionAsync_BasicTest()
+        {
+            SmallCarInfo result =
+                await carService.GetFirstByQueryWithProjectionAsync<SmallCarInfo>(
+                    QueryBuilder.Create(new BaseCarQuery()).Where(x => x.Brand.Name == "Audi")
+                    .OrderBy("Id", true)
+                    .Build());
+
+            result.Should().NotBeNull();
+            result.Name.Should().Be("A3");
+
+            result =
+                 await carService.GetFirstByQueryWithProjectionAsync<SmallCarInfo>(
+                    QueryBuilder.Create(new BaseCarQuery()).Where(x => x.Brand.Name == "Audi")
+                    .OrderBy("Id", false)
+                    .Build());
+
+            result.Should().NotBeNull();
+            result.Name.Should().Be("R8");
+
+            result =
+                 await carService.GetFirstByQueryWithProjectionAsync<SmallCarInfo>(
+                QueryBuilder.Create(new BaseCarQuery()).Where(x => x.Brand.Name == "XXXX")
+                .Build());
+
+            result.Should().BeNull();
         }
     }
 }

@@ -11,7 +11,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
     <PackageTags>framework ef</PackageTags>
-    <PackageReleaseNotes>1.1.18 : Add GenericFindUniqueCommand
+    <PackageReleaseNotes>1.1.18 : Add GenericFindUniqueCommand*
 1.1.17 : Update packages dependencies</PackageReleaseNotes>
   </PropertyGroup>
 

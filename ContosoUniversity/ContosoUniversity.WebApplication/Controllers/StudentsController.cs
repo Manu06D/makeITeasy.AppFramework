@@ -37,10 +37,8 @@ namespace ContosoUniversity.WebApplication.Controllers
 
             if (id > 0)
             {
-                var students =
-                    await _mediator.Send(new GenericQueryWithProjectCommand<Student, StudentEditViewModel>(new BasicinstructorQuery() { ID = id }));
-
-                StudentEditViewModel? model = students.Results.FirstOrDefault();
+                StudentEditViewModel? model =
+                    await _mediator.Send(new GenericFindUniqueWithProjectCommand<Student, StudentEditViewModel>(new BasicinstructorQuery() { ID = id }));
 
                 return base.PartialView(model);
             }
@@ -66,10 +64,10 @@ namespace ContosoUniversity.WebApplication.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            QueryResult<StudentDetailsViewModel> result = 
-                await _mediator.Send(new GenericQueryWithProjectCommand<Student, StudentDetailsViewModel>(new BasicinstructorQuery() { ID = id }));
+            StudentDetailsViewModel result = 
+                await _mediator.Send(new GenericFindUniqueWithProjectCommand<Student, StudentDetailsViewModel>(new BasicinstructorQuery() { ID = id }));
 
-            return PartialView(result.Results.FirstOrDefault());
+            return PartialView(result);
         }
     }
 }

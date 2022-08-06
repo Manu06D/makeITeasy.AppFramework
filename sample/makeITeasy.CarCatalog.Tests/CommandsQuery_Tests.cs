@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using makeITeasy.AppFramework.Core.Commands;
+using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.CarCatalog.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.Core.Services.Queries.CarQueries;
@@ -76,6 +77,39 @@ namespace makeITeasy.CarCatalog.Tests
             QueryResult<Car> searchResult = await _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQuery() { ID = car.Id }));
             searchResult.Results.Should().HaveCount(1);
             searchResult.Results[0].Name.Should().Be(car.Name);
+        }
+
+        [Fact]
+        public async Task GenericFindUniqueCommand_BasicTest()
+        {
+            var carService = Resolve<ICarService>();
+            CommandResult<Car> newCarResult = await carService.CreateAsync(TestCarsCatalog.GetCars().First(x => x.Name == "A3"));
+
+            Car searchResult = await _mediator.Send(new GenericFindUniqueCommand<Car>(new BaseCarQuery() { Name = "A3" }));
+            searchResult.Should().NotBeNull();
+            searchResult.Name.Should().Be("A3");
+
+            searchResult = await _mediator.Send(new GenericFindUniqueCommand<Car>(new BaseCarQuery() { Name = "XX" }));
+            searchResult.Should().BeNull();
+        }
+
+        public class SmallCarInfo : IMapFrom<Car>
+        {
+            public string Name { get; set; }
+        }
+
+        [Fact]
+        public async Task GenericFindUniqueCommandWithProject_BasicTest()
+        {
+            var carService = Resolve<ICarService>();
+            CommandResult<Car> newCarResult = await carService.CreateAsync(TestCarsCatalog.GetCars().First(x => x.Name == "A3"));
+
+            SmallCarInfo searchResult = await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, SmallCarInfo>(new BaseCarQuery() { Name = "A3" }));
+            searchResult.Should().NotBeNull();
+            searchResult.Name.Should().Be("A3");
+
+            searchResult = await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, SmallCarInfo>(new BaseCarQuery() { Name = "XX" }));
+            searchResult.Should().BeNull();
         }
     }
 }

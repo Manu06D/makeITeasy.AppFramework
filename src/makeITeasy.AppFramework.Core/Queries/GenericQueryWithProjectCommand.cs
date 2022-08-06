@@ -10,8 +10,8 @@ namespace makeITeasy.AppFramework.Core.Queries
 
         public GenericQueryWithProjectCommand(ISpecification<TRequest> query, bool includeCount = false)
         {
-            this.Query = query;
-            this.IncludeCount = includeCount;
+            Query = query;
+            IncludeCount = includeCount;
         }
     }
 }

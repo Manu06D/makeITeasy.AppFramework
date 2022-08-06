@@ -58,6 +58,14 @@ namespace makeITeasy.AppFramework.Core.Services
             return await EntityRepository.ListAsync(specification, includeCount);
         }
 
+        public virtual async Task<TEntity> GetFirstByQueryAsync(ISpecification<TEntity> specification)
+        {
+            specification.Take = 1;
+            specification.Skip = 0;
+
+            return (await QueryAsync(specification, false)).Results.FirstOrDefault();
+        }
+
         public virtual async Task<QueryResult<TTargetEntity>> QueryWithProjectionAsync<TTargetEntity>(ISpecification<TEntity> specification, bool includeCount = false)
             where TTargetEntity : class
         {
@@ -69,6 +77,15 @@ namespace makeITeasy.AppFramework.Core.Services
             }                   
 
             return await EntityRepository.ListWithProjectionAsync<TTargetEntity>(specification, includeCount);
+        }
+
+        public virtual async Task<TTargetEntity> GetFirstByQueryWithProjectionAsync<TTargetEntity>(ISpecification<TEntity> specification) 
+            where TTargetEntity : class
+        {
+            specification.Take = 1;
+            specification.Skip = 0;
+
+            return (await QueryWithProjectionAsync<TTargetEntity>(specification, false)).Results.FirstOrDefault();
         }
 
         public virtual async Task<CommandResult<TEntity>> CreateAsync(TEntity entity, bool saveChanges = true)

@@ -16,9 +16,9 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
 {
     public abstract class BaseEfRepository<T, U> : IAsyncRepository<T> where T : class, IBaseEntity where U : DbContext
     {
-        private readonly IDbContextFactory<U> _dbFactory;
+        private readonly IDbContextFactory<U>? _dbFactory;
         private readonly IMapper _mapper;
-        private U _dbContext = null;
+        private U? _dbContext = null;
 
         public ICurrentDateProvider DateProvider { get; set; }
 
@@ -34,14 +34,14 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
             _mapper = mapper;
         }
 
-        protected U GetDbContext()
+        protected U? GetDbContext()
         {
             if (_dbContext != null)
             {
                 return _dbContext;
             }
 
-            return _dbFactory.CreateDbContext();
+            return _dbFactory?.CreateDbContext();
         }
 
         public virtual async Task<T> GetByIdAsync(object id)
@@ -51,21 +51,15 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
                 //not so elegant, need to investigate on more suitable solution
                 Array a = (Array)id;
 
-                switch (a.Length)
+                return a.Length switch
                 {
-                    case 1:
-                        return await GetDbContext().Set<T>().FindAsync(a.GetValue(0));
-                    case 2:
-                        return await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1));
-                    case 3:
-                        return await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1), a.GetValue(2));
-                    case 4:
-                        return await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1), a.GetValue(2), a.GetValue(3));
-                    case 5:
-                        return await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1), a.GetValue(2), a.GetValue(3), a.GetValue(4));
-                    default:
-                        throw new Exception("Composite key with more than 5 columns are not supported");
-                }
+                    1 => await GetDbContext().Set<T>().FindAsync(a.GetValue(0)),
+                    2 => await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1)),
+                    3 => await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1), a.GetValue(2)),
+                    4 => await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1), a.GetValue(2), a.GetValue(3)),
+                    5 => await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1), a.GetValue(2), a.GetValue(3), a.GetValue(4)),
+                    _ => throw new Exception("Composite key with more than 5 columns are not supported"),
+                };
             }
 
 
@@ -74,8 +68,9 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
 
         public virtual async Task<T> GetByIdAsync(object id, List<Expression<Func<T, object>>> includes)
         {
-            U dbContext = GetDbContext();
-            if (includes != null)
+            U? dbContext = GetDbContext();
+
+            if (includes != null && dbContext != null)
             {
                 var keyProperty = dbContext.Model.FindEntityType(typeof(T)).FindPrimaryKey().Properties[0];
 
@@ -93,16 +88,15 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
         public virtual async Task<IList<T>> ListAllAsync()
         {
             U dbContext = GetDbContext();
+
             return await dbContext.Set<T>().ToListAsync();
         }
 
         public virtual async Task<QueryResult<T>> ListAsync(ISpecification<T> spec, bool includeCount = false)
         {
-            var result = new QueryResult<T>();
+            QueryResult<T> result = new ();
 
-            (int nbResult, IQueryable<T> filteredSet) = await CreateQueryableFromSpec(spec, GetDbContext(), includeCount);
-
-            result.TotalItems = nbResult;
+            (result.TotalItems, IQueryable<T> filteredSet) = await CreateQueryableFromSpec(spec, GetDbContext(), includeCount);
 
             result.Results = await filteredSet.AsNoTracking().ToListAsync();
 
@@ -111,11 +105,10 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
 
         public virtual async Task<QueryResult<X>> ListWithProjectionAsync<X>(ISpecification<T> spec, bool includeCount = false) where X : class
         {
-            var result = new QueryResult<X>();
+            QueryResult<X> result = new ();
 
-            (int nbResult, IQueryable<T> filteredSet) = await CreateQueryableFromSpec(spec, GetDbContext(), includeCount);
+            (result.TotalItems, IQueryable<T> filteredSet) = await CreateQueryableFromSpec(spec, GetDbContext(), includeCount);
 
-            result.TotalItems = nbResult;
             result.Results = filteredSet.AsNoTracking().ProjectTo<X>(_mapper.ConfigurationProvider).DecompileAsync().ToList();
 
             return result;
@@ -128,13 +121,13 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
                 throw new InvalidQueryException();
             }
 
-            IQueryable<T> filteredSet = ApplySpecification(spec, dbContext);
+            IQueryable<T> filteredSet = BaseEfRepository<T, U>.ApplySpecification(spec, dbContext);
 
             int totalItems = await ApplyCountIfNeededAsync(filteredSet, includeCount);
 
             if (spec.IsPagingEnabled && spec.Take.GetValueOrDefault() > 0)
             {
-                filteredSet = ApplyPaging(filteredSet, spec);
+                filteredSet = BaseEfRepository<T, U>.ApplyPaging(filteredSet, spec);
             }
 
             return (totalItems, filteredSet);
@@ -152,7 +145,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
 
         public async Task<int> CountAsync(ISpecification<T> spec)
         {
-            return await ApplySpecification(spec, GetDbContext()).CountAsync();
+            return await BaseEfRepository<T, U>.ApplySpecification(spec, GetDbContext()).CountAsync();
         }
 
         public async Task<T> AddAsync(T entity, bool saveChanges = true)
@@ -212,7 +205,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
 
             (var action, bool recursive) = GetITimeTrackingAction(state, now);
 
-            bool dateTimeUpdated = UpdateITimeTrackingEntity(entity, action, recursive);
+            bool dateTimeUpdated = BaseEfRepository<T, U>.UpdateITimeTrackingEntity(entity, action, recursive);
 
             return dateTimeUpdated;
         }
@@ -248,11 +241,11 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
         {
             foreach (var entity in entities)
             {
-                UpdateITimeTrackingEntity(entity, action, recursive);
+                BaseEfRepository<T, U>.UpdateITimeTrackingEntity(entity, action, recursive);
             }
         }
 
-        private bool UpdateITimeTrackingEntity(IBaseEntity entity, Action<ITimeTrackingEntity> action, bool recursive = true)
+        private static bool UpdateITimeTrackingEntity(IBaseEntity entity, Action<ITimeTrackingEntity> action, bool recursive = true)
         {
             bool result = false;
 
@@ -404,7 +397,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
 
         public async Task<CommandResult> DeleteAsync(T entity, bool saveChanges = true)
         {
-            CommandResult result = new CommandResult();
+            CommandResult result = new ();
 
             U dbContext = GetDbContext();
 
@@ -419,12 +412,12 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
             return result;
         }
 
-        private IQueryable<T> ApplySpecification(ISpecification<T> spec, U dbContext)
+        private static IQueryable<T> ApplySpecification(ISpecification<T> spec, U dbContext)
         {
             return SpecificationEvaluator<T>.GetQuery(dbContext.Set<T>().AsQueryable(), spec);
         }
 
-        private IQueryable<T> ApplyPaging(IQueryable<T> filteredSet, ISpecification<T> spec)
+        private static IQueryable<T> ApplyPaging(IQueryable<T> filteredSet, ISpecification<T> spec)
         {
             return filteredSet.Skip(spec.Skip.Value).Take(spec.Take.Value);
         }

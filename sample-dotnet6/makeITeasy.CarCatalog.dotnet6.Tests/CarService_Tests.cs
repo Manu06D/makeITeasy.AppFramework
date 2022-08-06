@@ -464,5 +464,63 @@ namespace makeITeasy.CarCatalog.dotnet6.Tests
 
             updateResultProperty.Result.Should().Be(CommandState.Success);
         }
+
+        [Fact]
+        public async Task GetFirstByQueryAsync_BasicTest()
+        {
+            Car result =
+                await carService.GetFirstByQueryAsync(
+                    QueryBuilder.Create(new BaseCarQuery()).Where(x => x.Brand.Name == "Audi")
+                    .OrderBy("Id", true)
+                    .Build());
+
+            result.Should().NotBeNull();
+            result.Name.Should().Be("A3");
+
+            result =
+                await carService.GetFirstByQueryAsync(
+                    QueryBuilder.Create(new BaseCarQuery()).Where(x => x.Brand.Name == "Audi")
+                    .OrderBy("Id", false)
+                    .Build());
+
+            result.Should().NotBeNull();
+            result.Name.Should().Be("R8");
+
+            result =
+            await carService.GetFirstByQueryAsync(
+                QueryBuilder.Create(new BaseCarQuery()).Where(x => x.Brand.Name == "XXXX")
+                .Build());
+
+            result.Should().BeNull();
+        }
+
+        [Fact]
+        public async Task GetFirstByQueryWithProjectionAsync_BasicTest()
+        {
+            SmallCarInfo result =
+                await carService.GetFirstByQueryWithProjectionAsync<SmallCarInfo>(
+                    QueryBuilder.Create(new BaseCarQuery()).Where(x => x.Brand.Name == "Audi")
+                    .OrderBy("Id", true)
+                    .Build());
+
+            result.Should().NotBeNull();
+            result.Name.Should().Be("A3");
+
+            result =
+                 await carService.GetFirstByQueryWithProjectionAsync<SmallCarInfo>(
+                    QueryBuilder.Create(new BaseCarQuery()).Where(x => x.Brand.Name == "Audi")
+                    .OrderBy("Id", false)
+                    .Build());
+
+            result.Should().NotBeNull();
+            result.Name.Should().Be("R8");
+
+            result =
+                 await carService.GetFirstByQueryWithProjectionAsync<SmallCarInfo>(
+                QueryBuilder.Create(new BaseCarQuery()).Where(x => x.Brand.Name == "XXXX")
+                .Build());
+
+            result.Should().BeNull();
+        }
     }
 }
