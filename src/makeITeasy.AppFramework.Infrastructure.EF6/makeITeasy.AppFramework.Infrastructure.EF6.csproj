@@ -5,14 +5,15 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	  <Version>6.1.17</Version>
+	  <Version>6.1.18</Version>
 	  <Authors>Emmanuel D.</Authors>
 	  <Company>Make IT Easy</Company>
 	  <Description>Infrastructure module for makeITeasy.Appframework for Entity Framework 6</Description>
 	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
 	  <RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
 	  <PackageTags>framework ef</PackageTags>
-	  <PackageReleaseNotes>6.1.17 : Update packages dependencies</PackageReleaseNotes>
+	  <PackageReleaseNotes>1.1.18 : Add GenericFindUniqueCommand*
+6.1.17 : Update packages dependencies</PackageReleaseNotes>
   </PropertyGroup>
 
 	<ItemGroup>

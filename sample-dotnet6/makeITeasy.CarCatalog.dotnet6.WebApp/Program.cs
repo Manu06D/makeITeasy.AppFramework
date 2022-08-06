@@ -29,7 +29,7 @@ using makeITeasy.CarCatalog.dotnet6.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((context, config) => config.WriteTo.Console());
+builder.Host.UseSerilog((context, config) => config.WriteTo.Console().WriteTo.Debug());
 
 Assembly[] assembliesToScan = new Assembly[]
     {
@@ -37,7 +37,6 @@ Assembly[] assembliesToScan = new Assembly[]
         CarCatalogCore.Assembly,
         AppFrameworkModels.Assembly
     };
-
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddOptions();
@@ -82,7 +81,7 @@ builder.Host.ConfigureContainer<ContainerBuilder>(
     }
 );
 
-DatatableHelpers.RegisterDatatableService(builder.Services);
+builder.Services.RegisterDatatablesService();
 
 var app = builder.Build();
 

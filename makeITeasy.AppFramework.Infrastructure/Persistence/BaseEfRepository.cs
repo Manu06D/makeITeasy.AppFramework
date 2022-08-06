@@ -19,9 +19,9 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 {
     public abstract class BaseEfRepository<T, U> : IAsyncRepository<T> where T : class, IBaseEntity where U : DbContext
     {
-        private readonly IDbContextFactory<U> _dbFactory;
+        private readonly IDbContextFactory<U>? _dbFactory;
         private readonly IMapper _mapper;
-        private U _dbContext = null;
+        private U? _dbContext = null;
 
         public ICurrentDateProvider DateProvider { get; set; }
 
@@ -54,31 +54,25 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
                 //not so elegant, need to investigate on more suitable solution
                 Array a = (Array)id;
 
-                switch (a.Length)
+                return a.Length switch
                 {
-                    case 1:
-                        return await GetDbContext().Set<T>().FindAsync(a.GetValue(0));
-                    case 2:
-                        return await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1));
-                    case 3:
-                        return await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1), a.GetValue(2));
-                    case 4:
-                        return await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1), a.GetValue(2), a.GetValue(3));
-                    case 5:
-                        return await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1), a.GetValue(2), a.GetValue(3), a.GetValue(4));
-                    default:
-                        throw new Exception("Composite key with more than 5 columns are not supported");
-                }
+                    1 => await GetDbContext().Set<T>().FindAsync(a.GetValue(0)),
+                    2 => await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1)),
+                    3 => await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1), a.GetValue(2)),
+                    4 => await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1), a.GetValue(2), a.GetValue(3)),
+                    5 => await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1), a.GetValue(2), a.GetValue(3), a.GetValue(4)),
+                    _ => throw new Exception("Composite key with more than 5 columns are not supported"),
+                };
             }
-
 
             return await GetDbContext().Set<T>().FindAsync(id);
         }
 
         public virtual async Task<T> GetByIdAsync(object id, List<Expression<Func<T, object>>> includes)
         {
-            U dbContext = GetDbContext();
-            if (includes != null)
+            U? dbContext = GetDbContext();
+
+            if (includes != null && dbContext != null)
             {
                 var keyProperty = dbContext.Model.FindEntityType(typeof(T)).FindPrimaryKey().Properties[0];
 
@@ -96,6 +90,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
         public virtual async Task<IList<T>> ListAllAsync()
         {
             U dbContext = GetDbContext();
+
             return await dbContext.Set<T>().ToListAsync();
         }
 
@@ -255,7 +250,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             }
         }
 
-        private bool UpdateITimeTrackingEntity(IBaseEntity entity, Action<ITimeTrackingEntity> action, bool recursive = true)
+        private static bool UpdateITimeTrackingEntity(IBaseEntity entity, Action<ITimeTrackingEntity> action, bool recursive = true)
         {
             bool result = false;
 
@@ -422,12 +417,12 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             return result;
         }
 
-        private IQueryable<T> ApplySpecification(ISpecification<T> spec, U dbContext)
+        private static IQueryable<T> ApplySpecification(ISpecification<T> spec, U dbContext)
         {
             return SpecificationEvaluator<T>.GetQuery(dbContext.Set<T>().AsQueryable(), spec);
         }
 
-        private IQueryable<T> ApplyPaging(IQueryable<T> filteredSet, ISpecification<T> spec)
+        private static IQueryable<T> ApplyPaging(IQueryable<T> filteredSet, ISpecification<T> spec)
         {
             return filteredSet.Skip(spec.Skip.Value).Take(spec.Take.Value);
         }

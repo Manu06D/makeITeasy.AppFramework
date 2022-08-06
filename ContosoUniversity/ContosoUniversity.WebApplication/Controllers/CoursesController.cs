@@ -36,10 +36,8 @@ namespace ContosoUniversity.WebApplication.Controllers
 
             if (id > 0)
             {
-                var courses =
-                    await _mediator.Send(new GenericQueryWithProjectCommand<Course, CourseEditViewModel>(new BasicCourseQuery() { ID = id }));
-
-                CourseEditViewModel? model = courses.Results.FirstOrDefault();
+                CourseEditViewModel? model =
+                    await _mediator.Send(new GenericFindUniqueWithProjectCommand<Course, CourseEditViewModel>(new BasicCourseQuery() { ID = id }));
 
                 return base.PartialView(model);
             }
@@ -65,10 +63,10 @@ namespace ContosoUniversity.WebApplication.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            QueryResult<CourseDetailsViewModel> result =
-                await _mediator.Send(new GenericQueryWithProjectCommand<Course, CourseDetailsViewModel>(new BasicCourseQuery() { ID = id }));
+            CourseDetailsViewModel result = 
+                await _mediator.Send(new GenericFindUniqueWithProjectCommand<Course, CourseDetailsViewModel>(new BasicCourseQuery() { ID = id }));
 
-            return PartialView(result.Results.FirstOrDefault());
+            return PartialView(result);
         }
     }
 }
