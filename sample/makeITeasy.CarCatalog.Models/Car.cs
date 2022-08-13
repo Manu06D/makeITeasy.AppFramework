@@ -18,6 +18,7 @@ public int ReleaseYear { get; set; }
 public DateTime? CreationDate { get; set; }
 public DateTime? LastModificationDate { get; set; }
 public byte[] RowVersion { get; set; }
+public int Version { get; set; }
 
 public virtual Brand Brand { get; set; }
 public virtual ICollection<CarDetail> CarDetails { get; set; }

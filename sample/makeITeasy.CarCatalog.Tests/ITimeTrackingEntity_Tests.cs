@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.CarCatalog.Core.Services.Interfaces;
+using makeITeasy.CarCatalog.Core.Services.Queries.CarQueries;
 using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Models;
 using makeITeasy.CarCatalog.Tests.Catalogs;
@@ -85,6 +86,60 @@ namespace makeITeasy.CarCatalog.Tests
             var dbCreation = await carService.CreateRangeAsync(carList);
 
             dbCreation.Should().Match(x => x.All(y => y.Entity.CreationDate.HasValue));
+        }
+
+        [Fact]
+        public async Task UpdateNofields_Test()
+        {
+            var carList = TestCarsCatalog.GetCars();
+
+            DateTime dateTimeBeforeSave = DateTime.Now;
+            var dbCreation = await carService.CreateAsync(carList.First());
+            DateTime dateTimeAfterSave = DateTime.Now;
+
+            DateTime? creationDateTime = dbCreation.Entity.CreationDate;
+            DateTime? lastModificationDate = dbCreation.Entity.LastModificationDate;
+
+            creationDateTime.Should().NotBeNull();
+            creationDateTime.Value.Should().Be(lastModificationDate.Value).And.BeAfter(dateTimeBeforeSave).And.BeBefore(dateTimeAfterSave);
+
+            var carQuery = await carService.GetFirstByQueryAsync(new BaseCarQuery() { ID = dbCreation.Entity.Id });
+
+            await carService.UpdateAsync(carQuery);
+
+            carQuery = await carService.GetFirstByQueryAsync(new BaseCarQuery() { ID = dbCreation.Entity.Id });
+
+            carQuery.CreationDate.Should().Be(dbCreation.Entity.CreationDate);
+
+            carQuery.LastModificationDate.Should().Be(dbCreation.Entity.LastModificationDate);
+        }
+
+        [Fact]
+        public async Task UpdateWithfields_Test()
+        {
+            var carList = TestCarsCatalog.GetCars();
+
+            DateTime dateTimeBeforeSave = DateTime.Now;
+            var dbCreation = await carService.CreateAsync(carList.First());
+            DateTime dateTimeAfterSave = DateTime.Now;
+
+            DateTime? creationDateTime = dbCreation.Entity.CreationDate;
+            DateTime? lastModificationDate = dbCreation.Entity.LastModificationDate;
+
+            creationDateTime.Should().NotBeNull();
+            creationDateTime.Value.Should().Be(lastModificationDate.Value).And.BeAfter(dateTimeBeforeSave).And.BeBefore(dateTimeAfterSave);
+
+            var carQuery = await carService.GetFirstByQueryAsync(new BaseCarQuery() { ID = dbCreation.Entity.Id });
+
+            carQuery.Name = "XXXx";
+
+            DateTime dateBeforeUpdate = DateTime.Now;
+            await carService.UpdateAsync(carQuery);
+            DateTime dateAfterUpdate = DateTime.Now;
+
+            carQuery.CreationDate.Should().Be(dbCreation.Entity.CreationDate);
+
+            carQuery.LastModificationDate.Should().BeAfter(dateBeforeUpdate).And.BeBefore(dateAfterUpdate);
         }
 
         [Fact]

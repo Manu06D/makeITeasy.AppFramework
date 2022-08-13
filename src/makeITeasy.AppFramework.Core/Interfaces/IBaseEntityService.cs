@@ -11,6 +11,7 @@ namespace makeITeasy.AppFramework.Core.Interfaces
     public interface IBaseEntityService<TEntity> where TEntity : class, IBaseEntity
     {
         Task<TEntity> GetByIdAsync(object id, List<Expression<Func<TEntity, object>>> includes = null);
+        Task<IList<TEntity>> ListAllAsync(List<Expression<Func<TEntity, object>>>? includes = null);
         Task<QueryResult<TEntity>> QueryAsync(ISpecification<TEntity> specification, bool includeCount = false);
         Task<TEntity> GetFirstByQueryAsync(ISpecification<TEntity> specification);
         Task<QueryResult<TTarget>> QueryWithProjectionAsync<TTarget>(ISpecification<TEntity> specification, bool includeCount = false) where TTarget : class;

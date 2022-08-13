@@ -12,7 +12,7 @@ namespace makeITeasy.AppFramework.Core.Interfaces
     {
         Task<T> GetByIdAsync(object id);
         Task<T> GetByIdAsync(object id, List<Expression<Func<T, object>>> includes);
-        Task<IList<T>> ListAllAsync();
+        Task<IList<T>> ListAllAsync(List<Expression<Func<T, object>>>? includes = null);
         Task<QueryResult<T>> ListAsync(ISpecification<T> spec, bool includeCount = false);
         Task<QueryResult<TTarget>> ListWithProjectionAsync<TTarget>(ISpecification<T> spec, bool includeCount = false) where TTarget : class;
         Task<T> AddAsync(T entity, bool saveChanges = true);

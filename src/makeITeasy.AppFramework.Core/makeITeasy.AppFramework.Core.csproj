@@ -10,7 +10,8 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
     <PackageTags>framework ef</PackageTags>
-    <PackageReleaseNotes>1.1.13 : Add GenericFindUniqueCommand*
+    <PackageReleaseNotes>1.1.14 : Add ListAllAsync to services
+1.1.13 : Add GenericFindUniqueCommand*
 1.1.12 : BaseEntityService methods are now all virtual
 1.1.11 : Update packages dependencies
 1.1.1 : Add IsolationLevel to query
@@ -20,7 +21,7 @@
     <Authors>Emmanuel D.</Authors>
     <Company>Make IT Easy</Company>
     <Description>Core module for makeITeasy.Appframework</Description>
-    <Version>1.1.13</Version>
+    <Version>1.1.14</Version>
     <DebugType>embedded</DebugType>
     <EmbedAllSources>true</EmbedAllSources>
   </PropertyGroup>

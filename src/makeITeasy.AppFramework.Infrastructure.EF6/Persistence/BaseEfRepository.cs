@@ -1,16 +1,20 @@
-﻿using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using AutoMapper;
+﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
+
 using DelegateDecompiler.EntityFrameworkCore;
+
+using EFCore.BulkExtensions;
+
+using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Interfaces;
-using makeITeasy.AppFramework.Models;
 using makeITeasy.AppFramework.Core.Queries;
+using makeITeasy.AppFramework.Models;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using makeITeasy.AppFramework.Core.Commands;
-using EFCore.BulkExtensions;
+
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
 {
@@ -62,7 +66,6 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
                 };
             }
 
-
             return await GetDbContext().Set<T>().FindAsync(id);
         }
 
@@ -85,16 +88,21 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
             return await GetByIdAsync(id);
         }
 
-        public virtual async Task<IList<T>> ListAllAsync()
+        public virtual async Task<IList<T>> ListAllAsync(List<Expression<Func<T, object>>>? includes = null)
         {
-            U dbContext = GetDbContext();
+            var dbSet = GetDbContext().Set<T>().AsQueryable();
 
-            return await dbContext.Set<T>().ToListAsync();
+            if (includes != null)
+            {
+                dbSet = includes.Aggregate(dbSet, (current, include) => current.Include(include));
+            }
+
+            return await dbSet.ToListAsync();
         }
 
         public virtual async Task<QueryResult<T>> ListAsync(ISpecification<T> spec, bool includeCount = false)
         {
-            QueryResult<T> result = new ();
+            QueryResult<T> result = new();
 
             (result.TotalItems, IQueryable<T> filteredSet) = await CreateQueryableFromSpec(spec, GetDbContext(), includeCount);
 
@@ -105,7 +113,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
 
         public virtual async Task<QueryResult<X>> ListWithProjectionAsync<X>(ISpecification<T> spec, bool includeCount = false) where X : class
         {
-            QueryResult<X> result = new ();
+            QueryResult<X> result = new();
 
             (result.TotalItems, IQueryable<T> filteredSet) = await CreateQueryableFromSpec(spec, GetDbContext(), includeCount);
 
@@ -181,13 +189,50 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
 
             foreach (var entry in entries)
             {
-                DateTime now = DateProvider?.Now ?? DateTime.Now;
+                var hasAnyChangeOnEntry = true;
 
-                ((ITimeTrackingEntity)entry.Entity).LastModificationDate = now;
-
-                if (entry.State == EntityState.Added)
+                if (entry.State == EntityState.Modified)
                 {
-                    ((ITimeTrackingEntity)entry.Entity).CreationDate = now;
+                    List<string> propertiesToExclude = typeof(ITimeTrackingEntity).GetProperties().Select(x => x.Name).ToList();
+
+                    foreach (var property in entry.Properties.Where(x => !propertiesToExclude.Contains(x.Metadata.Name)))
+                    {
+                        bool hasLocalChange = false;
+                        if (property.OriginalValue == null)
+                        {
+                            hasLocalChange = property.CurrentValue != null;
+                        }
+                        else
+                        {
+                            hasLocalChange = !property.OriginalValue.Equals(property.CurrentValue);
+                        }
+
+                        if (hasLocalChange)
+                        {
+                            hasAnyChangeOnEntry = true;
+                            break;
+                        }
+
+                        hasAnyChangeOnEntry = false;
+                    }
+
+                    if (!hasAnyChangeOnEntry)
+                    {
+                        //revert LastModificationDateChange
+                        entry.Property(nameof(ITimeTrackingEntity.LastModificationDate)).IsModified = false;
+                    }
+                }
+
+                if (hasAnyChangeOnEntry)
+                {
+                    DateTime now = DateProvider?.Now ?? DateTime.Now;
+
+                    ((ITimeTrackingEntity)entry.Entity).LastModificationDate = now;
+
+                    if (entry.State == EntityState.Added)
+                    {
+                        ((ITimeTrackingEntity)entry.Entity).CreationDate = now;
+                    }
                 }
             }
 
@@ -320,8 +365,6 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
                     EntityEntry<T> ee = dbContext.Entry(databaseEntity);
 
                     ee.CurrentValues.SetValues(entity);
-
-                    //ee.State = EntityState.Modified;
                 }
             }
 
@@ -397,7 +440,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
 
         public async Task<CommandResult> DeleteAsync(T entity, bool saveChanges = true)
         {
-            CommandResult result = new ();
+            CommandResult result = new();
 
             U dbContext = GetDbContext();
 

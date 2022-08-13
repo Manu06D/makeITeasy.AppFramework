@@ -51,6 +51,11 @@ namespace makeITeasy.AppFramework.Core.Services
             return await EntityRepository.GetByIdAsync(id, includes);
         }
 
+        public async Task<IList<TEntity>> ListAllAsync(List<Expression<Func<TEntity, object>>>? includes = null)
+        {
+            return await EntityRepository.ListAllAsync(includes);
+        }
+
         public virtual async Task<QueryResult<TEntity>> QueryAsync(ISpecification<TEntity> specification, bool includeCount = false)
         {
             specification?.BuildQuery();
