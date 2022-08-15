@@ -554,5 +554,44 @@ namespace makeITeasy.CarCatalog.dotnet6.Tests
 
             result.Should().BeNull();
         }
+
+        [Fact]
+        public async Task XXX()
+        {
+            Car newCar = new Car()
+            {
+                Name = "C3",
+                ReleaseYear = 2011,
+                Brand = new Brand()
+                {
+                    Name = "Citroen",
+                    Country = new Country()
+                    {
+                        Name = "France",
+                        CountryCode = "FR"
+                    }
+                }
+            };
+
+            var result = await carService.CreateAsync(newCar);
+
+            result.Result.Should().Be(CommandState.Success);
+
+            Car newCar2 = new Car()
+            {
+                Name = "C4",
+                ReleaseYear = 2011,
+                BrandId = newCar.BrandId,
+                Brand = new Brand()
+                {
+                    Name = "Citroen",
+                    Id = newCar.BrandId
+                }
+            };
+
+            result = await carService.CreateAsync(newCar2);
+
+            result.Result.Should().Be(CommandState.Success);
+        }
     }
 }

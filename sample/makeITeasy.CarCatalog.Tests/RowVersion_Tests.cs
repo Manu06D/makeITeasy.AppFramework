@@ -101,6 +101,8 @@ namespace makeITeasy.CarCatalog.Tests
 
             result = await carService.UpdateAsync(afterFirstUpdateQueryResult.Results.First());
 
+            result.Result.Should().Be(CommandState.Warning);
+
             await Task.Delay(25);
 
             var afterSecondUpdateQueryResult = await carService.QueryAsync(new BaseCarQuery() { ID = result.Entity.Id }, includeCount: true);

@@ -170,9 +170,9 @@ namespace makeITeasy.AppFramework.Core.Services
 
         private async Task<CommandResult<TEntity>> InnerUpdateAsync(TEntity entity)
         {
-            await EntityRepository.UpdateAsync(entity);
+            CommandResult<TEntity> result = await EntityRepository.UpdateAsync(entity);
 
-            return new CommandResult<TEntity>() { Entity = entity, Result = CommandState.Success };
+            return new CommandResult<TEntity>() { Entity = entity, Result = result.Result };
         }
 
         public async Task<CommandResult<TEntity>> InnerAddAsync(TEntity entity, bool saveChanges = true)
