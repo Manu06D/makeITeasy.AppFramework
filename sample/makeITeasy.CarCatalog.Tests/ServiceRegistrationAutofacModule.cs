@@ -49,7 +49,9 @@ namespace makeITeasy.CarCatalog.Tests
                     AppFramework.Core.AppFrameworkCore.Assembly, //Framework Assembly
                     Core.CarCatalogCore.Assembly,                //Service Assembly
                     AppFrameworkModels.Assembly,                 //Models Assembly
-                    Assembly.GetExecutingAssembly()};
+                    Assembly.GetExecutingAssembly(),
+                    typeof(Car).Assembly
+            };
 
             var sqlLiteMemoryConnection = new SqliteConnection("DataSource=:memory:");
             sqlLiteMemoryConnection.Open();
@@ -73,10 +75,12 @@ namespace makeITeasy.CarCatalog.Tests
             //    options.EnableSensitiveDataLogging(true);
             //    options.EnableDetailedErrors();
             //});
-
+            
+            services.AddValidatorsFromAssemblies(assembliesToScan);
             builder.Populate(services);
 
             builder.RegisterModule(new RegisterAutofacModule() { Assemblies = assembliesToScan });
+
             builder.RegisterAutoMapper(assemblies: assembliesToScan);
             builder.RegisterMediatR(assembliesToScan);
 
@@ -95,9 +99,6 @@ namespace makeITeasy.CarCatalog.Tests
                 .OnActivated(args => AutofacHelper.InjectProperties(args.Context, args.Instance, true));
             ;
             builder.RegisterType<CarRepository>().As<ICarRepository>();
-
-            builder.RegisterAssemblyTypes(CarCatalogModels.Assembly).Where(t => t.IsClosedTypeOf(typeof(IValidator<>))).AsImplementedInterfaces();
-            builder.RegisterType<AutofacValidatorFactory>().As<IValidatorFactory>().SingleInstance();
 
             builder.RegisterType<UnitOfWork>().As(typeof(IUnitOfWork));
         }

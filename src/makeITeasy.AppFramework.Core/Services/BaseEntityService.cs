@@ -10,13 +10,14 @@ using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Models.Exceptions;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations;
 
 namespace makeITeasy.AppFramework.Core.Services
 {
     public class BaseEntityService<TEntity> : IBaseEntityService<TEntity>, IDisposable where TEntity : class, IBaseEntity
     {
         //injected by autofac by propertieswired
-        protected IValidatorFactory ValidatorFactory { get; set; }
+        protected IValidator<TEntity> _validator { get; set; }
         //injected by autofac by propertieswired
         public IAsyncRepository<TEntity> EntityRepository { get; set; }
         protected ILogger<BaseEntityService<TEntity>> _logger { get; set; }
@@ -25,10 +26,10 @@ namespace makeITeasy.AppFramework.Core.Services
         {
         }
 
-        protected BaseEntityService(IAsyncRepository<TEntity> entityRepository, IValidatorFactory validatorFactory, ILogger<BaseEntityService<TEntity>> logger)
+        protected BaseEntityService(IAsyncRepository<TEntity> entityRepository, ILogger<BaseEntityService<TEntity>> logger, IValidator<TEntity> validator = null)
         {
             EntityRepository = entityRepository;
-            ValidatorFactory = validatorFactory;
+            _validator = validator;
             _logger = logger;
         }
 
@@ -115,11 +116,9 @@ namespace makeITeasy.AppFramework.Core.Services
 
         private async Task<CommandResult<TEntity>> ValidateAndProcess(TEntity entity, Func<TEntity, Task<CommandResult<TEntity>>> action)
         {
-            var entityValidator = ValidatorFactory?.GetValidator<TEntity>();
-
-            if (entityValidator != null)
+            if (_validator != null)
             {
-                var validationResult = entityValidator.Validate(entity);
+                var validationResult = _validator.Validate(entity);
 
                 if (!validationResult.IsValid)
                 {
@@ -134,17 +133,15 @@ namespace makeITeasy.AppFramework.Core.Services
 
         private async Task<ICollection<CommandResult<TEntity>>> ValidateAndProcess(ICollection<TEntity> entities, Func<ICollection<TEntity>, Task<ICollection<CommandResult<TEntity>>>> action)
         {
-            var entityValidator = ValidatorFactory?.GetValidator<TEntity>();
-
             List<CommandResult<TEntity>> results = new List<CommandResult<TEntity>>();
 
             ICollection<TEntity> entitiesToHandle = new List<TEntity>();
 
-            if (entityValidator != null)
+            if (_validator != null)
             {
                 foreach(var entity in entities)
                 {
-                    var validationResult = entityValidator.Validate(entity);
+                    var validationResult = _validator.Validate(entity);
 
                     if (!validationResult.IsValid)
                     {
@@ -208,7 +205,7 @@ namespace makeITeasy.AppFramework.Core.Services
 
         public bool Validate(TEntity entity)
         {
-            return ValidatorFactory.GetValidator<TEntity>()?.Validate(entity).IsValid ?? throw new ValidatorNotFoundException(typeof(TEntity));
+            return _validator?.Validate(entity).IsValid ?? throw new ValidatorNotFoundException(typeof(TEntity));
         }
     }
 }

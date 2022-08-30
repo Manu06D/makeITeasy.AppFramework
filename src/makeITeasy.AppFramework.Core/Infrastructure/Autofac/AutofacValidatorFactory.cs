@@ -4,11 +4,11 @@ using FluentValidation;
 
 namespace makeITeasy.AppFramework.Core.Infrastructure.Autofac
 {
-    public class AutofacValidatorFactory : ValidatorFactoryBase
+    public class AutofacValidatorFactory_old : ValidatorFactoryBase
     {
         private readonly IComponentContext _context;
 
-        public AutofacValidatorFactory(IComponentContext context)
+        public AutofacValidatorFactory_old(IComponentContext context)
         {
             _context = context;
         }

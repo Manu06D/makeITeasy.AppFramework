@@ -45,7 +45,8 @@ namespace makeITeasy.CarCatalog.WebApp
         private readonly Assembly[] assembliesToScan = new Assembly[]{
                     AppFramework.Core.AppFrameworkCore.Assembly,
                     Core.CarCatalogCore.Assembly,
-                    AppFrameworkModels.Assembly
+                    AppFrameworkModels.Assembly,
+                    typeof(Car).Assembly
             };
 
         public void ConfigureServices(IServiceCollection services)
@@ -54,6 +55,8 @@ namespace makeITeasy.CarCatalog.WebApp
             services.AddScoped<DatatableExceptionFilter>();
 
             services.AddControllersWithViews().AddNewtonsoftJson();
+
+            services.AddValidatorsFromAssemblies(assembliesToScan);
 
             services.AddServerSideBlazor().AddCircuitOptions(o =>
             {
@@ -90,10 +93,6 @@ namespace makeITeasy.CarCatalog.WebApp
             builder.RegisterGeneric(typeof(TransactionCarCatalogRepository<>)).As(typeof(IAsyncRepository<>)).InstancePerLifetimeScope()
                     .PropertiesAutowired()
                     .OnActivated(args => AutofacHelper.InjectProperties(args.Context, args.Instance, true));
-
-            builder.RegisterAssemblyTypes(CarCatalogModels.Assembly).Where(t => t.IsClosedTypeOf(typeof(IValidator<>))).AsImplementedInterfaces();
-            
-            builder.RegisterType<AutofacValidatorFactory>().As<IValidatorFactory>().SingleInstance();
 
             ////specific service/repository
             builder.RegisterType<CarService>().As<ICarService>();
