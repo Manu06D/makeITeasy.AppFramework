@@ -16,6 +16,7 @@ using makeITeasy.AppFramework.Models;
 
 using System.Reflection;
 using ContosoUniversity.Infrastructure;
+using ContosoUniversity.Models;
 
 namespace ContosoUniversity.WebApplication.WebAppElements.Startup
 {
@@ -45,10 +46,6 @@ namespace ContosoUniversity.WebApplication.WebAppElements.Startup
                 builder.RegisterGeneric(typeof(UniversityCatalogRepository<>)).As(typeof(IAsyncRepository<>)).InstancePerLifetimeScope()
                         .PropertiesAutowired()
                         .OnActivated(args => AutofacHelper.InjectProperties(args.Context, args.Instance, true));
-
-                builder.RegisterAssemblyTypes(modelAssembly).Where(t => t.IsClosedTypeOf(typeof(IValidator<>))).AsImplementedInterfaces();
-
-                builder.RegisterType<AutofacValidatorFactory>().As<IValidatorFactory>().SingleInstance();
 
             }
         );

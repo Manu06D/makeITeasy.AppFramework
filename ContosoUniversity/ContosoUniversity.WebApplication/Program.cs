@@ -1,6 +1,8 @@
 using Serilog;
 using ContosoUniversity.WebApplication.WebAppElements.Startup;
 using makeITeasy.AppFramework.Web.Helpers;
+using Autofac.Core;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,7 @@ builder.Host.UseSerilog((context, config) => config.WriteTo.Console().WriteTo.De
 builder.Services.AddControllersWithViews();
 builder.Services.AddOptions();
 builder.Services.RegisterDatatablesService();
+builder.Services.AddValidatorsFromAssembly(typeof(ContosoUniversity.Models.Instructor).Assembly);
 
 builder.ConfigureDatabase();
 builder.ConfigureAutofac();

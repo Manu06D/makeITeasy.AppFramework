@@ -14,7 +14,7 @@ namespace makeITeasy.CarCatalog.dotnet6.Core.Services
     {
         private readonly ICarRepository _carRepository;
 
-        public CarService(ICarRepository carRepository, IValidatorFactory validatorFactory, ILogger<CarService> logger) : base(carRepository, validatorFactory, logger)
+        public CarService(ICarRepository carRepository, ILogger<CarService> logger, IValidator<Car> validator = null) : base(carRepository, logger, validator)
         {
             _carRepository = carRepository;
         }
