@@ -9,7 +9,6 @@ using ContosoUniversity.Infrastructure.Data;
 using FluentValidation;
 
 using makeITeasy.AppFramework.Core.Helpers;
-using makeITeasy.AppFramework.Core.Infrastructure.Autofac;
 
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Models;

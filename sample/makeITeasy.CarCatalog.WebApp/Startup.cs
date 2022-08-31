@@ -6,7 +6,6 @@ using Autofac.Extensions.DependencyInjection;
 using AutoMapper.Contrib.Autofac.DependencyInjection;
 using FluentValidation;
 using makeITeasy.AppFramework.Core.Helpers;
-using makeITeasy.AppFramework.Core.Infrastructure.Autofac;
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.AppFramework.Web.Filters;
