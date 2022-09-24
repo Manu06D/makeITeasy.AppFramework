@@ -22,6 +22,9 @@
          "ObjectType": 0
       },
       {
+         "ExcludedColumns": [
+            "DynamicCarDetails"
+         ],
          "Name": "[dbo].[CarDetails]",
          "ObjectType": 0
       },
@@ -30,7 +33,7 @@
          "ObjectType": 0
       }
    ],
-   "UiHint": "makeITeasy.CarCatalog.Database\\makeITeasy.CarCatalog.Database.sqlproj",
+   "UiHint": "..\\sample\\makeITeasy.CarCatalog.Database\\makeITeasy.CarCatalog.Database.sqlproj",
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,
    "UseDbContextSplitting": false,

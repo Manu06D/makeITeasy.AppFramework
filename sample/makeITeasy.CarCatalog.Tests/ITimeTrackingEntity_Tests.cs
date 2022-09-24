@@ -1,15 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using FluentAssertions;
+
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.CarCatalog.Core.Services.Interfaces;
-using makeITeasy.CarCatalog.Core.Services.Queries.CarQueries;
+using makeITeasy.CarCatalog.Tests.Catalogs;
 using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Models;
-using makeITeasy.CarCatalog.Tests.Catalogs;
+
 using Xunit;
+using System.Collections.Generic;
+using Microsoft.Azure.Cosmos.Serialization.HybridRow;
+using makeITeasy.CarCatalog.Core.Services.Queries.CarQueries;
 
 namespace makeITeasy.CarCatalog.Tests
 {

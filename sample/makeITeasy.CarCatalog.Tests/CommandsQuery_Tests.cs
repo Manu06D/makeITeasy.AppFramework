@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+
 using FluentAssertions;
+
 using makeITeasy.AppFramework.Core.Commands;
-using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.CarCatalog.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.Core.Services.Queries.CarQueries;
+using makeITeasy.CarCatalog.Tests.Catalogs;
 using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Models;
-using makeITeasy.CarCatalog.Tests.Catalogs;
+
 using MediatR;
+
 using Xunit;
+using makeITeasy.AppFramework.Core.Interfaces;
 
 namespace makeITeasy.CarCatalog.Tests
 {
@@ -40,7 +44,7 @@ namespace makeITeasy.CarCatalog.Tests
 
             newCarResult.Result.Should().Be(CommandState.Success);
 
-            QueryResult<Car> result = await _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQuery() { ID = newCarResult.Entity.Id}));
+            QueryResult<Car> result = await _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQuery() { ID = newCarResult.Entity.Id }));
 
             result.Results.Count.Should().Be(1);
         }
@@ -67,7 +71,7 @@ namespace makeITeasy.CarCatalog.Tests
             CommandResult<Car> newCarResult = await carService.CreateAsync(TestCarsCatalog.GetCars().First());
 
             newCarResult.Result.Should().Be(CommandState.Success);
-            
+
             Car car = newCarResult.Entity;
             car.Name = $"car.Name{DateTime.Now.Ticks}";
 

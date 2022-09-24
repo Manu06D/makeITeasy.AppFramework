@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
+
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.CarCatalog.Core.Services.Queries.BrandQueries;
 using makeITeasy.CarCatalog.Core.Services.Queries.CarQueries;
 using makeITeasy.CarCatalog.Models;
 using makeITeasy.CarCatalog.WebApp.Models;
+
 using MediatR;
-using Microsoft.AspNetCore.Http;
+
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+
+using System.Diagnostics;
 
 namespace makeITeasy.CarCatalog.WebApp.Controllers
 {
@@ -29,12 +28,12 @@ namespace makeITeasy.CarCatalog.WebApp.Controllers
             _mapper = mapper;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             return View();
         }
 
-        public async Task<IActionResult> IndexWithBlazor()
+        public IActionResult IndexWithBlazor()
         {
             return View();
         }
@@ -60,15 +59,15 @@ namespace makeITeasy.CarCatalog.WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit([FromBody] CarEditViewModel model)
         {
-            if (ModelState.IsValid)
-            {
+            //if (ModelState.IsValid)
+            //{
                 CommandResult<Car> result = await _mediator.Send(new UpdateEntityCommand<Car>(_mapper.Map<Car>(model)));
 
                 if (result.Result == CommandState.Success)
                 {
                     return Ok(model);
                 }
-            }
+            //}
 
             return StatusCode(StatusCodes.Status500InternalServerError, "An error has occured");
         }
@@ -78,6 +77,17 @@ namespace makeITeasy.CarCatalog.WebApp.Controllers
             Car result = await _mediator.Send(new GenericFindUniqueCommand<Car>(new BaseCarQuery() { ID = id, IncludeStrings = new List<string>() { "Brand" } }));
 
             return PartialView(result);
+        }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

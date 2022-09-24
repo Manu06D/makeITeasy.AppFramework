@@ -21,8 +21,7 @@
       "wwwroot/lib/jquery-slidePanel/dist/css/slidePanel.css",
       "wwwroot/lib/toastr.js/toastr.css",
       "wwwroot/css/site.css",
-      "wwwroot/lib/datatables/css/jquery.dataTables.min.css"
+      "wwwroot/lib/datatables/css/jquery.dataTables.css"
     ]
   }
-
 ]

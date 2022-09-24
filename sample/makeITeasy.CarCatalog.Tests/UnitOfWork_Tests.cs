@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using FluentAssertions;
+
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.CarCatalog.Core.Services.Interfaces;
@@ -11,7 +13,9 @@ using makeITeasy.CarCatalog.Core.Services.Queries.BrandQueries;
 using makeITeasy.CarCatalog.Core.Services.Queries.CarQueries;
 using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Models;
+
 using Microsoft.EntityFrameworkCore;
+
 using Xunit;
 
 namespace makeITeasy.CarCatalog.Tests

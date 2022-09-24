@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using makeITeasy.CarCatalog.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.Models;
 

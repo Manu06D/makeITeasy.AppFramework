@@ -74,12 +74,11 @@ namespace makeITeasy.CarCatalog.Tests
             //    options.EnableSensitiveDataLogging(true);
             //    options.EnableDetailedErrors();
             //});
-            
+
             services.AddValidatorsFromAssemblies(assembliesToScan);
             builder.Populate(services);
 
             builder.RegisterModule(new RegisterAutofacModule() { Assemblies = assembliesToScan });
-
             builder.RegisterAutoMapper(assemblies: assembliesToScan);
             builder.RegisterMediatR(assembliesToScan);
 

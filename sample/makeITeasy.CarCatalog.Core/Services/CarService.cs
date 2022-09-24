@@ -1,12 +1,12 @@
 ﻿using makeITeasy.AppFramework.Core.Services;
 using makeITeasy.CarCatalog.Models;
-using makeITeasy.CarCatalog.Core.Services.Interfaces;
 using FluentValidation;
-using makeITeasy.CarCatalog.Core.Ports;
 using System.Collections.Generic;
-using makeITeasy.CarCatalog.Models.Custom;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using makeITeasy.CarCatalog.Core.Ports;
+using makeITeasy.CarCatalog.Core.Services.Interfaces;
+using makeITeasy.CarCatalog.Models.Custom;
 
 namespace makeITeasy.CarCatalog.Core.Services
 {

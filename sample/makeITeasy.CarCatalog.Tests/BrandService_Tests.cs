@@ -2,7 +2,6 @@
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Models;
-using makeITeasy.CarCatalog.Tests.Catalogs;
 using Xunit;
 using makeITeasy.CarCatalog.Models.Collections;
 using System.Threading.Tasks;
@@ -14,6 +13,7 @@ using makeITeasy.CarCatalog.Core.Services.Queries.BrandQueries;
 using makeITeasy.AppFramework.Core.Models.Exceptions;
 using System.Transactions;
 using System;
+using makeITeasy.CarCatalog.Tests.Catalogs;
 
 namespace makeITeasy.CarCatalog.Tests
 {
@@ -178,12 +178,12 @@ namespace makeITeasy.CarCatalog.Tests
             var getResult = await brandService.QueryWithProjectionAsync<CustomBrand>(
                 new BaseBrandQuery()
                 {
-                    Includes = 
-                        new List<System.Linq.Expressions.Expression<Func<Brand, object>>>() { 
+                    Includes =
+                        new List<System.Linq.Expressions.Expression<Func<Brand, object>>>() {
                             x => x.Cars.Where(x => x.Name.StartsWith("A3")),
                             x => x.Cars
                         },
-                    
+
                 }
                 , includeCount: true);
 

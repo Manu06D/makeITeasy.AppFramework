@@ -1,12 +1,16 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+
 using FluentAssertions;
+
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.CarCatalog.Core.Services.Queries.CarQueries;
 using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Models;
+
 using MediatR;
+
 using Xunit;
 
 namespace makeITeasy.CarCatalog.Tests
@@ -53,7 +57,7 @@ namespace makeITeasy.CarCatalog.Tests
 
             newCar.Name = "C4";
 
-            var resultUpdate = await _mediator.Send(new UpdatePartialEntityCommand<Car>(newCar, new string[] { nameof(newCar.Name)}));
+            var resultUpdate = await _mediator.Send(new UpdatePartialEntityCommand<Car>(newCar, new string[] { nameof(newCar.Name) }));
             resultUpdate.Result.Should().Be(CommandState.Success);
 
             var query = await _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQuery() { ID = newCar.Id }));

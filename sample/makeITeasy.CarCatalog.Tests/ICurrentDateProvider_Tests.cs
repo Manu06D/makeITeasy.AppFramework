@@ -4,6 +4,7 @@ using FluentAssertions;
 
 using makeITeasy.AppFramework.Models;
 using makeITeasy.CarCatalog.Core.Services.Interfaces;
+using makeITeasy.CarCatalog.Core.Services.Queries.BrandQueries;
 using makeITeasy.CarCatalog.Core.Services.Queries.CarQueries;
 using makeITeasy.CarCatalog.Core.Services.Queries.CountryQueries;
 using makeITeasy.CarCatalog.Infrastructure.Data;

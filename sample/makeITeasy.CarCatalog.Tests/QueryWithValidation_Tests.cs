@@ -5,10 +5,9 @@ using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.CarCatalog.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.Core.Services.Queries.CarQueries;
+using makeITeasy.CarCatalog.Tests.Catalogs;
 using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Models;
-
-using makeITeasy.CarCatalog.Tests.Catalogs;
 
 using MediatR;
 
@@ -56,15 +55,15 @@ namespace makeITeasy.CarCatalog.Tests
 
             result.Results.Count.Should().Be(1);
 
-            Func<Task> act = () => _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQueryWithValidation() { ID = -1}));
+            Func<Task> act = () => _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQueryWithValidation() { ID = -1 }));
 
             await act.Should().ThrowAsync<InvalidQueryException>();
 
-            act = () => _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQueryWithValidation() {}));
+            act = () => _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQueryWithValidation() { }));
 
             await act.Should().ThrowAsync<InvalidQueryException>();
 
-            act = () => _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQueryWithValidation() { Name = newCarResult.Entity.Name}));
+            act = () => _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQueryWithValidation() { Name = newCarResult.Entity.Name }));
 
             result.Results.Count.Should().Be(1);
         }

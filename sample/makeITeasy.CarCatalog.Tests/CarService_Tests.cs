@@ -11,9 +11,9 @@ using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.CarCatalog.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.Core.Services.Queries.CarQueries;
+using makeITeasy.CarCatalog.Tests.Catalogs;
 using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Models;
-using makeITeasy.CarCatalog.Tests.Catalogs;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -32,7 +32,6 @@ namespace makeITeasy.CarCatalog.Tests
             var t = Resolve<CarCatalogContext>();
 
             t.Database.EnsureCreated();
-
         }
 
         ~CarService_Tests()
@@ -94,7 +93,7 @@ namespace makeITeasy.CarCatalog.Tests
         [Fact]
         public async Task CreateAndGet_BasicTest()
         {
-            Car newCar = new()
+            Car newCar = new Car()
             {
                 Name = "C3",
                 ReleaseYear = 2011,
@@ -131,7 +130,7 @@ namespace makeITeasy.CarCatalog.Tests
         public async Task CreateAndGet_ListTest()
         {
             CreateCarCatalog();
-
+            
             var getResult = await carService.QueryAsync(new BaseCarQuery(), includeCount: true);
 
             getResult.TotalItems.Should().Be(carList.Count);
@@ -145,7 +144,7 @@ namespace makeITeasy.CarCatalog.Tests
             var listAllResult = await carService.ListAllAsync();
             listAllResult.Count.Should().Be(carList.Count);
 
-            var listAllWithCountryResult = await carService.ListAllAsync(new List<Expression<Func<Car, object>>>() { x => x.Brand.Country });
+            var listAllWithCountryResult = await carService.ListAllAsync(new List<Expression<Func<Car, object>>>() { x => x.Brand.Country});
             listAllWithCountryResult.Select(x => x.Brand.Country.Name).Should().HaveCountGreaterThan(1);
         }
 
@@ -153,7 +152,7 @@ namespace makeITeasy.CarCatalog.Tests
         public async Task CreateAndGet_ListWithIncludeStringTest()
         {
             CreateCarCatalog();
-
+            
             var getResult = await carService.QueryAsync(new BaseCarQuery() { IncludeStrings = new List<string>() { "Brand.Country" } }, includeCount: true);
 
             getResult.TotalItems.Should().Be(carList.Count);
@@ -175,7 +174,7 @@ namespace makeITeasy.CarCatalog.Tests
         public async Task CreateAndGet_ListWithIncludeTest()
         {
             CreateCarCatalog();
-            
+
             var getResult = await carService.QueryAsync
                 (new BaseCarQuery() { Includes = new List<Expression<Func<Car, object>>>() { x => x.Brand.Country } }, includeCount: true);
 
@@ -253,7 +252,7 @@ namespace makeITeasy.CarCatalog.Tests
         public async Task CreateAndGet_ListWithMapping2LevelTest()
         {
             CreateCarCatalog();
-            
+
             var getResult = await carService.QueryWithProjectionAsync<SmallCarInfoWithBrand>(new BaseCarQuery() { }, includeCount: true);
 
             getResult.TotalItems.Should().Be(carList.Count);
@@ -554,6 +553,45 @@ namespace makeITeasy.CarCatalog.Tests
                 .Build());
 
             result.Should().BeNull();
+        }
+
+        //[Fact]
+        public async Task EntitiesWithDifferentState_Test()
+        {
+            Car newCar = new Car()
+            {
+                Name = "C3",
+                ReleaseYear = 2011,
+                Brand = new Brand()
+                {
+                    Name = "Citroen",
+                    Country = new Country()
+                    {
+                        Name = "France",
+                        CountryCode = "FR"
+                    }
+                }
+            };
+
+            var result = await carService.CreateAsync(newCar);
+
+            result.Result.Should().Be(CommandState.Success);
+
+            Car newCar2 = new Car()
+            {
+                Name = "C4",
+                ReleaseYear = 2011,
+                BrandId = newCar.BrandId,
+                Brand = new Brand()
+                {
+                    Name = "Citroen",
+                    Id = newCar.BrandId
+                }
+            };
+
+            result = await carService.CreateAsync(newCar2);
+
+            result.Result.Should().Be(CommandState.Error);
         }
     }
 }

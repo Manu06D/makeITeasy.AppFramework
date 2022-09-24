@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using makeITeasy.AppFramework.Core.Interfaces;
+﻿using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.CarCatalog.Models;
 
 namespace makeITeasy.CarCatalog.WebApp.Models

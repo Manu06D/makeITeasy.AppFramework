@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\makeITeasy.AppFramework.Infrastructure.EF6\makeITeasy.AppFramework.Infrastructure.EF6.csproj" />
+    <ProjectReference Include="..\..\src\makeITeasy.AppFramework.Infrastructure.EF6\makeITeasy.AppFramework.Infrastructure.csproj" />
     <ProjectReference Include="..\ContosoUniversity.Core\ContosoUniversity.Core.csproj" />
     <ProjectReference Include="..\ContosoUniversity.Models\ContosoUniversity.Models.csproj" />
   </ItemGroup>

@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using AutoMapper;
+
 using makeITeasy.AppFramework.Infrastructure.Persistence;
 using makeITeasy.CarCatalog.Core.Ports;
 using makeITeasy.CarCatalog.Infrastructure.Data;
-using makeITeasy.CarCatalog.Models;
 using makeITeasy.CarCatalog.Models.Custom;
+using makeITeasy.CarCatalog.Models;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace makeITeasy.CarCatalog.Infrastructure.Repositories

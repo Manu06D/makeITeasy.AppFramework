@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
 using Serilog;
@@ -10,7 +11,7 @@ namespace makeITeasy.CarCatalog.Infrastructure.Persistence
 {
     public class DatabaseInterceptor : ISaveChangesInterceptor
     {
-        private readonly Serilog.ILogger _logger = Log.ForContext(typeof(DatabaseInterceptor));
+        private readonly ILogger _logger = Log.ForContext(typeof(DatabaseInterceptor));
         public void SaveChangesFailed(DbContextErrorEventData eventData)
         {
         }
@@ -18,26 +19,17 @@ namespace makeITeasy.CarCatalog.Infrastructure.Persistence
         public Task SaveChangesFailedAsync(DbContextErrorEventData eventData, CancellationToken cancellationToken = default)
         {
             _logger.Information("SaveChangesFailedAsync");
-            
+
             return Task.CompletedTask;
         }
 
         public int SavedChanges(SaveChangesCompletedEventData eventData, int result)
         {
-            var context = eventData.Context;
-            context.ChangeTracker.DetectChanges();
-
-            var t= context.ChangeTracker.Entries();
             return result;
         }
 
         public ValueTask<int> SavedChangesAsync(SaveChangesCompletedEventData eventData, int result, CancellationToken cancellationToken = default)
         {
-            var context = eventData.Context;
-            context.ChangeTracker.DetectChanges();
-
-            var t = context.ChangeTracker.Entries();
-
             return new ValueTask<int>(result);
         }
 
@@ -45,7 +37,7 @@ namespace makeITeasy.CarCatalog.Infrastructure.Persistence
         {
             var context = eventData.Context;
             context.ChangeTracker.DetectChanges();
-            foreach(var entry in context.ChangeTracker.Entries())
+            foreach (var entry in context.ChangeTracker.Entries())
             {
                 var message = entry.State switch
                 {
@@ -55,7 +47,7 @@ namespace makeITeasy.CarCatalog.Infrastructure.Persistence
                     _ => null
                 };
 
-                if(message != null)
+                if (message != null)
                 {
                     _logger.Information(message);
                 }
@@ -66,11 +58,6 @@ namespace makeITeasy.CarCatalog.Infrastructure.Persistence
 
         public ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
         {
-
-            var context = eventData.Context;
-            context.ChangeTracker.DetectChanges();
-
-            var t = context.ChangeTracker.Entries();
             return new ValueTask<InterceptionResult<int>>(result);
         }
     }

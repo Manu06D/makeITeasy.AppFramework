@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+
 using makeITeasy.AppFramework.Core.Extensions;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.CarCatalog.Models;
@@ -21,7 +22,7 @@ namespace makeITeasy.CarCatalog.Core.Services.Queries.CarQueries
                 AddFunctionToCriteria(x => x.Id == ID);
             }
 
-            if(!string.IsNullOrWhiteSpace(Name))
+            if (!string.IsNullOrWhiteSpace(Name))
             {
                 AddFunctionToCriteria(x => x.Name.StartsWith(Name));
             }

@@ -7,6 +7,7 @@ using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Models;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 using System;
 using System.Collections.Generic;
@@ -100,9 +101,9 @@ namespace makeITeasy.CarCatalog.Tests
             afterFirstUpdateQueryResult.Results.First().Version.Should().BeGreaterThan(0);
 
             result = await carService.UpdateAsync(afterFirstUpdateQueryResult.Results.First());
-
+            
             result.Result.Should().Be(CommandState.Warning);
-
+            
             await Task.Delay(25);
 
             var afterSecondUpdateQueryResult = await carService.QueryAsync(new BaseCarQuery() { ID = result.Entity.Id }, includeCount: true);

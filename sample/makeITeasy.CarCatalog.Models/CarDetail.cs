@@ -8,7 +8,6 @@ namespace makeITeasy.CarCatalog.Models
     {
 public long Id { get; set; }
 public long CarId { get; set; }
-public string DynamicCarDetails { get; set; }
 
 public virtual Car Car { get; set; }
     }

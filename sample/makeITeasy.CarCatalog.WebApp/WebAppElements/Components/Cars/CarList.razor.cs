@@ -2,11 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.CarCatalog.Core.Services.Queries.CarQueries;
-using makeITeasy.CarCatalog.Models;
 using makeITeasy.CarCatalog.WebApp.Models.Datatables;
+using makeITeasy.CarCatalog.Models;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Components;
 
 namespace makeITeasy.CarCatalog.WebApp.WebAppElements.Components.Cars

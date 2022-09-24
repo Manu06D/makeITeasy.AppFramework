@@ -1,11 +1,14 @@
 ﻿using System.Threading.Tasks;
+
 using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.AppFramework.Web.DataTables.AspNetCore;
 using makeITeasy.AppFramework.Web.Filters;
-using makeITeasy.CarCatalog.Models;
 using makeITeasy.CarCatalog.WebApp.Models.Datatables;
+using makeITeasy.CarCatalog.Models;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace makeITeasy.CarCatalog.WebApp.ApiControllers
@@ -18,7 +21,7 @@ namespace makeITeasy.CarCatalog.WebApp.ApiControllers
 
         public CarApiController(IMediator mediator)
         {
-            this._mediator = mediator;
+            _mediator = mediator;
         }
 
 
