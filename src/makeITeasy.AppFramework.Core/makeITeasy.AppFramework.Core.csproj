@@ -29,11 +29,11 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="6.4.0" />
-    <PackageReference Include="AutoMapper" Version="11.0.1" />
+    <PackageReference Include="AutoMapper" Version="11.0.2-alpha.0.12" />
     <PackageReference Include="DelegateDecompiler" Version="0.30.0" />
-    <PackageReference Include="FluentValidation" Version="11.1.0" />
+    <PackageReference Include="FluentValidation" Version="11.2.2" />
     <PackageReference Include="MediatR" Version="10.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0-rc.1.22426.10" />
   </ItemGroup>
 
   <ItemGroup>

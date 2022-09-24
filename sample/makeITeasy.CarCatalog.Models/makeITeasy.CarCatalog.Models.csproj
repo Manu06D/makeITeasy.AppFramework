@@ -6,8 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="DelegateDecompiler" Version="0.30.0" />
-    <PackageReference Include="FluentValidation" Version="11.1.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="FluentValidation" Version="11.2.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2-beta2" />
   </ItemGroup>
 
   <ItemGroup>
