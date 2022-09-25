@@ -12,9 +12,14 @@ using makeITeasy.AppFramework.Models;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Query;
 
+using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 
 namespace makeITeasy.AppFramework.Infrastructure.Persistence
 {
@@ -373,11 +378,33 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             return dbResult;
         }
 
-        public async Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, Expression<Func<T, T>> updateExpression)
+        public async Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, List<PropertyChangeCollection<T, object>> changes)
         {
+            IQueryable<T> query = GetDbContext().Set<T>().Where(entityPredicate);
 
-            return await GetDbContext().Set<T>().Where(entityPredicate).BatchUpdateAsync(updateExpression);
-        }
+            Func<SetPropertyCalls<T>, SetPropertyCalls<T>> propertyCalls = x => changes.Aggregate(x, (current, change) => current.SetProperty(change.Property, change.UpdateExpression));
+
+            //propertyCalls = changes.Aggregate(changes, (current, change) => current.SetProperty(change.Property, change.UpdateExpression));
+
+            //foreach(var change in changes)
+            //{
+            //    propertyCalls = x => x.SetProperty(change.Property, change.UpdateExpression);
+            //}
+
+            //s => changes..Aggregate(s, (current, change) => current.SetProperty(change.Property, change.UpdateExpression));
+
+            Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> exp =
+                  x => x.SetProperty(changes[0].Property, changes[0].UpdateExpression)
+                //changes.Aggregate(changes, (current, change) => current.SetProperty(change.Property, change.UpdateExpression));
+                //x => changes.AsEnumerable().Aggregate(x, (current, change) => current.SetProperty(change.Property, change.UpdateExpression))
+
+            ;
+
+            //exp  = Expression.Lambda<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>>(exp.Body);
+            //exp = Expression.Lambda<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>>(Expression.Call(propertyCalls.Method));//
+
+            return await query.ExecuteUpdateAsync(exp);
+       }
 
         public async Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] propertyNames, bool saveChanges = true)
         {

@@ -1,31 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
-    <PackageTags>framework ef</PackageTags>
-    <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
-    <Authors>Emmanuel D.</Authors>
-    <Company>Make IT Easy</Company>
-    <Description>
-		Models for makeITeasy.Appframework
-		1.1.6 : Add ReadUncommitedQuery
-		1.1.5 : Add ICurrentDateProvider model
-	</Description>
-    <Version>1.1.6</Version>
-    <AssemblyVersion></AssemblyVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
+		<PackageTags>framework ef</PackageTags>
+		<PackageReleaseNotes>Initial Release</PackageReleaseNotes>
+		<Authors>Emmanuel D.</Authors>
+		<Company>Make IT Easy</Company>
+		<Description>
+			Models for makeITeasy.Appframework
+			1.1.6 : Add ReadUncommitedQuery
+			1.1.5 : Add ICurrentDateProvider model
+		</Description>
+		<Version>1.1.6</Version>
+		<AssemblyVersion></AssemblyVersion>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.ComponentModel.Annotations" Version="6.0.0-preview.4.21253.7" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="System.ComponentModel.Annotations" Version="6.0.0-preview.4.21253.7" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.1.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.1.1" />
+	</ItemGroup>
 
 </Project>

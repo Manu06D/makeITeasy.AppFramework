@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Xunit;
+using makeITeasy.AppFramework.Models;
 
 namespace makeITeasy.CarCatalog.Tests
 {
@@ -88,11 +89,18 @@ namespace makeITeasy.CarCatalog.Tests
 
             var dbCreation = await carService.CreateRangeAsync(carList);
 
-            var udbUpdate = await carService.UpdateRangeAsync(x => x.Id > 0, x => new Car { Name = x.Name + "XX" });
+            List<PropertyChangeCollection<Car, object>> changes = new()
+            {
+                new PropertyChangeCollection<Car, object>(x => x.Name, x => x.Name + "XXXX")
+                //,
+                //new PropertyChangeCollection<Car, object>(x => x.ReleaseYear, x => 2015),
+            };
+
+            var udbUpdate = await carService.UpdateRangeAsync(x => x.Id > 0, changes);
 
             var queryResult = await carService.QueryAsync(new BaseCarQuery());
 
-            queryResult.Results.Should().Match(x => x.All(y => y.Name.EndsWith("XX")));
+            queryResult.Results.Should().Match(x => x.All(y => y.Name.EndsWith("XX") && y.ReleaseYear == 2015));
         }
     }
 }

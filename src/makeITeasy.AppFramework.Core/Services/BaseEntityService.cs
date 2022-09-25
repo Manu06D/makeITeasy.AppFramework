@@ -104,9 +104,9 @@ namespace makeITeasy.AppFramework.Core.Services
             return await ValidateAndProcess(entities, async (x) => await InnerAddRangeAsync(x));
         }
 
-        public virtual async Task<int> UpdateRangeAsync(Expression<Func<TEntity, bool>> entityPredicate, Expression<Func<TEntity, TEntity>> updateExpression)
+        public virtual async Task<int> UpdateRangeAsync(Expression<Func<TEntity, bool>> entityPredicate, List<PropertyChangeCollection<TEntity, object>> changes)
         {
-            return await EntityRepository.UpdateRangeAsync(entityPredicate, updateExpression);
+            return await EntityRepository.UpdateRangeAsync(entityPredicate, changes);
         }
 
         public virtual async Task<CommandResult<TEntity>> UpdateAsync(TEntity entity)
