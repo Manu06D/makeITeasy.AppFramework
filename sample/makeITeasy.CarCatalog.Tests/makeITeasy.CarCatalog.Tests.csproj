@@ -12,8 +12,8 @@
 		<PackageReference Include="Bogus" Version="34.0.2" />
 		<PackageReference Include="FluentAssertions" Version="6.7.0" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.2.2" />
-		<PackageReference Include="AutoMapper.Contrib.Autofac.DependencyInjection" Version="6.1.0" />
-		<PackageReference Include="MediatR.Extensions.Autofac.DependencyInjection" Version="8.2.0" />
+		<PackageReference Include="AutoMapper.Contrib.Autofac.DependencyInjection" Version="7.0.0" />
+		<PackageReference Include="MediatR.Extensions.Autofac.DependencyInjection" Version="9.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="7.0.0-rc.1.22426.7" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.0-rc.1.22426.7" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0-rc.1.22426.10" />
