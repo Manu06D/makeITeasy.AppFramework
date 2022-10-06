@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 
+using DelegateDecompiler;
 using DelegateDecompiler.EntityFrameworkCore;
 
 using EFCore.BulkExtensions;
+
+using LinqKit;
 
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Interfaces;
@@ -393,18 +396,25 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
             //s => changes..Aggregate(s, (current, change) => current.SetProperty(change.Property, change.UpdateExpression));
 
-            Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> exp =
-                  x => x.SetProperty(changes[0].Property, changes[0].UpdateExpression)
+            Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> exp = x => x.SetProperty(changes[0].Property, changes[0].UpdateExpression)
                 //changes.Aggregate(changes, (current, change) => current.SetProperty(change.Property, change.UpdateExpression));
-                //x => changes.AsEnumerable().Aggregate(x, (current, change) => current.SetProperty(change.Property, change.UpdateExpression))
-
             ;
 
             //exp  = Expression.Lambda<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>>(exp.Body);
             //exp = Expression.Lambda<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>>(Expression.Call(propertyCalls.Method));//
 
+            //doesn't work
+            //return await query.ExecuteUpdateAsync(x => propertyCalls(x));
+
+            Func<SetPropertyCalls<T>, SetPropertyCalls<T>> expFunc = x => x.SetProperty(changes[0].Property, changes[0].UpdateExpression);
+
+            Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> xx = x => expFunc(x);
+            
+
+            return await query.ExecuteUpdateAsync(xx.Expand());
+
             return await query.ExecuteUpdateAsync(exp);
-       }
+        }
 
         public async Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] propertyNames, bool saveChanges = true)
         {

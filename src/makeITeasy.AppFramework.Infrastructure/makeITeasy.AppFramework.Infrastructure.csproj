@@ -23,8 +23,9 @@
 		<PackageReference Include="AutoMapper" Version="11.0.2-alpha.0.12" />
 		<PackageReference Include="DelegateDecompiler.EntityFrameworkCore5" Version="0.30" />
 		<PackageReference Include="EFCore.BulkExtensions" Version="6.5.6" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0-rc.1.22426.7" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.0-rc.1.22426.7" />
+		<PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" Version="6.1.2" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0-rc.2.22472.11" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.0-rc.2.22472.11" />
 	</ItemGroup>
 
 	<ItemGroup>
