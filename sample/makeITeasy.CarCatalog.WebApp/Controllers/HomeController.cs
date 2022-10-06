@@ -6,10 +6,12 @@ using makeITeasy.CarCatalog.Core.Services.Queries.BrandQueries;
 using makeITeasy.CarCatalog.Core.Services.Queries.CarQueries;
 using makeITeasy.CarCatalog.Models;
 using makeITeasy.CarCatalog.WebApp.Models;
+using makeITeasy.CarCatalog.WebApp.Models.Settings;
 
 using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 using System.Diagnostics;
 
@@ -20,12 +22,13 @@ namespace makeITeasy.CarCatalog.WebApp.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
-
-        public HomeController(ILogger<HomeController> logger, IMediator mediator, IMapper mapper)
+        private readonly AppSettings _appSettings;
+        public HomeController(ILogger<HomeController> logger, IMediator mediator, IMapper mapper, AppSettings appSettings)
         {
             _logger = logger;
             _mediator = mediator;
             _mapper = mapper;
+            _appSettings = appSettings;
         }
 
         public IActionResult Index()

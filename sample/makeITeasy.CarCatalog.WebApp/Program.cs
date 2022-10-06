@@ -1,3 +1,4 @@
+using makeITeasy.CarCatalog.WebApp.Models.Settings;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper.Contrib.Autofac.DependencyInjection;
@@ -25,6 +26,7 @@ using makeITeasy.CarCatalog.Core;
 using makeITeasy.CarCatalog.Infrastructure.Repositories;
 using makeITeasy.CarCatalog.Infrastructure.Data;
 using makeITeasy.CarCatalog.Models;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,7 +40,16 @@ Assembly[] assembliesToScan = new Assembly[]
     };
 
 builder.Services.AddControllersWithViews();
+
 builder.Services.AddOptions();
+builder.Services.AddOptions<AppSettings>()
+    .BindConfiguration("MySettings")
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
+//bypass the IOptions<>
+builder.Services.AddSingleton(resolver => resolver.GetRequiredService<IOptions<AppSettings>>().Value);
+
 builder.Services.AddScoped<DatatableExceptionFilter>();
 builder.Services.AddDbContextFactory<CarCatalogContext>(options =>
 {

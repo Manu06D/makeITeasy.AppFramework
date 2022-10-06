@@ -32,7 +32,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\makeITeasy.AppFramework.Infrastructure.EF6\makeITeasy.AppFramework.Infrastructure.csproj" />
+		<ProjectReference Include="..\..\src\makeITeasy.AppFramework.Infrastructure\makeITeasy.AppFramework.Infrastructure.csproj" />
 		<ProjectReference Include="..\makeITeasy.CarCatalog.Core\makeITeasy.CarCatalog.Core.csproj" />
 		<ProjectReference Include="..\makeITeasy.CarCatalog.Infrastructure\makeITeasy.CarCatalog.Infrastructure.csproj" />
 	</ItemGroup>
