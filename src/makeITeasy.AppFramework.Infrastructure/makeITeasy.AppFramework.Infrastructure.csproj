@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>6.1.19</Version>
+		<Version>6.1.20-beta01</Version>
 		<Authors>Emmanuel D.</Authors>
 		<Company>Make IT Easy</Company>
 		<Description>Infrastructure module for makeITeasy.Appframework for Entity Framework 6</Description>
@@ -13,6 +13,7 @@
 		<RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
 		<PackageTags>framework ef</PackageTags>
 		<PackageReleaseNotes>
+			6.1.20 : clean code
 			6.1.19 : Fix issue with LastModificationDate
 			6.1.18 : Add GenericFindUniqueCommand*
 			6.1.17 : Update packages dependencies
@@ -20,10 +21,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AutoMapper" Version="11.0.1" />
+		<PackageReference Include="AutoMapper" Version="12.0.0" />
 		<PackageReference Include="DelegateDecompiler.EntityFrameworkCore5" Version="0.30" />
-		<PackageReference Include="EFCore.BulkExtensions" Version="6.5.5" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.7" />
+		<PackageReference Include="EFCore.BulkExtensions" Version="6.5.6" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.9" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -11,10 +11,10 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
         int Length { get; }
         ISearch Search { get; }
         IEnumerable<IColumn> Columns { get; }
-        IDictionary<string, object> AdditionalParameters { get; }
+        IDictionary<string, object>? AdditionalParameters { get; }
         (string, bool) SortInformation { get; }
-        List<(string, bool)> SortsInformation { get; }
+        List<(string, bool)>? SortsInformation { get; }
 
-        V GetSearchInformation<T, U, V>() where T : IDatatableBaseConfiguration where U : IBaseEntity where V : ISpecification<U>;
+        V? GetSearchInformation<T, U, V>() where T : IDatatableBaseConfiguration where U : IBaseEntity where V : ISpecification<U>;
     }
 }

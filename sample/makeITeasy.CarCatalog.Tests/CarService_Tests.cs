@@ -463,6 +463,18 @@ namespace makeITeasy.CarCatalog.Tests
         }
 
         [Fact]
+        public void Query_NullSpecification()
+        {
+            carService.Invoking(y => y.QueryAsync(null)).Should().ThrowAsync<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void QueryWithProjection_NullSpecification()
+        {
+            carService.Invoking(y => y.QueryWithProjectionAsync<SmallCarInfo>(null)).Should().ThrowAsync<ArgumentNullException>();
+        }
+
+        [Fact]
         public async Task QueryBuilder_BasicTest()
         {
             CreateCarCatalog();

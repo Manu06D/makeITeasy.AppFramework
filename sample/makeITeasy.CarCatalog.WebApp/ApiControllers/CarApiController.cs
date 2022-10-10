@@ -29,13 +29,21 @@ namespace makeITeasy.CarCatalog.WebApp.ApiControllers
         [HttpPost("/api/car/search", Name = nameof(CarDatatableSearchRequest))]
         public async Task<IActionResult> CarDatatableSearchRequest(IDataTablesRequest request)
         {
-            var searchQuery = request?.GetSearchInformation<CarDatatable, Car, ITransactionSpecification<Car>>();
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
 
-            searchQuery.IsolationLevel = System.Transactions.IsolationLevel.ReadUncommitted;
+            ITransactionSpecification<Car>? searchQuery = request?.GetSearchInformation<CarDatatable, Car, ITransactionSpecification<Car>>();
+
+            if (searchQuery != null)
+            {
+                searchQuery.IsolationLevel = System.Transactions.IsolationLevel.ReadUncommitted;
+            }
 
             QueryResult<CarDatatableViewModel> output = await _mediator.Send(new GenericQueryWithProjectCommand<Car, CarDatatableViewModel>(searchQuery, true));
 
-            var response = DataTablesResponse.Create(request, output.TotalItems, output.TotalItems, output.Results);
+            DataTablesResponse? response = DataTablesResponse.Create(request, output.TotalItems, output.TotalItems, output.Results);
 
             return new DataTablesJsonResult(response, true);
         }

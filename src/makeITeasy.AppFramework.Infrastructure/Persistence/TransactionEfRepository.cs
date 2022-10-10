@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.AppFramework.Core.Queries;
 using Microsoft.EntityFrameworkCore;
@@ -14,15 +12,15 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
         {
         }
 
-        public override async Task<int> ApplyCountIfNeededAsync(IQueryable<T> filteredSet, bool includeCount)
+        public override async Task<int> ApplyCountIfNeededAsync(IQueryable<T>? filteredSet, bool includeCount)
         {
-            if (includeCount)
+            if (includeCount && filteredSet != null)
             {
                 //Can't async/await otherwise the error "A TransactionScope must be disposed on the same thread that it was created"  will pop
                 return filteredSet.CountAsync().Result;
             }
 
-            return 0;
+            return await Task.FromResult(0);
         }
 
         public override async Task<QueryResult<T>> ListAsync(ISpecification<T> spec, bool includeCount = false)
@@ -33,7 +31,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
 
             if (isolationLevel.HasValue)
             {
-                using (var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = isolationLevel.Value }, TransactionScopeAsyncFlowOption.Enabled))
+                using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = isolationLevel.Value }, TransactionScopeAsyncFlowOption.Enabled))
                 {
                     var result = await functionToExecute();
                     scope.Complete();

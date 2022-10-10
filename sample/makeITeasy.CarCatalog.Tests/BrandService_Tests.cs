@@ -135,7 +135,7 @@ namespace makeITeasy.CarCatalog.Tests
                     newBrand.Id.Should().BePositive();
                     newBrand2.Id.Should().BePositive();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     scope.Dispose();
                 }

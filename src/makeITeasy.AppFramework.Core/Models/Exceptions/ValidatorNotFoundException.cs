@@ -7,7 +7,7 @@ namespace makeITeasy.AppFramework.Core.Models.Exceptions
     {
         private Type EntityType { get; set; }
 
-        public ValidatorNotFoundException(Type entityType, string message = null, Exception innerException = null) 
+        public ValidatorNotFoundException(Type entityType, string? message = null, Exception? innerException = null) 
             : base($"validator for {entityType.FullName} was not found", innerException)
         {
             EntityType = entityType;

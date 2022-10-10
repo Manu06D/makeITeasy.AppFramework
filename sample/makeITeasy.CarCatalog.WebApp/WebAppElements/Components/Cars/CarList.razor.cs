@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.CarCatalog.Core.Services.Queries.CarQueries;
 using makeITeasy.CarCatalog.WebApp.Models.Datatables;
@@ -18,17 +13,17 @@ namespace makeITeasy.CarCatalog.WebApp.WebAppElements.Components.Cars
     {
         public string SearchValue { get; set; } = string.Empty;
 
-        QueryResult<CarDatatableViewModel> requests = new QueryResult<CarDatatableViewModel>();
+        QueryResult<CarDatatableViewModel> requests = new();
 
         [Inject]
-        private IMediator _mediator { get; set; }
+        private IMediator? _mediator { get; set; }
 
         protected async override Task OnInitializedAsync()
         {
             await LoadRequests();
         }
 
-        async Task LoadRequests()
+        private async Task LoadRequests()
         {
             var query = new BaseCarQuery();
 
@@ -37,7 +32,10 @@ namespace makeITeasy.CarCatalog.WebApp.WebAppElements.Components.Cars
                 query.Name = SearchValue;
             }
 
-            requests = await _mediator.Send(new GenericQueryWithProjectCommand<Car, CarDatatableViewModel>(query));
+            if(_mediator != null)
+            {
+                requests = await _mediator.Send(new GenericQueryWithProjectCommand<Car, CarDatatableViewModel>(query));
+            }
         }
     }
 }

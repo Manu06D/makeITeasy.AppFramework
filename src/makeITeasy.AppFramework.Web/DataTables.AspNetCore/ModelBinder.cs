@@ -110,7 +110,7 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
         /// Provides custom aditional parameters processing for your request.
         /// You have to implement this to populate 'IDataTablesRequest' object with aditional (user-defined) request values.
         /// </summary>
-        public Func<ModelBindingContext, IDictionary<string, object>> ParseAdditionalParameters;
+        public Func<ModelBindingContext, IDictionary<string, object>>? ParseAdditionalParameters;
 
         /// <summary>
         /// For internal use only.

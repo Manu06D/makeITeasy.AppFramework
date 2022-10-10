@@ -15,39 +15,41 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
         /// <summary>
         /// Defines the default result enconding.
         /// </summary>
-        private static readonly System.Text.Encoding DefaultContentEncoding = System.Text.Encoding.UTF8;
+        private static readonly Encoding DefaultContentEncoding = Encoding.UTF8;
         /// <summary>
         /// Defines the default json request behavior.
         /// </summary>
         private static readonly bool AllowJsonThroughHttpGet = false;
 
 
-        private string ContentType;
-        private System.Text.Encoding ContentEncoding;
-        private bool AllowGet;
-        private object Data;
+        private readonly string ContentType;
+        private readonly Encoding ContentEncoding;
+        private readonly bool AllowGet;
+        private readonly object? Data;
 
 
         public DataTablesJsonResult(IDataTablesResponse response)
             : this(response, DefaultContentType, DefaultContentEncoding, AllowJsonThroughHttpGet)
         { }
 
-        public DataTablesJsonResult(IDataTablesResponse response, bool allowJsonThroughHttpGet)
+        public DataTablesJsonResult(IDataTablesResponse? response, bool allowJsonThroughHttpGet)
             : this(response, DefaultContentType, DefaultContentEncoding, allowJsonThroughHttpGet)
         { }
 
-        public DataTablesJsonResult(IDataTablesResponse response, string contentType, System.Text.Encoding contentEncoding, bool allowJsonThroughHttpGet)
+        public DataTablesJsonResult(IDataTablesResponse? response, string contentType, Encoding contentEncoding, bool allowJsonThroughHttpGet)
         {
             Data = response;
-            ContentEncoding = contentEncoding ?? System.Text.Encoding.UTF8;
-            ContentType = String.Format(contentType ?? DefaultContentType, contentEncoding.WebName);
+            ContentEncoding = contentEncoding ?? Encoding.UTF8;
+            ContentType = string.Format(contentType ?? DefaultContentType, contentEncoding?.WebName);
             AllowGet = allowJsonThroughHttpGet;
         }
 
         public async Task ExecuteResultAsync(ActionContext context)
         {
             if (!AllowGet && context.HttpContext.Request.Method.Equals("GET", StringComparison.InvariantCultureIgnoreCase))
+            {
                 throw new NotSupportedException("This request has been blocked because sensitive information could be disclosed to third party web sites when this is used in a GET request. To allow GET requests, set JsonRequestBehavior to AllowGet.");
+            }
 
             var response = context.HttpContext.Response;
 
@@ -55,9 +57,8 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
 
             if (Data != null)
             {
-                var content = Data.ToString();
-                var contentBytes = ContentEncoding.GetBytes(content);
-                await response.Body.WriteAsync(contentBytes, 0, contentBytes.Length);
+                byte[] contentBytes = ContentEncoding.GetBytes(Data.ToString() ?? string.Empty);
+                await response.Body.WriteAsync(contentBytes);
             }
         }
     }

@@ -45,6 +45,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContosoUniversity.Core", "C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContosoUniversity.WebApplication", "ContosoUniversity\ContosoUniversity.WebApplication\ContosoUniversity.WebApplication.csproj", "{FF6CF50A-6132-40BD-A7D3-4B6A03146035}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "makeITeasy.CarCatalog.Database", "sample\makeITeasy.CarCatalog.Database\makeITeasy.CarCatalog.Database.sqlproj", "{7E0391C7-E4DC-4F33-A912-11FD18194D3F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -109,6 +111,12 @@ Global
 		{FF6CF50A-6132-40BD-A7D3-4B6A03146035}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF6CF50A-6132-40BD-A7D3-4B6A03146035}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF6CF50A-6132-40BD-A7D3-4B6A03146035}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E0391C7-E4DC-4F33-A912-11FD18194D3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E0391C7-E4DC-4F33-A912-11FD18194D3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E0391C7-E4DC-4F33-A912-11FD18194D3F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{7E0391C7-E4DC-4F33-A912-11FD18194D3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E0391C7-E4DC-4F33-A912-11FD18194D3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E0391C7-E4DC-4F33-A912-11FD18194D3F}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -128,6 +136,7 @@ Global
 		{4F77DEBA-B229-46BB-9A6D-A1B595857A1B} = {E067453F-5C5D-48E6-892B-107645B72708}
 		{BA74F7FD-6987-4A0C-882B-79FA14AA7036} = {E067453F-5C5D-48E6-892B-107645B72708}
 		{FF6CF50A-6132-40BD-A7D3-4B6A03146035} = {E067453F-5C5D-48E6-892B-107645B72708}
+		{7E0391C7-E4DC-4F33-A912-11FD18194D3F} = {53C000FC-9912-48F0-A94F-5887CC8FBD6A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0C3977D6-0D6B-40FF-BF97-481316AA2FB9}

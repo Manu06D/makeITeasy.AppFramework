@@ -19,9 +19,9 @@ namespace makeITeasy.AppFramework.Web.Models
 
         public long TableID { get; } = DateTime.Now.Ticks;
 
-        public String? ApiUrl { get; }
+        public string? ApiUrl { get; }
 
-        public DatatableBaseConfiguration(String apiUrl)
+        public DatatableBaseConfiguration(string apiUrl)
         {
             ApiUrl = apiUrl;
 

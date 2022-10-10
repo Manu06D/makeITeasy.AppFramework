@@ -11,17 +11,17 @@ namespace makeITeasy.CarCatalog.WebApp.Models
 
         [Required]
         [MinLength(3)]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
-        public List<Brand> Brands { get; set; }
+        public List<Brand>? Brands { get; set; }
 
         public int BrandID { get; set; }
 
         public int ReleaseYear { get; set; }
-        public byte[] RowVersion { get; set; }
+        public byte[]? RowVersion { get; set; }
         public string DatabaseRowVersion
         {
-            get { return Convert.ToBase64String(RowVersion); }
+            get { return RowVersion != null ? Convert.ToBase64String(RowVersion) : "unknown"; }
             set { RowVersion = Convert.FromBase64String(value); }
         }
     }

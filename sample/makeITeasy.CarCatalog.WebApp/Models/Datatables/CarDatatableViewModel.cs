@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Web.Attributes;
 using makeITeasy.CarCatalog.Models;
@@ -12,19 +11,19 @@ namespace makeITeasy.CarCatalog.WebApp.Models.Datatables
         public long ID { get; set; }
 
         [TableColumn(Name = nameof(Name), Title = "Name", Priority = 2)]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [TableColumn(Name = nameof(BrandName), Title = "Brand", SortDataSource = "Brand.Name", Priority = 3)]
 
-        public string BrandName { get; set; }
+        public string? BrandName { get; set; }
 
         [TableColumn(Name = nameof(ReleaseYear), Title = "Year", SortDataSource = "Brand.Country.Name")]
 
-        public string ReleaseYear { get; set; }
+        public string? ReleaseYear { get; set; }
 
         [TableColumn(Name = nameof(BrandCountryName), Title = "Country", SortDataSource = "Brand.Country.Name")]
 
-        public string BrandCountryName { get; set; }
+        public string? BrandCountryName { get; set; }
 
         [TableColumn(Name = nameof(IsModernCar), Title = "Is Actual", Sortable = false, Priority = 4)]
         public bool IsModernCar { get; set; }
