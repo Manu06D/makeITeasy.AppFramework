@@ -3,12 +3,14 @@ using ContosoUniversity.WebApplication.WebAppElements.Startup;
 using makeITeasy.AppFramework.Web.Helpers;
 using Autofac.Core;
 using FluentValidation;
+using ContosoUniversity.WebApplication.WebAppElements.Misc;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((context, config) => config.WriteTo.Console().WriteTo.Debug());
+builder.Host.UseSerilog((context, config) => config.WriteTo.Console().WriteTo.Debug().Enrich.With(new WebLogEnricher()));
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddOptions();
 builder.Services.RegisterDatatablesService();
 builder.Services.AddValidatorsFromAssembly(typeof(ContosoUniversity.Models.Instructor).Assembly);

@@ -17,6 +17,8 @@ namespace ContosoUniversity.WebApplication.Controllers
 
         public IActionResult Index()
         {
+            _logger.LogInformation("Accessing Welcome Page");
+
             return View();
         }
 
