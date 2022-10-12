@@ -30,7 +30,7 @@ namespace makeITeasy.AppFramework.Web.Models
 
         private void parseColumnProperties()
         {
-            var attributesProperties = retieveAttributesFromType(typeof(TResult));
+            Dictionary<string, TableColumnAttribute> attributesProperties = retieveAttributesFromType(typeof(TResult));
 
             int counter = 0;
             foreach (string propertyName in attributesProperties.Keys)
@@ -56,9 +56,9 @@ namespace makeITeasy.AppFramework.Web.Models
 
         private static Dictionary<string, TableColumnAttribute> retieveAttributesFromType(Type type)
         {
-            var attributesProperty = new Dictionary<string, TableColumnAttribute>();
+            Dictionary<string, TableColumnAttribute> attributesProperty = new();
 
-            foreach (var property in type.GetProperties())
+            foreach (PropertyInfo property in type.GetProperties())
             {
                 TableColumnAttribute? attribute = property.GetCustomAttribute<TableColumnAttribute>();
 

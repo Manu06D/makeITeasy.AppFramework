@@ -380,7 +380,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             int dbChanges = await SaveOrUpdateChanges(dbContext, saveChanges);
 
             result.Entity = entity;
-            result.Result = dbChanges > 0 ? CommandState.Success : CommandState.Warning;
+            result.Result = dbChanges >= 0 ? CommandState.Success : CommandState.Error;
 
             return result;
         }
@@ -468,7 +468,7 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
                 }
                 else
                 {
-                    result.Result = CommandState.Warning;
+                    result.Result = CommandState.Success;
                     result.Message = "No properties have been changed";
                 }
             }
