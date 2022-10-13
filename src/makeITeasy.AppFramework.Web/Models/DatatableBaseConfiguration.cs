@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
+
 using makeITeasy.AppFramework.Web.Attributes;
 using makeITeasy.AppFramework.Web.Helpers;
 
@@ -19,9 +20,9 @@ namespace makeITeasy.AppFramework.Web.Models
 
         public long TableID { get; } = DateTime.Now.Ticks;
 
-        public string? ApiUrl { get; }
+        public String? ApiUrl { get; }
 
-        public DatatableBaseConfiguration(string apiUrl)
+        public DatatableBaseConfiguration(String apiUrl)
         {
             ApiUrl = apiUrl;
 
@@ -30,7 +31,7 @@ namespace makeITeasy.AppFramework.Web.Models
 
         private void parseColumnProperties()
         {
-            Dictionary<string, TableColumnAttribute> attributesProperties = retieveAttributesFromType(typeof(TResult));
+            var attributesProperties = retieveAttributesFromType(typeof(TResult));
 
             int counter = 0;
             foreach (string propertyName in attributesProperties.Keys)
@@ -56,9 +57,9 @@ namespace makeITeasy.AppFramework.Web.Models
 
         private static Dictionary<string, TableColumnAttribute> retieveAttributesFromType(Type type)
         {
-            Dictionary<string, TableColumnAttribute> attributesProperty = new();
+            var attributesProperty = new Dictionary<string, TableColumnAttribute>();
 
-            foreach (PropertyInfo property in type.GetProperties())
+            foreach (var property in type.GetProperties())
             {
                 TableColumnAttribute? attribute = property.GetCustomAttribute<TableColumnAttribute>();
 

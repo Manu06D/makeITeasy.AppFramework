@@ -15,7 +15,7 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
             {
                 try
                 {
-                    PropertyInfo? property = inputType.GetProperty(item.Key);
+                    PropertyInfo property = inputType.GetProperty(item.Key);
                     if (property != null)
                     {
                         if (property.PropertyType?.BaseType == typeof(Array))
@@ -31,12 +31,12 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
                             object converted = DateTime.Parse(item.Value.ToString());
                             property.SetValue(output, converted, null);
                         }
-                        else if (property.PropertyType?.IsEnum == true)
+                        else if (property.PropertyType.IsEnum)
                         {
                             object converted = GetEnumValue(item, property.PropertyType);
                             property.SetValue(output, converted, null);
                         }
-                        else if (property.PropertyType?.IsGenericType == true && property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                        else if (property.PropertyType.IsGenericType && property.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
                         {
                             Type targetType = property.PropertyType.GetGenericArguments()[0];
                             object converted = null;

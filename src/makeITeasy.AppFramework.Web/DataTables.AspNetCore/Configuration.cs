@@ -65,14 +65,12 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
         /// <param name="requestModelBinder">Request model binder to use when resolving 'IDataTablesRequest' models.</param>
         /// <param name="parseRequestAdditionalParameters">Function to evaluate and parse aditional parameters sent within the request (user-defined parameters).</param>
         /// <param name="enableResponseAdditionalParameters">Indicates whether response aditional parameters parsing is enabled or not.</param>
-        public static void RegisterDataTables(this IServiceCollection services, IOptions options, ModelBinder requestModelBinder, Func<ModelBindingContext, IDictionary<string, object>>? parseRequestAdditionalParameters, bool enableResponseAdditionalParameters)
+        public static void RegisterDataTables(this IServiceCollection services, IOptions options, ModelBinder requestModelBinder, Func<ModelBindingContext, IDictionary<string, object>> parseRequestAdditionalParameters, bool enableResponseAdditionalParameters)
         {
-            if (requestModelBinder == null)
-            {
-                throw new ArgumentNullException(nameof(requestModelBinder), "Request model binder for DataTables.AspNet cannot be null.");
-            }
+            if (options == null) throw new ArgumentNullException("options", "Options for DataTables.AspNet cannot be null.");
+            if (requestModelBinder == null) throw new ArgumentNullException("requestModelBinder", "Request model binder for DataTables.AspNet cannot be null.");
 
-            Options = options ?? throw new ArgumentNullException(nameof(options), "Options for DataTables.AspNet cannot be null.");
+            Options = options;
 
             if (parseRequestAdditionalParameters != null)
             {
@@ -81,9 +79,7 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
             }
 
             if (enableResponseAdditionalParameters)
-            {
                 Options.EnableResponseAdditionalParameters();
-            }
 
             services.Configure<MvcOptions>(_options =>
             {
@@ -93,24 +89,19 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
         }
         internal class ModelBinderProvider : IModelBinderProvider
         {
-            public IModelBinder? ModelBinder { get; private set; }
+            public IModelBinder ModelBinder { get; private set; }
             public ModelBinderProvider() { }
             public ModelBinderProvider(IModelBinder modelBinder) { ModelBinder = modelBinder; }
-            public IModelBinder? GetBinder(ModelBinderProviderContext context)
+            public IModelBinder GetBinder(ModelBinderProviderContext context)
             {
                 if (IsBindable(context.Metadata.ModelType))
                 {
-                    ModelBinder ??= new ModelBinder();
-
+                    if (ModelBinder == null) ModelBinder = new ModelBinder();
                     return ModelBinder;
                 }
-                else
-                {
-                    return null;
-                }
+                else return null;
             }
-
-            private static bool IsBindable(Type type) { return type.Equals(typeof(IDataTablesRequest)); }
+            private bool IsBindable(Type type) { return type.Equals(typeof(IDataTablesRequest)); }
         }
     }
 }

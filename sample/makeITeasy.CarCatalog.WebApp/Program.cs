@@ -39,13 +39,16 @@ Assembly[] assembliesToScan = new Assembly[]
         AppFrameworkModels.Assembly
     };
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(
+    //options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true
+    );
 
 builder.Services.AddOptions();
 builder.Services.AddOptions<AppSettings>()
     .BindConfiguration("MySettings")
     .ValidateDataAnnotations()
-    .ValidateOnStart();
+    .ValidateOnStart()
+    ;
 
 //bypass the IOptions<>
 builder.Services.AddSingleton(resolver => resolver.GetRequiredService<IOptions<AppSettings>>().Value);

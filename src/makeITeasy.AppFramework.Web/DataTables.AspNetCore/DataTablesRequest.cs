@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using makeITeasy.AppFramework.Models;
 using makeITeasy.AppFramework.Web.Models;
 
@@ -8,25 +9,20 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
 {
     public class DataTablesRequest : IDataTablesRequest
     {
-        public IDictionary<string, object>? AdditionalParameters { get; private set; }
+        public IDictionary<string, object> AdditionalParameters { get; private set; }
         public IEnumerable<IColumn> Columns { get; private set; }
         public int Draw { get; private set; }
         public int Length { get; private set; }
         public ISearch Search { get; private set; }
         public int Start { get; private set; }
 
-        public List<(string, bool)>? SortsInformation
+        public List<(string, bool)> SortsInformation
         {
             get
             {
-                if(Columns == null)
-                {
-                    return null;
-                }
-
                 return
-                    Columns.Where(x => x.Sort != null).ToList()
-                        .ConvertAll(y => (y.Field, y.Sort?.Direction == SortDirection.Ascending));
+                    Columns?.Where(x => x.Sort != null).ToList()
+                        .ConvertAll(y => (y.Field, y.Sort.Direction == SortDirection.Ascending));
             }
         }
 
@@ -39,7 +35,7 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
 
                 IColumn? sortColumn = Columns?.FirstOrDefault(x => x.Sort != null);
 
-                if (sortColumn?.Sort != null)
+                if (sortColumn != null)
                 {
                     orderColumn = sortColumn.Field;
                     sortAscending = sortColumn.Sort.Direction == SortDirection.Ascending;
@@ -54,7 +50,7 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
         {
         }
 
-        public DataTablesRequest(int draw, int start, int length, ISearch search, IEnumerable<IColumn> columns, IDictionary<string, object>? additionalParameters)
+        public DataTablesRequest(int draw, int start, int length, ISearch search, IEnumerable<IColumn> columns, IDictionary<string, object> additionalParameters)
         {
             Draw = draw;
             Start = start;
@@ -64,18 +60,13 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
             AdditionalParameters = additionalParameters;
         }
 
-        public V? GetSearchInformation<T, U, V>() where T : IDatatableBaseConfiguration where U : IBaseEntity where V : ISpecification<U>
+        public V GetSearchInformation<T, U, V>() where T : IDatatableBaseConfiguration where U : IBaseEntity where V : ISpecification<U>
         {
-            Type? searchType = typeof(T).BaseType?.GetGenericArguments()[0];
+            Type searchType = typeof(T).BaseType.GetGenericArguments()[0];
 
-            if(searchType == null)
-            {
-                return default;
-            }
+            var searchResult = createObjectWithDefaultConstructor(searchType);
 
-            object? searchResult = createObjectWithDefaultConstructor(searchType);
-
-            List<OrderBySpecification<string>> sortOrders = SortsInformation?.ConvertAll(x => new OrderBySpecification<string>(x.Item1, !x.Item2)) ?? new List<OrderBySpecification<string>>() { };
+            List<OrderBySpecification<string>> sortOrders = SortsInformation.ConvertAll(x => new OrderBySpecification<string>(x.Item1, !x.Item2));
 
             if (searchResult != null && IsTypeImplementInterface(searchType, typeof(ISpecification<U>)))
             {
@@ -94,7 +85,7 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
 
             foreach (var sortOrder in sortOrders)
             {
-                var filterColum = instance?.Columns.FirstOrDefault(x => string.Compare(sortOrder.OrderBy, x.Name, true) == 0 && !string.IsNullOrEmpty(x.SortDataSource));
+                var filterColum = instance.Columns.FirstOrDefault(x => string.Compare(sortOrder.OrderBy, x.Name, true) == 0 && !string.IsNullOrEmpty(x.SortDataSource));
 
                 if (filterColum != null)
                 {
@@ -102,27 +93,27 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
                 }
             }
 
-            return (V?)searchResult;
+            return (V)searchResult;
         }
 
-        private static bool IsTypeImplementInterface(Type type, Type searchInterface)
+        private bool IsTypeImplementInterface(Type type, Type searchInterface)
         {
             return type.GetInterfaces().Any(x => x == searchInterface);
         }
 
-        private static object? createObjectWithDefaultConstructor(Type type)
+        private static object createObjectWithDefaultConstructor(Type type)
         {
-            object? instance;
+            object instance = null;
 
             var datatableCtr = type.GetConstructors().OrderBy(x => x.GetParameters().Length).FirstOrDefault();
 
             if (datatableCtr != null)
             {
-                object?[] parameters =
-                    datatableCtr.GetParameters()?.Select(p =>
-                        p.HasDefaultValue ? p.DefaultValue : 
+                object[] parameters =
+                    datatableCtr.GetParameters().Select(p =>
+                        p.HasDefaultValue ? p.DefaultValue :
                         p.ParameterType.IsValueType && Nullable.GetUnderlyingType(p.ParameterType) == null ? Activator.CreateInstance(p.ParameterType) : null
-                    ).ToArray() ?? Array.Empty<object>();
+                    ).ToArray();
 
                 instance = datatableCtr.Invoke(parameters);
             }

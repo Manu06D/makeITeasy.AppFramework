@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+
 using Newtonsoft.Json;
 
 namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
@@ -10,9 +11,9 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
         int Draw { get; }
         int TotalRecords { get; }
         int TotalRecordsFiltered { get; }
-        object? Data { get; }
-        string? Error { get; }
-        IDictionary<string, object>? AdditionalParameters { get; }
+        object Data { get; }
+        string Error { get; }
+        IDictionary<string, object> AdditionalParameters { get; }
     }
 
     public class DataTablesResponse : IDataTablesResponse
@@ -25,7 +26,7 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
         /// Gets error message, if not successful.
         /// Should only be available for DataTables 1.10 and above.
         /// </summary>
-        public string? Error { get; protected set; }
+        public string Error { get; protected set; }
         /// <summary>
         /// Gets total record count (total records available on database).
         /// </summary>
@@ -37,11 +38,11 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
         /// <summary>
         /// Gets data object (collection).
         /// </summary>
-        public object? Data { get; protected set; }
+        public object Data { get; protected set; }
         /// <summary>
         /// Gets aditional parameters for response.
         /// </summary>
-        public IDictionary<string, object>? AdditionalParameters { get; protected set; }
+        public IDictionary<string, object> AdditionalParameters { get; protected set; }
 
         /// <summary>
         /// Converts this object to a Json compatible response using global naming convention for parameters.
@@ -136,7 +137,7 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
         /// </summary>
         /// <param name="data">Data object to be transformed to json.</param>
         /// <returns>A json representation of your data.</returns>
-        public virtual string SerializeData(object? data)
+        public virtual string SerializeData(object data)
         {
             //var settings = new JsonSerializerSettings() { ContractResolver = new DefaultContractResolver() };
             var settings = new JsonSerializerSettings() { ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver() };
@@ -159,7 +160,7 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
         /// </summary>
         /// <param name="draw">Draw count from request object.</param>
         /// <param name="errorMessage">Error message.</param>
-        protected DataTablesResponse(int draw, string errorMessage, IDictionary<string, object>? additionalParameters)
+        protected DataTablesResponse(int draw, string errorMessage, IDictionary<string, object> additionalParameters)
         {
             Draw = draw;
             Error = errorMessage;
@@ -185,7 +186,7 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
         /// <param name="totalRecordsFiltered">Filtered record count (total records available after filtering).</param>
         /// <param name="additionalParameters">Aditional parameters for response.</param>
         /// <param name="data">Data object (collection).</param>
-        protected DataTablesResponse(int draw, int totalRecords, int totalRecordsFiltered, object data, IDictionary<string, object>? additionalParameters)
+        protected DataTablesResponse(int draw, int totalRecords, int totalRecordsFiltered, object data, IDictionary<string, object> additionalParameters)
         {
             Draw = draw;
             TotalRecords = totalRecords;
@@ -203,7 +204,7 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
         /// <param name="totalRecordsFiltered">Filtered record count (total records available after filtering).</param>
         /// <param name="data">Data object (collection).</param>
         /// <returns>The response object.</returns>
-        public static DataTablesResponse? Create(IDataTablesRequest? request, int totalRecords, int totalRecordsFiltered, object data)
+        public static DataTablesResponse Create(IDataTablesRequest request, int totalRecords, int totalRecordsFiltered, object data)
         {
             return Create(request, totalRecords, totalRecordsFiltered, data, null);
         }
@@ -217,23 +218,17 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
         /// <param name="data">Data object (collection).</param>
         /// <param name="additionalParameters">Aditional parameters for response.</param>
         /// <returns>The response object.</returns>
-        public static DataTablesResponse? Create(IDataTablesRequest? request, int totalRecords, int totalRecordsFiltered, object data, IDictionary<string, object>? additionalParameters)
+        public static DataTablesResponse Create(IDataTablesRequest request, int totalRecords, int totalRecordsFiltered, object data, IDictionary<string, object> additionalParameters)
         {
             // When request is null, there should be no response (null response).
-            if (request == null)
-            {
-                return null;
-            }
+            if (request == null) return null;
 
             if (Configuration.Options.IsDrawValidationEnabled)
             {
                 // When draw validation is in place, response must have a draw value equals to or greater than 1.
                 // Any other value besides that represents an invalid draw request and response should be null.
 
-                if (request.Draw < 1)
-                {
-                    return null;
-                }
+                if (request.Draw < 1) return null;
             }
 
             return new DataTablesResponse(request.Draw, totalRecords, totalRecordsFiltered, data, additionalParameters);
@@ -244,9 +239,9 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
         /// <param name="request">The request object.</param>
         /// <param name="errorMessage">Error message.</param>
         /// <returns>The response object.</returns>
-        public static DataTablesResponse? Create(IDataTablesRequest request, string errorMessage)
+        public static DataTablesResponse Create(IDataTablesRequest request, string errorMessage)
         {
-            return Create(request, errorMessage, null);
+            return DataTablesResponse.Create(request, errorMessage, null);
         }
         /// <summary>
         /// Creates a new response instance.
@@ -254,23 +249,17 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
         /// <param name="request">The request object.</param>
         /// <param name="errorMessage">Error message.</param>
         /// <returns>The response object.</returns>
-        public static DataTablesResponse? Create(IDataTablesRequest request, string errorMessage, IDictionary<string, object>? additionalParameters)
+        public static DataTablesResponse Create(IDataTablesRequest request, string errorMessage, IDictionary<string, object> additionalParameters)
         {
             // When request is null, there should be no response (null response).
-            if (request == null)
-            {
-                return null;
-            }
+            if (request == null) return null;
 
             if (Configuration.Options.IsDrawValidationEnabled)
             {
                 // When draw validation is in place, response must have a draw value equals to or greater than 1.
                 // Any other value besides that represents an invalid draw request and response should be null.
 
-                if (request.Draw < 1)
-                {
-                    return null;
-                }
+                if (request.Draw < 1) return null;
             }
 
             return new DataTablesResponse(request.Draw, errorMessage, additionalParameters);
