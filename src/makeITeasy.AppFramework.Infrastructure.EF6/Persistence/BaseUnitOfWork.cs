@@ -7,7 +7,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
+namespace makeITeasy.AppFramework.Infrastructure.Persistence
 {
     public class BaseUnitOfWork<T> where T : DbContext
     {

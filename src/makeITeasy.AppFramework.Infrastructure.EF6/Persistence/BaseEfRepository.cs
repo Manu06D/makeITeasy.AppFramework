@@ -12,19 +12,20 @@ using makeITeasy.AppFramework.Models;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
+namespace makeITeasy.AppFramework.Infrastructure.Persistence
 {
     public abstract class BaseEfRepository<T, U> : IAsyncRepository<T> where T : class, IBaseEntity where U : DbContext
     {
         private readonly IDbContextFactory<U>? _dbFactory;
         private readonly IMapper _mapper;
-        private U? _dbContext = null;
+        private readonly U? _dbContext = null;
 
-        public ICurrentDateProvider DateProvider { get; set; }
+        public ICurrentDateProvider? DateProvider { get; set; }
 
         protected BaseEfRepository(IDbContextFactory<U> dbFactory, IMapper mapper)
         {
@@ -38,22 +39,32 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
             _mapper = mapper;
         }
 
-        protected U? GetDbContext()
+        protected U GetDbContext()
         {
             if (_dbContext != null)
             {
                 return _dbContext;
             }
 
-            return _dbFactory?.CreateDbContext();
+            if(_dbFactory == null)
+            {
+                throw new Exception("DBFactory has not been registered.");
+            }
+
+            return _dbFactory.CreateDbContext();
         }
 
-        public virtual async Task<T> GetByIdAsync(object id)
+        public virtual async Task<T?> GetByIdAsync(object id)
         {
             if (id.GetType().IsArray)
             {
                 //not so elegant, need to investigate on more suitable solution
                 Array a = (Array)id;
+
+                if(a == null)
+                {
+                    throw new Exception("An error has occured while casting the primary key");
+                }
 
                 return a.Length switch
                 {
@@ -69,15 +80,19 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
             return await GetDbContext().Set<T>().FindAsync(id);
         }
 
-        public virtual async Task<T> GetByIdAsync(object id, List<Expression<Func<T, object>>> includes)
+        public virtual async Task<T?> GetByIdAsync(object id, List<Expression<Func<T, object>>>? includes)
         {
             U? dbContext = GetDbContext();
 
             if (includes != null && dbContext != null)
             {
-                var keyProperty = dbContext.Model.FindEntityType(typeof(T)).FindPrimaryKey().Properties[0];
+                IProperty? keyProperty = dbContext.Model.FindEntityType(typeof(T))?.FindPrimaryKey()?.Properties[0];
+                if (keyProperty == null)
+                {
+                    throw new Exception($"An error has occred while guessing the primary key of object {typeof(T).FullName}"); ;
+                }
 
-                var dbSet = dbContext.Set<T>().AsQueryable();
+                IQueryable<T> dbSet = dbContext.Set<T>().AsQueryable();
 
                 //TODO : test if it works :)
                 dbSet = includes.Aggregate(dbSet, (current, include) => current.Include(include));
@@ -104,9 +119,12 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
         {
             QueryResult<T> result = new();
 
-            (result.TotalItems, IQueryable<T> filteredSet) = await CreateQueryableFromSpec(spec, GetDbContext(), includeCount);
+            (result.TotalItems, IQueryable<T>? filteredSet) = await CreateQueryableFromSpec(spec, GetDbContext(), includeCount);
 
-            result.Results = await filteredSet.AsNoTracking().ToListAsync();
+            if(filteredSet != null)
+            {
+                result.Results = await filteredSet.AsNoTracking().ToListAsync();
+            }
 
             return result;
         }
@@ -115,21 +133,24 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
         {
             QueryResult<X> result = new();
 
-            (result.TotalItems, IQueryable<T> filteredSet) = await CreateQueryableFromSpec(spec, GetDbContext(), includeCount);
+            (result.TotalItems, IQueryable<T>? filteredSet) = await CreateQueryableFromSpec(spec, GetDbContext(), includeCount);
 
-            result.Results = filteredSet.AsNoTracking().ProjectTo<X>(_mapper.ConfigurationProvider).DecompileAsync().ToList();
+            if (filteredSet != null && _mapper?.ConfigurationProvider != null)
+            {
+                result.Results = filteredSet.AsNoTracking().ProjectTo<X>(_mapper.ConfigurationProvider).DecompileAsync().ToList();
+            }
 
             return result;
         }
 
-        private async Task<(int, IQueryable<T>)> CreateQueryableFromSpec(ISpecification<T> spec, U dbContext, bool includeCount = false)
+        private async Task<(int, IQueryable<T>?)> CreateQueryableFromSpec(ISpecification<T> spec, U dbContext, bool includeCount = false)
         {
             if (typeof(IIsValidSpecification).IsAssignableFrom(spec.GetType()) && !((IIsValidSpecification)spec).IsValid())
             {
                 throw new InvalidQueryException();
             }
 
-            IQueryable<T> filteredSet = BaseEfRepository<T, U>.ApplySpecification(spec, dbContext);
+            IQueryable<T>? filteredSet = BaseEfRepository<T, U>.ApplySpecification(spec, dbContext);
 
             int totalItems = await ApplyCountIfNeededAsync(filteredSet, includeCount);
 
@@ -141,9 +162,9 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
             return (totalItems, filteredSet);
         }
 
-        public virtual async Task<int> ApplyCountIfNeededAsync(IQueryable<T> filteredSet, bool includeCount)
+        public virtual async Task<int> ApplyCountIfNeededAsync(IQueryable<T>? filteredSet, bool includeCount)
         {
-            if (includeCount)
+            if (includeCount && filteredSet != null)
             {
                 return await filteredSet.CountAsync().ConfigureAwait(false);
             }
@@ -153,7 +174,16 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
 
         public async Task<int> CountAsync(ISpecification<T> spec)
         {
-            return await BaseEfRepository<T, U>.ApplySpecification(spec, GetDbContext()).CountAsync();
+            IQueryable<T>? query = BaseEfRepository<T, U>.ApplySpecification(spec, GetDbContext());
+
+            if (query != null)
+            {
+                return await query.CountAsync();
+            }
+            else
+            {
+                return -1;
+            }
         }
 
         public async Task<T> AddAsync(T entity, bool saveChanges = true)
@@ -189,7 +219,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
 
             foreach (var entry in entries)
             {
-                var hasAnyChangeOnEntry = true;
+                bool hasAnyChangeOnEntry = true;
 
                 if (entry.State == EntityState.Modified)
                 {
@@ -248,26 +278,38 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
         {
             DateTime now = DateProvider?.Now ?? DateTime.Now;
 
-            (var action, bool recursive) = GetITimeTrackingAction(state, now);
+            (var action, bool recursive) = BaseEfRepository<T, U>.GetITimeTrackingAction(state, now);
 
-            bool dateTimeUpdated = BaseEfRepository<T, U>.UpdateITimeTrackingEntity(entity, action, recursive);
+            bool dateTimeUpdated = BaseEfRepository<T, U>.UpdateITimeTrackingEntity(entity, action);
 
             return dateTimeUpdated;
         }
 
-        private (Action<ITimeTrackingEntity> action, bool recursive) GetITimeTrackingAction(EntityState state, DateTime date)
+        private static (Action<ITimeTrackingEntity> action, bool recursive) GetITimeTrackingAction(EntityState state, DateTime date)
         {
-            Action<ITimeTrackingEntity> action = null;
+            Action<ITimeTrackingEntity>? action = null;
             bool recursive = false;
 
-            if (state == EntityState.Added)
+            switch (state)
             {
-                action = (x) => { x.CreationDate = date; x.LastModificationDate = date; };
-                recursive = true;
-            }
-            else if (state == EntityState.Modified)
-            {
-                action = (x) => { x.LastModificationDate = date; };
+                case EntityState.Added:
+                    {
+                        action = (x) => { x.CreationDate = date; x.LastModificationDate = date; };
+                        recursive = true;
+                        break;
+                    }
+
+                case EntityState.Modified:
+                    {
+                        action = (x) => { x.LastModificationDate = date; };
+                        break;
+                    }
+
+                default:
+                    {
+                        action = (x) => { };
+                        break;
+                    }
             }
 
             return (action, recursive);
@@ -277,20 +319,20 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
         {
             DateTime now = DateProvider?.Now ?? DateTime.Now;
 
-            (var action, bool recursive) = GetITimeTrackingAction(state, now);
+            (var action, bool recursive) = BaseEfRepository<T, U>.GetITimeTrackingAction(state, now);
 
-            UpdateITimeTrackingEntities(entities, action, recursive);
+            BaseEfRepository<T, U>.UpdateITimeTrackingEntities(entities, action);
         }
 
-        private void UpdateITimeTrackingEntities(ICollection<T> entities, Action<ITimeTrackingEntity> action, bool recursive = true)
+        private static void UpdateITimeTrackingEntities(ICollection<T> entities, Action<ITimeTrackingEntity> action)
         {
             foreach (var entity in entities)
             {
-                BaseEfRepository<T, U>.UpdateITimeTrackingEntity(entity, action, recursive);
+                BaseEfRepository<T, U>.UpdateITimeTrackingEntity(entity, action);
             }
         }
 
-        private static bool UpdateITimeTrackingEntity(IBaseEntity entity, Action<ITimeTrackingEntity> action, bool recursive = true)
+        private static bool UpdateITimeTrackingEntity(IBaseEntity entity, Action<ITimeTrackingEntity> action)
         {
             bool result = false;
 
@@ -338,7 +380,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
             int dbChanges = await SaveOrUpdateChanges(dbContext, saveChanges);
 
             result.Entity = entity;
-            result.Result = dbChanges > 0 ? CommandState.Success : CommandState.Warning;
+            result.Result = dbChanges >= 0 ? CommandState.Success : CommandState.Error;
 
             return result;
         }
@@ -356,7 +398,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
             if (dbContext.Entry(entity).State == EntityState.Detached)
             {
                 //This can be an issue if input entity is not fully filled with database value. Data can be lost !!
-                T databaseEntity = await dbContext.FindAsync<T>(entity.DatabaseID);
+                T? databaseEntity = await dbContext.FindAsync<T>(entity.DatabaseID);
 
                 if (databaseEntity != null)
                 {
@@ -381,15 +423,20 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
 
         public async Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] propertyNames, bool saveChanges = true)
         {
+            if (propertyNames == null || propertyNames.Length  == 0)
+            {
+                throw new ArgumentNullException(nameof(propertyNames));
+            }
+
             var dbContext = GetDbContext();
 
             var result = new CommandResult<T>();
-            T databaseEntity = await GetByIdAsync(entity.DatabaseID);
+            T? databaseEntity = await GetByIdAsync(entity.DatabaseID);
 
             if (PrepareEntityForDbOperation(entity, EntityState.Modified))
             {
                 Array.Resize(ref propertyNames, propertyNames.Length + 1);
-                propertyNames[propertyNames.Length - 1] = nameof(ITimeTrackingEntity.LastModificationDate);
+                propertyNames[^1] = nameof(ITimeTrackingEntity.LastModificationDate);
             }
 
             if (databaseEntity != null)
@@ -400,8 +447,8 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
                 {
                     if (property != null)
                     {
-                        object oldValue = property.GetValue(databaseEntity);
-                        object newValue = property.GetValue(entity);
+                        object? oldValue = property.GetValue(databaseEntity);
+                        object? newValue = property.GetValue(entity);
 
                         if (
                             oldValue?.Equals(newValue) == false
@@ -421,7 +468,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
                 }
                 else
                 {
-                    result.Result = CommandState.Warning;
+                    result.Result = CommandState.Success;
                     result.Message = "No properties have been changed";
                 }
             }
@@ -455,14 +502,19 @@ namespace makeITeasy.AppFramework.Infrastructure.EF6.Persistence
             return result;
         }
 
-        private static IQueryable<T> ApplySpecification(ISpecification<T> spec, U dbContext)
+        private static IQueryable<T>? ApplySpecification(ISpecification<T> spec, U dbContext)
         {
             return SpecificationEvaluator<T>.GetQuery(dbContext.Set<T>().AsQueryable(), spec);
         }
 
-        private static IQueryable<T> ApplyPaging(IQueryable<T> filteredSet, ISpecification<T> spec)
+        private static IQueryable<T>? ApplyPaging(IQueryable<T>? filteredSet, ISpecification<T> spec)
         {
-            return filteredSet.Skip(spec.Skip.Value).Take(spec.Take.Value);
+            if (spec is null)
+            {
+                throw new ArgumentNullException(nameof(spec));
+            }
+
+            return filteredSet?.Skip(spec.Skip.GetValueOrDefault()).Take(spec.Take.GetValueOrDefault(10));
         }
 
         public void Dispose()

@@ -17,16 +17,16 @@ namespace makeITeasy.AppFramework.Core.Services
     public class BaseEntityService<TEntity> : IBaseEntityService<TEntity>, IDisposable where TEntity : class, IBaseEntity
     {
         //injected by autofac by propertieswired
-        protected IValidator<TEntity> _validator { get; set; }
+        protected IValidator<TEntity>? _validator { get; set; }
         //injected by autofac by propertieswired
-        public IAsyncRepository<TEntity> EntityRepository { get; set; }
-        protected ILogger<BaseEntityService<TEntity>> _logger { get; set; }
+        public IAsyncRepository<TEntity>? EntityRepository { get; set; }
+        protected ILogger<BaseEntityService<TEntity>>? _logger { get; set; }
 
         public BaseEntityService()
         {
         }
 
-        protected BaseEntityService(IAsyncRepository<TEntity> entityRepository, ILogger<BaseEntityService<TEntity>> logger, IValidator<TEntity> validator = null)
+        protected BaseEntityService(IAsyncRepository<TEntity> entityRepository, ILogger<BaseEntityService<TEntity>> logger, IValidator<TEntity>? validator = null)
         {
             EntityRepository = entityRepository;
             _validator = validator;
@@ -36,6 +36,8 @@ namespace makeITeasy.AppFramework.Core.Services
         public void Dispose()
         {
             Dispose(true);
+
+
             GC.SuppressFinalize(this);
         }
 
@@ -47,21 +49,40 @@ namespace makeITeasy.AppFramework.Core.Services
             }
         }
 
-        public async Task<TEntity> GetByIdAsync(object id, List<Expression<Func<TEntity, object>>> includes = null)
+        public void EnsureThatRepositoryExists()
         {
-            return await EntityRepository.GetByIdAsync(id, includes);
+            if (EntityRepository == null)
+            {
+                throw new Exception("Service has no repository");
+            }
+        }
+
+        public async Task<TEntity?> GetByIdAsync(object id, List<Expression<Func<TEntity, object>>>? includes = null)
+        {
+            EnsureThatRepositoryExists();
+
+            return await EntityRepository!.GetByIdAsync(id, includes);
         }
 
         public async Task<IList<TEntity>> ListAllAsync(List<Expression<Func<TEntity, object>>>? includes = null)
         {
-            return await EntityRepository.ListAllAsync(includes);
+            EnsureThatRepositoryExists();
+
+            return await EntityRepository!.ListAllAsync(includes);
         }
 
         public virtual async Task<QueryResult<TEntity>> QueryAsync(ISpecification<TEntity> specification, bool includeCount = false)
         {
-            specification?.BuildQuery();
+            if (specification is null)
+            {
+                throw new ArgumentNullException(nameof(specification));
+            }
 
-            return await EntityRepository.ListAsync(specification, includeCount);
+            EnsureThatRepositoryExists();
+
+            specification.BuildQuery();
+
+            return await EntityRepository!.ListAsync(specification, includeCount);
         }
 
         public virtual async Task<TEntity> GetFirstByQueryAsync(ISpecification<TEntity> specification)
@@ -72,17 +93,24 @@ namespace makeITeasy.AppFramework.Core.Services
             return (await QueryAsync(specification, false)).Results.FirstOrDefault();
         }
 
-        public virtual async Task<QueryResult<TTargetEntity>> QueryWithProjectionAsync<TTargetEntity>(ISpecification<TEntity> specification, bool includeCount = false)
+        public virtual async Task<QueryResult<TTargetEntity>> QueryWithProjectionAsync<TTargetEntity>(ISpecification<TEntity>? specification, bool includeCount = false)
             where TTargetEntity : class
         {
-            specification?.BuildQuery();
+            if (specification is null)
+            {
+                throw new ArgumentNullException(nameof(specification));
+            }
 
-            if(specification?.Includes?.Any(x => x.Body?.NodeType != ExpressionType.MemberAccess) ?? false)
+            EnsureThatRepositoryExists();
+
+            specification.BuildQuery();
+
+            if(specification.Includes?.Any(x => x.Body?.NodeType != ExpressionType.MemberAccess) ?? false)
             {
                 _logger?.LogWarning("Query with projection will ignore include and especially function include");
             }                   
 
-            return await EntityRepository.ListWithProjectionAsync<TTargetEntity>(specification, includeCount);
+            return await EntityRepository!.ListWithProjectionAsync<TTargetEntity>(specification, includeCount);
         }
 
         public virtual async Task<TTargetEntity> GetFirstByQueryWithProjectionAsync<TTargetEntity>(ISpecification<TEntity> specification) 
@@ -106,7 +134,9 @@ namespace makeITeasy.AppFramework.Core.Services
 
         public virtual async Task<int> UpdateRangeAsync(Expression<Func<TEntity, bool>> entityPredicate, Expression<Func<TEntity, TEntity>> updateExpression)
         {
-            return await EntityRepository.UpdateRangeAsync(entityPredicate, updateExpression);
+            EnsureThatRepositoryExists();
+
+            return await EntityRepository!.UpdateRangeAsync(entityPredicate, updateExpression);
         }
 
         public virtual async Task<CommandResult<TEntity>> UpdateAsync(TEntity entity)
@@ -167,21 +197,27 @@ namespace makeITeasy.AppFramework.Core.Services
 
         private async Task<CommandResult<TEntity>> InnerUpdateAsync(TEntity entity)
         {
-            CommandResult<TEntity> result = await EntityRepository.UpdateAsync(entity);
+            EnsureThatRepositoryExists();
+
+            CommandResult<TEntity> result = await EntityRepository!.UpdateAsync(entity);
 
             return new CommandResult<TEntity>() { Entity = entity, Result = result.Result };
         }
 
         public async Task<CommandResult<TEntity>> InnerAddAsync(TEntity entity, bool saveChanges = true)
         {
-            TEntity result = await EntityRepository.AddAsync(entity, saveChanges);
+            EnsureThatRepositoryExists();
+
+            TEntity result = await EntityRepository!.AddAsync(entity, saveChanges);
 
             return new CommandResult<TEntity>() { Entity = result, Result = CommandState.Success };
         }
 
         private async Task<ICollection<CommandResult<TEntity>>> InnerAddRangeAsync(ICollection<TEntity> entities)
         {
-            await EntityRepository.AddRangeAsync(entities);
+            EnsureThatRepositoryExists();
+
+            await EntityRepository!.AddRangeAsync(entities);
 
             return entities.Select(x => new CommandResult<TEntity>(CommandState.Success) { Entity = x }).ToList();
         }
@@ -195,12 +231,16 @@ namespace makeITeasy.AppFramework.Core.Services
 
         public virtual async Task<CommandResult<TEntity>> UpdatePropertiesAsync(TEntity entity, string[] properties)
         {
-            return await EntityRepository.UpdatePropertiesAsync(entity, properties);
+            EnsureThatRepositoryExists();
+
+            return await EntityRepository!.UpdatePropertiesAsync(entity, properties);
         }
 
         public virtual async Task<CommandResult> DeleteAsync(TEntity entity, bool saveChanges = true)
         {
-            return await EntityRepository.DeleteAsync(entity, saveChanges);
+            EnsureThatRepositoryExists();
+
+            return await EntityRepository!.DeleteAsync(entity, saveChanges);
         }
 
         public bool Validate(TEntity entity)

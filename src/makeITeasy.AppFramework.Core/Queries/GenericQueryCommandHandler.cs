@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Models;
@@ -17,7 +18,12 @@ namespace makeITeasy.AppFramework.Core.Queries
 
         public async Task<QueryResult<TEntity>> Handle(GenericQueryCommand<TEntity> request, CancellationToken cancellationToken)
         {
-            return await baseService.QueryAsync(request?.Query, request?.IncludeCount == true);
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
+            return await baseService.QueryAsync(request.Query, request.IncludeCount == true);
         }
     }
 }

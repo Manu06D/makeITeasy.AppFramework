@@ -21,7 +21,12 @@ namespace makeITeasy.AppFramework.Core.Queries
 
         public async Task<TEntity> Handle(GenericFindUniqueCommand<TEntity> request, CancellationToken cancellationToken)
         {
-            return await baseService.GetFirstByQueryAsync(request?.Query);
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
+            return await baseService.GetFirstByQueryAsync(request.Query);
         }
     }
 }

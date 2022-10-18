@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-using makeITeasy.AppFramework.Infrastructure.EF6.Persistence;
+using makeITeasy.AppFramework.Infrastructure.Persistence;
 using makeITeasy.AppFramework.Models;
 
 using Microsoft.EntityFrameworkCore;
