@@ -10,8 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\makeITeasy.AppFramework.Infrastructure\makeITeasy.AppFramework.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\makeITeasy.AppFramework.Core\makeITeasy.AppFramework.Core.csproj" />
+    <ProjectReference Include="..\..\src\makeITeasy.AppFramework.Infrastructure\makeITeasy.AppFramework.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\makeITeasy.AppFramework.Models\makeITeasy.AppFramework.Models.csproj" />
     <ProjectReference Include="..\makeITeasy.CarCatalog.Core\makeITeasy.CarCatalog.Core.csproj" />
     <ProjectReference Include="..\makeITeasy.CarCatalog.Models\makeITeasy.CarCatalog.Models.csproj" />
