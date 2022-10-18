@@ -1,57 +1,58 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
-    <PackageTags>framework ef</PackageTags>
-	  <PackageReleaseNotes>
-		  1.1.9 : Initial Release
-	  </PackageReleaseNotes>
-    <Authors>Emmanuel D.</Authors>
-    <Company>Make IT Easy</Company>
-    <Description>Web extentions module for makeITeasy.Appframework</Description>
-    <Version>1.1.9</Version>
-    <DebugType>Embedded</DebugType>
-    <EmbedAllSources>True</EmbedAllSources>
-	<!-- Enabling nullable might cause issues on Model validation-->
-	<!--<Nullable>enable</Nullable>-->
-	<LangVersion>9.0</LangVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
+		<PackageTags>framework ef</PackageTags>
+		<Version>1.1.10</Version>
+		<PackageReleaseNotes>
+			1.1.10 : code cleanup
+			1.1.9 : Initial Release
+		</PackageReleaseNotes>
+		<Authors>Emmanuel D.</Authors>
+		<Company>Make IT Easy</Company>
+		<Description>Web extentions module for makeITeasy.Appframework</Description>
+		<DebugType>Embedded</DebugType>
+		<EmbedAllSources>True</EmbedAllSources>
+		<!-- Enabling nullable might cause issues on Model validation-->
+		<!--<Nullable>enable</Nullable>-->
+		<LangVersion>9.0</LangVersion>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Content Remove="bundleconfig.json" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Remove="bundleconfig.json" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\makeITeasy.AppFramework.Models\makeITeasy.AppFramework.Models.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\makeITeasy.AppFramework.Models\makeITeasy.AppFramework.Models.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\dist\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="wwwroot\dist\" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="bundleconfig.json" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="bundleconfig.json" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.1.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.1.1" />
+	</ItemGroup>
 
 
 </Project>

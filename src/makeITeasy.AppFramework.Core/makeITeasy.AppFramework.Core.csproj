@@ -10,6 +10,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
     <PackageTags>framework ef</PackageTags>
+    <Version>1.2.1</Version>
     <PackageReleaseNotes>
 		1.2.1 : clean code
 		1.2.0 : Remove AutofacValidatorFactory.
@@ -24,7 +25,6 @@
     <Authors>Emmanuel D.</Authors>
     <Company>Make IT Easy</Company>
     <Description>Core module for makeITeasy.Appframework</Description>
-    <Version>1.2.1-beta</Version>
     <DebugType>embedded</DebugType>
     <EmbedAllSources>true</EmbedAllSources>
     <Nullable>enable</Nullable>	  
