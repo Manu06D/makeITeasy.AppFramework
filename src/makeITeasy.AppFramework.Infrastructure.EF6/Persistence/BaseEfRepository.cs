@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 
-using DelegateDecompiler.EntityFrameworkCore;
+using DelegateDecompiler.EntityFramework;
 
 using EFCore.BulkExtensions;
 
