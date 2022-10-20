@@ -7,15 +7,18 @@ namespace makeITeasy.AppFramework.Core.Helpers
 {
     public class RegisterAutofacModule : Module
     {
-        public Assembly[] Assemblies { get; set; }
+        public Assembly[]? Assemblies { get; set; }
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterAssemblyTypes(Assemblies)
-                  .Where(t => t.Name.EndsWith("Service"))
-                  .AsImplementedInterfaces()
-                  .PropertiesAutowired()
-                  .OnActivated(args => AutofacHelper.InjectProperties(args.Context, args.Instance, true));
+            if (Assemblies != null)
+            {
+                builder.RegisterAssemblyTypes(Assemblies)
+                      .Where(t => t.Name.EndsWith("Service"))
+                      .AsImplementedInterfaces()
+                      .PropertiesAutowired()
+                      .OnActivated(args => AutofacHelper.InjectProperties(args.Context, args.Instance, true));
+            }
 
             builder.RegisterGeneric(typeof(Queries.GenericQueryCommandHandler<>)).AsImplementedInterfaces();
             builder.RegisterGeneric(typeof(Queries.GenericQueryWithProjectCommandHandler<,>)).AsImplementedInterfaces();

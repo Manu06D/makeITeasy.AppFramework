@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Models;
@@ -16,7 +17,12 @@ namespace makeITeasy.AppFramework.Core.Commands
         }
         public async Task<CommandResult<TEntity>> Handle(CreateEntityCommand<TEntity> request, CancellationToken cancellationToken)
         {
-            return await baseService.CreateAsync(request?.Entity);
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
+            return await baseService.CreateAsync(request.Entity);
         }
     }
 }

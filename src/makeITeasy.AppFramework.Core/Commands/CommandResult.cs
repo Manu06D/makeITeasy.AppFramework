@@ -5,9 +5,9 @@ namespace makeITeasy.AppFramework.Core.Commands
     public class CommandResult
     {
         public CommandState Result { get; set; } = CommandState.Error;
-        public string Message { get; set; }
+        public string? Message { get; set; }
 
-        public CommandResult(CommandState result, string message)
+        public CommandResult(CommandState result, string? message)
         {
             Result = result;
             Message = message;
@@ -15,21 +15,19 @@ namespace makeITeasy.AppFramework.Core.Commands
 
         public CommandResult()
         {
-
         }
     }
 
     public class CommandResult<T> : CommandResult where T : IBaseEntity
     {
-        public T Entity { get; set; }
+        public T? Entity { get; set; }
 
-        public CommandResult(CommandState result, string message = null) : base(result, message)
+        public CommandResult(CommandState result, string? message = null) : base(result, message)
         {
         }
 
         public CommandResult()
         {
-
         }
 
         public static CommandResult<T> CreateDefault()

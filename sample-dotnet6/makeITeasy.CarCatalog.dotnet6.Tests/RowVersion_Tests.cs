@@ -102,7 +102,7 @@ namespace makeITeasy.CarCatalog.dotnet6.Tests
 
             result = await carService.UpdateAsync(afterFirstUpdateQueryResult.Results.First());
             
-            result.Result.Should().Be(CommandState.Warning);
+            result.Result.Should().Be(CommandState.Success);
             
             await Task.Delay(25);
 

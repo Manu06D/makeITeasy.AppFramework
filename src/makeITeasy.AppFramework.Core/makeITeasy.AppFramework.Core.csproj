@@ -10,30 +10,34 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
     <PackageTags>framework ef</PackageTags>
-    <PackageReleaseNotes>1.2.0 : Remove AutofacValidatorFactory.
-1.1.14 : Add ListAllAsync to services
-1.1.13 : Add GenericFindUniqueCommand*
-1.1.12 : BaseEntityService methods are now all virtual
-1.1.11 : Update packages dependencies
-1.1.1 : Add IsolationLevel to query
-1.1.0 : Add new package makeITeasy.AppFramework.Infrastructure
-1.0.2 : Remove unwanted EF Core dependencies
+    <Version>1.2.1</Version>
+    <PackageReleaseNotes>
+		1.2.1 : clean code
+		1.2.0 : Remove AutofacValidatorFactory.
+        1.1.14 : Add ListAllAsync to services
+        1.1.13 : Add GenericFindUniqueCommand*
+        1.1.12 : BaseEntityService methods are now all virtual
+        1.1.11 : Update packages dependencies
+        1.1.1 : Add IsolationLevel to query
+        1.1.0 : Add new package makeITeasy.AppFramework.Infrastructure
+        1.0.2 : Remove unwanted EF Core dependencies
     </PackageReleaseNotes>
     <Authors>Emmanuel D.</Authors>
     <Company>Make IT Easy</Company>
     <Description>Core module for makeITeasy.Appframework</Description>
-    <Version>1.2.0</Version>
     <DebugType>embedded</DebugType>
     <EmbedAllSources>true</EmbedAllSources>
+    <Nullable>enable</Nullable>	  
+    <LangVersion>9.0</LangVersion>	  
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="6.4.0" />
-    <PackageReference Include="AutoMapper" Version="11.0.1" />
-    <PackageReference Include="DelegateDecompiler" Version="0.30.0" />
-    <PackageReference Include="FluentValidation" Version="11.1.0" />
-    <PackageReference Include="MediatR" Version="10.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+    <PackageReference Include="AutoMapper" Version="12.0.0" />
+    <PackageReference Include="DelegateDecompiler" Version="0.31.0" />
+    <PackageReference Include="FluentValidation" Version="11.2.2" />
+    <PackageReference Include="MediatR" Version="11.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2" />
   </ItemGroup>
 
   <ItemGroup>

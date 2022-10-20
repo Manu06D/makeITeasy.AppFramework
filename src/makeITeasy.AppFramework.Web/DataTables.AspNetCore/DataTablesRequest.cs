@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using makeITeasy.AppFramework.Models;
 using makeITeasy.AppFramework.Web.Models;
 
@@ -110,7 +111,7 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
             {
                 object[] parameters =
                     datatableCtr.GetParameters().Select(p =>
-                        p.HasDefaultValue ? p.DefaultValue : 
+                        p.HasDefaultValue ? p.DefaultValue :
                         p.ParameterType.IsValueType && Nullable.GetUnderlyingType(p.ParameterType) == null ? Activator.CreateInstance(p.ParameterType) : null
                     ).ToArray();
 

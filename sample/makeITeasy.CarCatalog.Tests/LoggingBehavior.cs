@@ -18,7 +18,7 @@ namespace makeITeasy.CarCatalog.Tests
             _mediatRLog = mediatRLog;
         }
 
-        public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
             bool IsFrameworkCommandResult = request.GetType().GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(ICommandEntity<>));
 
