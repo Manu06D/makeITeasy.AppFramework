@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Security.AccessControl;
 using System.Text;
+using System.Text.Json;
+using System.Xml.Linq;
 
 namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
 {
@@ -18,13 +23,29 @@ namespace makeITeasy.AppFramework.Web.DataTables.AspNetCore
                     PropertyInfo property = inputType.GetProperty(item.Key);
                     if (property != null)
                     {
-                        if (property.PropertyType?.BaseType == typeof(Array))
+                        if (property.PropertyType.IsGenericType && 
+                            property.PropertyType.GetGenericTypeDefinition() == typeof(List<>)
+                            )
                         {
-                            //if (item.Value?.GetType() == typeof(JArray) && item.Value is JArray j)
-                            //{
-                            //    object x = j.ToObject(property.PropertyType);
-                            //    property.SetValue(output, x, null);
-                            //}
+                            Type listType = property.PropertyType.GetGenericArguments().FirstOrDefault();
+                            IList converted = Activator.CreateInstance(property.PropertyType) as IList;
+
+                            var arrayEnumerator = ((JsonElement)item.Value).EnumerateArray();
+
+                            while (arrayEnumerator.MoveNext())
+                            {
+                                switch (arrayEnumerator.Current.ValueKind)
+                                {
+                                    case JsonValueKind.String:
+                                        (converted).Add(Convert.ChangeType(arrayEnumerator.Current.ToString(), listType));
+                                        break;
+                                    default:
+                                        break;
+
+                                }
+                            }
+
+                            property.SetValue(output, converted, null);
                         }
                         else if (property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(DateTime?))
                         {

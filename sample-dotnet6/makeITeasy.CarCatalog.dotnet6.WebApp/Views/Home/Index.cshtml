@@ -1,4 +1,5 @@
-﻿@using makeITeasy.CarCatalog.dotnet6.WebApp.ApiControllers
+﻿@model makeITeasy.CarCatalog.dotnet6.WebApp.Models.Views.Home.IndexViewModel
+@using makeITeasy.CarCatalog.dotnet6.WebApp.ApiControllers
 @{
     ViewData["Title"] = "Home Page";
     var carDatatable =
@@ -18,14 +19,24 @@
                 <input class="form-control" asp-for="@(carDatatable.SearchModel.Name)" name="@nameof(carDatatable.SearchModel.Name)" />
                 <span asp-validation-for="@(carDatatable.SearchModel.Name)" class="text-danger"></span>
             </div>
-            <div class="col-3">
+            <div class="col-2">
                 <label class="control-label" asp-for="@(carDatatable.SearchModel.IsModernCarSearch)"></label>
                 <input class="form-control form-check-input" asp-for="@(carDatatable.SearchModel.IsModernCarSearch)" name="@nameof(carDatatable.SearchModel.IsModernCarSearch)" />
             </div>
 
+            <div class="col-2">
+                <select class="form-control" multiple="multiple" asp-for="@(carDatatable.SearchModel.BrandNames)" asp-items="@(Model.AllBrandNames)" name="@nameof(carDatatable.SearchModel.BrandNames)">
+                </select>
+                </div>
+                <div class="col-2">
+                <select class="form-control" multiple="multiple" asp-for="@(carDatatable.SearchModel.BrandIds)" asp-items="@(Model.AllBrandIds)" name="@nameof(carDatatable.SearchModel.BrandIds)">
+                    </select>
+            </div>
+
         </div>
         <div class="panel-footer text-center">
-            <input type="submit" class="btn btn-success" id="submit" name="search" value="Rechercher" />
+            <input type="submit" class="btn btn-success" id="submit" name="clear" value="Clear" onclick="this.form.reset();" />
+            <input type="submit" class="btn btn-success" id="submit" name="search" value="Search" />
             <br />       
             <br />
         </div>

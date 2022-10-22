@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-using makeITeasy.AppFramework.Core.Queries;
+﻿using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.AppFramework.Web.DataTables.AspNetCore;
 using makeITeasy.AppFramework.Web.Filters;

@@ -2,6 +2,7 @@
 
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Queries;
+using makeITeasy.CarCatalog.dotnet6.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet6.Core.Services.Queries.BrandQueries;
 using makeITeasy.CarCatalog.dotnet6.Core.Services.Queries.CarQueries;
 using makeITeasy.CarCatalog.dotnet6.Models;
@@ -10,6 +11,7 @@ using makeITeasy.CarCatalog.dotnet6.WebApp.Models;
 using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 using System.Diagnostics;
 
@@ -20,17 +22,27 @@ namespace makeITeasy.CarCatalog.dotnet6.WebApp.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
+        private readonly IBrandService _brandService;
 
-        public HomeController(ILogger<HomeController> logger, IMediator mediator, IMapper mapper)
+        public HomeController(ILogger<HomeController> logger, IMediator mediator, IMapper mapper, IBrandService brandService)
         {
             _logger = logger;
             _mediator = mediator;
             _mapper = mapper;
+            _brandService = brandService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+
+            IList<Brand> brands = (await _brandService.ListAllAsync());
+            Models.Views.Home.IndexViewModel model = new()
+            {
+                AllBrandNames = brands.Select(x => new SelectListItem(x.Name, x.Name)).ToList(),
+                AllBrandIds = brands.Select(x => new SelectListItem(x.Id.ToString(), x.Id.ToString())).ToList()
+            };
+
+            return base.View(model);
         }
 
         public IActionResult IndexWithBlazor()

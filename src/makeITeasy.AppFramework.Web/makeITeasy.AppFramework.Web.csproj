@@ -10,8 +10,9 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
 		<PackageTags>framework ef</PackageTags>
-		<Version>1.1.10</Version>
+		<Version>1.1.11</Version>
 		<PackageReleaseNotes>
+			1.1.11 : Add Array (string / int) as support of datatable search object
 			1.1.10 : code cleanup
 			1.1.9 : Initial Release
 		</PackageReleaseNotes>
