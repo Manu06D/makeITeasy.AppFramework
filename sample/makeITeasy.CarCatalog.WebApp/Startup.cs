@@ -77,7 +77,7 @@ namespace makeITeasy.CarCatalog.WebApp
                 options.AddInterceptors(new DatabaseInterceptor());
             });
 
-            DatatableHelpers.RegisterDatatableService(services);
+            DatatableHelpers.RegisterDatatablesService(services);
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
