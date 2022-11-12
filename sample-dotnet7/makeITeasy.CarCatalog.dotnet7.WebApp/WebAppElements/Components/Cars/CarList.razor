@@ -1,0 +1,24 @@
+﻿@using Models.Datatables
+@using Microsoft.AspNetCore.Components.Web
+
+<h3>CarList</h3>
+
+<input type="text" @bind="SearchValue" />
+<button type="submit" @onclick="LoadRequests">Search</button>
+
+<table border="1">
+    <tr>
+        <td>ID</td>
+        <td>Brand</td>
+        <td>Name</td>
+    </tr>
+
+    @foreach (CarDatatableViewModel item in requests.Results)
+    {
+        <tr>
+            <td>@item.ID</td>
+            <td>@item.BrandName</td>
+            <td>@item.Name</td>
+        </tr>
+    }
+</table>
