@@ -529,5 +529,10 @@ namespace makeITeasy.AppFramework.Infrastructure.Persistence
             {
             }
         }
+
+        public Task<int> UpdateRangeAsync<TProperty>(Expression<Func<T, bool>> entityPredicate, List<Tuple<Expression<Func<T, TProperty>>, Expression<Func<T, TProperty>>>> changes)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

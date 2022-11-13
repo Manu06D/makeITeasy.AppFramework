@@ -3,8 +3,6 @@ using AutoMapper.QueryableExtensions;
 
 using DelegateDecompiler.EntityFrameworkCore;
 
-using EFCore.BulkExtensions;
-
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Core.Queries;
@@ -13,9 +11,16 @@ using makeITeasy.AppFramework.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore.Query;
 
+using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 
 namespace makeITeasy.AppFramework.Infrastructure.EF7.Persistence
 {
@@ -411,14 +416,76 @@ namespace makeITeasy.AppFramework.Infrastructure.EF7.Persistence
             }
 
             var dbResult = await SaveOrUpdateChangesWithResult(entity, dbContext, saveChanges);
-
             return dbResult;
         }
 
-        public async Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, Expression<Func<T, T>> updateExpression)
+        public async Task<int> UpdateRangeAsync<TProperty>(Expression<Func<T, bool>> entityPredicate, List<Tuple<Expression<Func<T, TProperty>>, Expression<Func<T, TProperty>>>> changes)
         {
 
-            return await GetDbContext().Set<T>().Where(entityPredicate).BatchUpdateAsync(updateExpression);
+            var setPropertyMethodInfo = typeof(SetPropertyCalls<>).MakeGenericType(typeof(T))
+                .GetMethods()
+                .Single(m => m.Name == nameof(SetPropertyCalls<T>.SetProperty)
+                             && m.GetParameters()[0].ParameterType.IsGenericType
+                             && m.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == typeof(Func<,>)
+                             && !m.GetParameters()[1].ParameterType.IsGenericType)
+                .MakeGenericMethod(typeof(TProperty));
+
+            // .SetProperty(b => b.Name, "Hello"));
+            //x => x.Name + "XX"
+            var setPropertyCallsParam = Expression.Parameter(typeof(SetPropertyCalls<T>), "sp");
+            var blogParam1 = Expression.Parameter(typeof(T), "b");
+
+            //Expression<Func<T, TProperty>> methodCall = (x) => x.changes[0].Item1;
+
+            var t = GetPropertyInfo<T, TProperty>(typeof(T), changes[0].Item1);
+
+            Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> setProperties =
+                Expression.Lambda<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>>(
+                    Expression.Call(
+                        setPropertyCallsParam,
+                        setPropertyMethodInfo,
+                        Expression.Lambda<Func<T, TProperty>>(Expression.Property(blogParam1, nameof(t.Name)), blogParam1),
+                        (changes[0].Item2)),
+                        //Expression.Lambda<Func<T, TProperty>>(changes[0].Item2), blogParam1), //Expression.Constant("Hello")),
+                        setPropertyCallsParam);
+
+
+            //Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> xx = (x) => x.SetProperty(changes[0].Item1, changes[1].Item2);
+
+            //changes.Aggregate(calls, (current, item) => current.SetProperty<TProperty>(item.Item1, item.Item2));
+
+            //await set.ExecuteUpdateAsync(s => s.SetProperty(changes[0].Item1, changes[0].Item2));
+            var set =  GetDbContext().Set<T>().Where(entityPredicate);
+            //await set.ExecuteUpdateAsync(x => x.SetProperty(changes[0].Item1, changes[0].Item2));
+
+            await set.ExecuteUpdateAsync(setProperties);
+            return 0;
+        }
+
+
+        public PropertyInfo GetPropertyInfo<TSource, TProperty>(Type type, Expression<Func<TSource, TProperty>> propertyLambda)
+        {
+
+            MemberExpression member = propertyLambda.Body as MemberExpression;
+            if (member == null)
+                throw new ArgumentException(string.Format(
+                    "Expression '{0}' refers to a method, not a property.",
+                    propertyLambda.ToString()));
+
+            PropertyInfo propInfo = member.Member as PropertyInfo;
+            if (propInfo == null)
+                throw new ArgumentException(string.Format(
+                    "Expression '{0}' refers to a field, not a property.",
+                    propertyLambda.ToString()));
+
+            if (type != propInfo.ReflectedType &&
+                !type.IsSubclassOf(propInfo.ReflectedType))
+                throw new ArgumentException(string.Format(
+                    "Expression '{0}' refers to a property that is not from type {1}.",
+                    propertyLambda.ToString(),
+                    type));
+
+            return propInfo;
         }
 
         public async Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] propertyNames, bool saveChanges = true)
@@ -528,6 +595,11 @@ namespace makeITeasy.AppFramework.Infrastructure.EF7.Persistence
             if (disposing)
             {
             }
+        }
+
+        public Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, Expression<Func<T, T>> updateExpression)
+        {
+            throw new NotImplementedException();
         }
     }
 }

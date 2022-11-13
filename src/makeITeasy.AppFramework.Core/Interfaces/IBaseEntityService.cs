@@ -16,6 +16,8 @@ namespace makeITeasy.AppFramework.Core.Interfaces
         Task<CommandResult> DeleteAsync(TEntity entity, bool saveChanges = true);
         Task<ICollection<CommandResult<TEntity>>> CreateRangeAsync(ICollection<TEntity> entities, bool saveChanges = true);
         Task<int> UpdateRangeAsync(Expression<Func<TEntity, bool>> entityPredicate, Expression<Func<TEntity, TEntity>> updateExpression);
+
+        Task<int> UpdateRangeAsync<TProperty>(Expression<Func<TEntity, bool>> entityPredicate, List<Tuple<Expression<Func<TEntity, TProperty>>, Expression<Func<TEntity, TProperty>>>> changes);
         bool Validate(TEntity entity);
     }
 }

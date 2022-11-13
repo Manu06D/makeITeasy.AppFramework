@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Xunit;
 using makeITeasy.CarCatalog.dotnet7.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet7.Core.Services.Queries.CarQueries;
+using System.Linq.Expressions;
 
 namespace makeITeasy.CarCatalog.dotnet7.Tests
 {
@@ -87,7 +88,10 @@ namespace makeITeasy.CarCatalog.dotnet7.Tests
 
             var dbCreation = await carService.CreateRangeAsync(carList);
 
-            var udbUpdate = await carService.UpdateRangeAsync(x => x.Id > 0, x => new Car { Name = x.Name + "XX" });
+            var udbUpdate = await carService.UpdateRangeAsync<string>(x => x.Id > 0, changes: new List<Tuple<Expression<Func<Car, string>>, Expression<Func<Car, string>>>>()
+            {
+                new Tuple<Expression<Func<Car, string>>, Expression<Func<Car, string>>>(x => x.Name,x => x.Name + "XX")
+            });
 
             var queryResult = await carService.QueryAsync(new BaseCarQuery());
 
