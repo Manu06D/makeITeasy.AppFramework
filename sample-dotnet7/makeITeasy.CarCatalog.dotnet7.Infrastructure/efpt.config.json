@@ -1,5 +1,5 @@
 ﻿{
-   "CodeGenerationMode": 2,
+   "CodeGenerationMode": 3,
    "ContextClassName": "CarCatalogContext",
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
