@@ -24,5 +24,10 @@ namespace makeITeasy.CarCatalog.dotnet7.Core.Services
         {
             return await _carRepository.GroupByBrandAndCountAsync();
         }
+
+        public async Task XXX()
+        {
+            await _carRepository.UpdateRangeXXX();
+        }
     }
 }

@@ -10,5 +10,6 @@ namespace makeITeasy.CarCatalog.dotnet7.Core.Services.Interfaces
     public interface ICarService : IBaseEntityService<Car>
     {
         Task<List<BrandGroupByCarCount>> GetBrandWithCountAsync();
+        Task XXX();
     }
 }

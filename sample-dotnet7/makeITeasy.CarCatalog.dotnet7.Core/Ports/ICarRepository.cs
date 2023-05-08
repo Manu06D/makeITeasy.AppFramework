@@ -10,5 +10,6 @@ namespace makeITeasy.CarCatalog.dotnet7.Core.Ports
     public interface ICarRepository : IAsyncRepository<Car>
     {
         Task<List<BrandGroupByCarCount>> GroupByBrandAndCountAsync();
+        Task UpdateRangeXXX();
     }
 }

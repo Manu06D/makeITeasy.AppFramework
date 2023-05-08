@@ -419,46 +419,67 @@ namespace makeITeasy.AppFramework.Infrastructure.EF7.Persistence
             return dbResult;
         }
 
-        public async Task<int> UpdateRangeAsync<TProperty>(Expression<Func<T, bool>> entityPredicate, List<Tuple<Expression<Func<T, TProperty>>, Expression<Func<T, TProperty>>>> changes)
+        public async Task<int> UpdateRangeAsync<TProperty>(Expression<Func<T, bool>> entityPredicate, List<Tuple<Func<T, TProperty>, Func<T, TProperty>>> changes)
         {
 
-            var setPropertyMethodInfo = typeof(SetPropertyCalls<>).MakeGenericType(typeof(T))
-                .GetMethods()
-                .Single(m => m.Name == nameof(SetPropertyCalls<T>.SetProperty)
-                             && m.GetParameters()[0].ParameterType.IsGenericType
-                             && m.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == typeof(Func<,>)
-                             && !m.GetParameters()[1].ParameterType.IsGenericType)
-                .MakeGenericMethod(typeof(TProperty));
+            //Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> propertyCalls = null;
+            ////p => p.SetProperty(x => x.LastName, x => "Updated" + x.LastName).SetProperty(x => x.FirstName, x => "Updated" + x.FirstName));
 
-            // .SetProperty(b => b.Name, "Hello"));
-            //x => x.Name + "XX"
-            var setPropertyCallsParam = Expression.Parameter(typeof(SetPropertyCalls<T>), "sp");
-            var blogParam1 = Expression.Parameter(typeof(T), "b");
+            ////await GetDbContext().Set<T>().Where(entityPredicate).ExecuteUpdateAsync(p => p.SetProperty(x => x.LastName, x => "Updated" + x.LastName).SetProperty(x => x.FirstName, x => "Updated" + x.FirstName));
 
-            //Expression<Func<T, TProperty>> methodCall = (x) => x.changes[0].Item1;
+            ////Func<T, T> selector = x => x;
+            ////Func<T, TProperty> value = x => x.ToString();
 
-            var t = GetPropertyInfo<T, TProperty>(typeof(T), changes[0].Item1);
+            //ParameterExpression param1 = Expression.Parameter(typeof(Func<T, TProperty>));
+            //ParameterExpression param2 = Expression.Parameter(typeof(Func<T, TProperty>));
 
-            Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> setProperties =
-                Expression.Lambda<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>>(
-                    Expression.Call(
-                        setPropertyCallsParam,
-                        setPropertyMethodInfo,
-                        Expression.Lambda<Func<T, TProperty>>(Expression.Property(blogParam1, nameof(t.Name)), blogParam1),
-                        (changes[0].Item2)),
-                        //Expression.Lambda<Func<T, TProperty>>(changes[0].Item2), blogParam1), //Expression.Constant("Hello")),
-                        setPropertyCallsParam);
+            //MethodCallExpression mathMaxExpression = Expression.Call(
+            //    typeof(SetPropertyCalls<T>).GetMethod("SetProperty", new Type[] { typeof(Func<T, Func<TProperty, TProperty>>), typeof(SetPropertyCalls<T>) }), param1, param2);
+
+            //Func<Func<T, TProperty>, Func<T, TProperty>, SetPropertyCalls<T>> xx = 
+            //    Expression.Lambda<Func<Func<T, TProperty>, Func<T, TProperty>, SetPropertyCalls<T>>>(mathMaxExpression, new ParameterExpression[] { param1, param2 }).Compile();
+
+            //SetPropertyCalls<T> x = xx(changes[0].Item1, changes[0].Item2);
+
+            //await GetDbContext().Set<T>().Where(entityPredicate).ExecuteUpdateAsync(x);
+
+            //var setPropertyMethodInfo = typeof(SetPropertyCalls<>).MakeGenericType(typeof(T))
+            //    .GetMethods()
+            //    .Single(m => m.Name == nameof(SetPropertyCalls<T>.SetProperty)
+            //                 && m.GetParameters()[0].ParameterType.IsGenericType
+            //                 && m.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == typeof(Func<,>)
+            //                 && !m.GetParameters()[1].ParameterType.IsGenericType)
+            //    .MakeGenericMethod(typeof(TProperty));
+
+            //// .SetProperty(b => b.Name, "Hello"));
+            ////x => x.Name + "XX"
+            //var setPropertyCallsParam = Expression.Parameter(typeof(SetPropertyCalls<T>), "sp");
+            //var blogParam1 = Expression.Parameter(typeof(T), "b");
+
+            ////Expression<Func<T, TProperty>> methodCall = (x) => x.changes[0].Item1;
+
+            //var t = GetPropertyInfo<T, TProperty>(typeof(T), changes[0].Item1);
+
+            //Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> setProperties =
+            //    Expression.Lambda<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>>(
+            //        Expression.Call(
+            //            setPropertyCallsParam,
+            //            setPropertyMethodInfo,
+            //            Expression.Lambda<Func<T, TProperty>>(Expression.Property(blogParam1, nameof(t.Name)), blogParam1),
+            //            (changes[0].Item2)),
+            //            //Expression.Lambda<Func<T, TProperty>>(changes[0].Item2), blogParam1), //Expression.Constant("Hello")),
+            //            setPropertyCallsParam);
 
 
-            //Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> xx = (x) => x.SetProperty(changes[0].Item1, changes[1].Item2);
+            ////Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> xx = (x) => x.SetProperty(changes[0].Item1, changes[1].Item2);
 
-            //changes.Aggregate(calls, (current, item) => current.SetProperty<TProperty>(item.Item1, item.Item2));
+            ////changes.Aggregate(calls, (current, item) => current.SetProperty<TProperty>(item.Item1, item.Item2));
 
-            //await set.ExecuteUpdateAsync(s => s.SetProperty(changes[0].Item1, changes[0].Item2));
-            var set =  GetDbContext().Set<T>().Where(entityPredicate);
-            //await set.ExecuteUpdateAsync(x => x.SetProperty(changes[0].Item1, changes[0].Item2));
+            ////await set.ExecuteUpdateAsync(s => s.SetProperty(changes[0].Item1, changes[0].Item2));
+            //var set =  GetDbContext().Set<T>().Where(entityPredicate);
+            ////await set.ExecuteUpdateAsync(x => x.SetProperty(changes[0].Item1, changes[0].Item2));
 
-            await set.ExecuteUpdateAsync(setProperties);
+            //await set.ExecuteUpdateAsync(setProperties);
             return 0;
         }
 
@@ -598,6 +619,11 @@ namespace makeITeasy.AppFramework.Infrastructure.EF7.Persistence
         }
 
         public Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, Expression<Func<T, T>> updateExpression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> UpdateRangeAsync<TProperty>(Expression<Func<T, bool>> entityPredicate, List<Tuple<Expression<Func<T, TProperty>>, Expression<Func<T, TProperty>>>> changes)
         {
             throw new NotImplementedException();
         }
