@@ -88,13 +88,17 @@ namespace makeITeasy.CarCatalog.dotnet7.Tests
 
             var dbCreation = await carService.CreateRangeAsync(carList);
 
-            await carService.XXX();
+            //await carService.XXX();
 
-            //var udbUpdate = await carService.UpdateRangeAsync<string>(x => x.Id > 0, changes: new List<Tuple<Expression<Func<Car, string>>, Expression<Func<Car, string>>>>()
+            //var udbUpdate = await carService.UpdateRangeAsync2<string>(x => x.Id > 0, changes: new List<Tuple<Expression<Func<Car, string>>, Expression<Func<Car, string>>>>()
             //{
             //    new Tuple<Expression<Func<Car, string>>, Expression<Func<Car, string>>>(x => x.Name,x => x.Name + "XX")
             //});
-
+            var udbUpdate = await carService.UpdateRangeAsync2(x => x.Id > 0, changes: new List<Tuple<Func<Car, object>, Func<Car, object>>>()
+            {
+                new Tuple<Func<Car, object>, Func<Car, object>>(x => x.Name, x => x.Name + "XX")
+                //new Tuple<Expression<Func<Car, string>>, Expression<Func<Car, string>>>(x => x.Name,x => x.Name + "XX")
+            });
             var queryResult = await carService.QueryAsync(new BaseCarQuery());
 
             queryResult.Results.Should().Match(x => x.All(y => y.Name.EndsWith("X")));

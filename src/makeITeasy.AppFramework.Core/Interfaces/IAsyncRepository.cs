@@ -23,6 +23,7 @@ namespace makeITeasy.AppFramework.Core.Interfaces
         Task<ICollection<T>> AddRangeAsync(ICollection<T> entities, bool saveChanges = true);
         Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, Expression<Func<T, T>> updateExpression);
 
-        Task<int> UpdateRangeAsync<TProperty>(Expression<Func<T, bool>> entityPredicate, List<Tuple<Expression<Func<T, TProperty>>, Expression<Func<T, TProperty>>>> changes); 
+        Task<int> UpdateRangeAsync<TProperty>(Expression<Func<T, bool>> entityPredicate, List<Tuple<Expression<Func<T, TProperty>>, Expression<Func<T, TProperty>>>> changes);
+        Task<int> UpdateRangeAsync2(Expression<Func<T, bool>> entityPredicate, List<Tuple<Func<T, object>, Func<T, object>>> changes);
     }
 }

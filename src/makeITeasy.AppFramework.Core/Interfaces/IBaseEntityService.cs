@@ -19,5 +19,6 @@ namespace makeITeasy.AppFramework.Core.Interfaces
 
         Task<int> UpdateRangeAsync<TProperty>(Expression<Func<TEntity, bool>> entityPredicate, List<Tuple<Expression<Func<TEntity, TProperty>>, Expression<Func<TEntity, TProperty>>>> changes);
         bool Validate(TEntity entity);
+        Task<int> UpdateRangeAsync2(Expression<Func<TEntity, bool>> entityPredicate, List<Tuple<Func<TEntity, object>, Func<TEntity, object>>> changes);
     }
 }

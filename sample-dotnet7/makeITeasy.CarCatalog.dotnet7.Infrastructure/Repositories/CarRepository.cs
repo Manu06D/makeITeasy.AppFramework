@@ -95,20 +95,20 @@ namespace makeITeasy.CarCatalog.dotnet7.Infrastructure.Repositories
             await GetDbContext().Cars.ExecuteUpdateAsync(setPropertyCalls);
         }
 
-        public Expression<Func<SetPropertyCalls<Car>, SetPropertyCalls<Car>>> Foo<Car, TProperty>()
-        {
-            ParameterExpression param1 = Expression.Parameter(typeof(Func<Car, TProperty>));
-            ParameterExpression param2 = Expression.Parameter(typeof(Func<Car, TProperty>));
+        //public Expression<Func<SetPropertyCalls<Car>, SetPropertyCalls<Car>>> Foo<Car, TProperty>()
+        //{
+        //    ParameterExpression param1 = Expression.Parameter(typeof(Func<Car, TProperty>));
+        //    ParameterExpression param2 = Expression.Parameter(typeof(Func<Car, TProperty>));
 
-            MethodCallExpression expr = Expression.Call(
-                typeof(SetPropertyCalls<Car>).GetMethod("SetProperty", new Type[] { typeof(Func<Car, Func<TProperty, TProperty>>), typeof(SetPropertyCalls<Car>) }), param1, param2);
+        //    MethodCallExpression expr = Expression.Call(
+        //        typeof(SetPropertyCalls<Car>).GetMethod("SetProperty", new Type[] { typeof(Func<Car, Func<TProperty, TProperty>>), typeof(SetPropertyCalls<Car>) }), param1, param2);
 
-            Func<Func<Car, TProperty>, Func<Car, TProperty>, SetPropertyCalls<Car>> exprMethod = 
-                Expression.Lambda<Func<Func<Car, TProperty>, Func<Car, TProperty>, SetPropertyCalls<Car>>>(expr, new ParameterExpression[] { param1, param2 }).Compile();
+        //    Func<Func<Car, TProperty>, Func<Car, TProperty>, SetPropertyCalls<Car>> exprMethod = 
+        //        Expression.Lambda<Func<Func<Car, TProperty>, Func<Car, TProperty>, SetPropertyCalls<Car>>>(expr, new ParameterExpression[] { param1, param2 }).Compile();
 
-            var x=  Expression.Lambda<Func<Func<Car, TProperty>, Func<Car, TProperty>, SetPropertyCalls<Car>>>(Expression.Call(exprMethod.Method));
+        //    var x=  Expression.Lambda<Func<Func<Car, TProperty>, Func<Car, TProperty>, SetPropertyCalls<Car>>>(Expression.Call(exprMethod.Method));
 
-            return x;
-        }
+        //    return x;
+        //}
     }
 }
