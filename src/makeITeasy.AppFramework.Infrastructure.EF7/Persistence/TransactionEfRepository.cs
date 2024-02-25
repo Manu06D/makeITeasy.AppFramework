@@ -12,20 +12,20 @@ namespace makeITeasy.AppFramework.Infrastructure.EF7.Persistence
         {
         }
 
-        public override async Task<int> ApplyCountIfNeededAsync(IQueryable<T>? filteredSet, bool includeCount)
+        public override async Task<int> ApplyCountIfNeededAsync(IQueryable<T>? filteredSet, bool includeCount, CancellationToken cancellationToken = default)
         {
             if (includeCount && filteredSet != null)
             {
                 //Can't async/await otherwise the error "A TransactionScope must be disposed on the same thread that it was created"  will pop
-                return filteredSet.CountAsync().Result;
+                return filteredSet.CountAsync(cancellationToken).Result;
             }
 
             return await Task.FromResult(0);
         }
 
-        public override async Task<QueryResult<T>> ListAsync(ISpecification<T> spec, bool includeCount = false)
+        public override async Task<QueryResult<T>> ListAsync(ISpecification<T> spec, bool includeCount = false, CancellationToken cancellationToken = default)
         {
-            async Task<QueryResult<T>> functionToExecute() => await base.ListAsync(spec, includeCount);
+            async Task<QueryResult<T>> functionToExecute() => await base.ListAsync(spec, includeCount, cancellationToken);
 
             IsolationLevel? isolationLevel = GetIsolationLevelFromSpec(spec);
 
@@ -44,9 +44,9 @@ namespace makeITeasy.AppFramework.Infrastructure.EF7.Persistence
             }
         }
 
-        public override async Task<QueryResult<X>> ListWithProjectionAsync<X>(ISpecification<T> spec, bool includeCount = false)
+        public override async Task<QueryResult<X>> ListWithProjectionAsync<X>(ISpecification<T> spec, bool includeCount = false, CancellationToken cancellationToken = default)
         {
-            async Task<QueryResult<X>> functionToExecute() => await base.ListWithProjectionAsync<X>(spec, includeCount);
+            async Task<QueryResult<X>> functionToExecute() => await base.ListWithProjectionAsync<X>(spec, includeCount, cancellationToken);
 
             IsolationLevel? isolationLevel = GetIsolationLevelFromSpec(spec);
 

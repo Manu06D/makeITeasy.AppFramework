@@ -10,7 +10,7 @@ using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Models.Exceptions;
 using Microsoft.Extensions.Logging;
-using System.ComponentModel.DataAnnotations;
+using System.Threading;
 
 namespace makeITeasy.AppFramework.Core.Services
 {
@@ -57,21 +57,21 @@ namespace makeITeasy.AppFramework.Core.Services
             }
         }
 
-        public async Task<TEntity?> GetByIdAsync(object id, List<Expression<Func<TEntity, object>>>? includes = null)
+        public async Task<TEntity?> GetByIdAsync(object id, List<Expression<Func<TEntity, object>>>? includes = null, CancellationToken cancellationToken = default)
         {
             EnsureThatRepositoryExists();
 
-            return await EntityRepository!.GetByIdAsync(id, includes);
+            return await EntityRepository!.GetByIdAsync(id, includes, cancellationToken);
         }
 
-        public async Task<IList<TEntity>> ListAllAsync(List<Expression<Func<TEntity, object>>>? includes = null)
+        public async Task<IList<TEntity>> ListAllAsync(List<Expression<Func<TEntity, object>>>? includes = null, CancellationToken cancellationToken = default)
         {
             EnsureThatRepositoryExists();
 
-            return await EntityRepository!.ListAllAsync(includes);
+            return await EntityRepository!.ListAllAsync(includes, cancellationToken);
         }
 
-        public virtual async Task<QueryResult<TEntity>> QueryAsync(ISpecification<TEntity> specification, bool includeCount = false)
+        public virtual async Task<QueryResult<TEntity>> QueryAsync(ISpecification<TEntity> specification, bool includeCount = false, CancellationToken cancellationToken = default)
         {
             if (specification is null)
             {
@@ -82,18 +82,18 @@ namespace makeITeasy.AppFramework.Core.Services
 
             specification.BuildQuery();
 
-            return await EntityRepository!.ListAsync(specification, includeCount);
+            return await EntityRepository!.ListAsync(specification, includeCount, cancellationToken);
         }
 
-        public virtual async Task<TEntity> GetFirstByQueryAsync(ISpecification<TEntity> specification)
+        public virtual async Task<TEntity> GetFirstByQueryAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default)
         {
             specification.Take = 1;
             specification.Skip = 0;
 
-            return (await QueryAsync(specification, false)).Results.FirstOrDefault();
+            return (await QueryAsync(specification, false, cancellationToken)).Results.FirstOrDefault();
         }
 
-        public virtual async Task<QueryResult<TTargetEntity>> QueryWithProjectionAsync<TTargetEntity>(ISpecification<TEntity>? specification, bool includeCount = false)
+        public virtual async Task<QueryResult<TTargetEntity>> QueryWithProjectionAsync<TTargetEntity>(ISpecification<TEntity>? specification, bool includeCount = false, CancellationToken cancellationToken = default)
             where TTargetEntity : class
         {
             if (specification is null)
@@ -110,38 +110,38 @@ namespace makeITeasy.AppFramework.Core.Services
                 _logger?.LogWarning("Query with projection will ignore include and especially function include");
             }                   
 
-            return await EntityRepository!.ListWithProjectionAsync<TTargetEntity>(specification, includeCount);
+            return await EntityRepository!.ListWithProjectionAsync<TTargetEntity>(specification, includeCount, cancellationToken);
         }
 
-        public virtual async Task<TTargetEntity> GetFirstByQueryWithProjectionAsync<TTargetEntity>(ISpecification<TEntity> specification) 
+        public virtual async Task<TTargetEntity> GetFirstByQueryWithProjectionAsync<TTargetEntity>(ISpecification<TEntity> specification, CancellationToken cancellationToken = default) 
             where TTargetEntity : class
         {
             specification.Take = 1;
             specification.Skip = 0;
 
-            return (await QueryWithProjectionAsync<TTargetEntity>(specification, false)).Results.FirstOrDefault();
+            return (await QueryWithProjectionAsync<TTargetEntity>(specification, false, cancellationToken)).Results.FirstOrDefault();
         }
 
-        public virtual async Task<CommandResult<TEntity>> CreateAsync(TEntity entity, bool saveChanges = true)
+        public virtual async Task<CommandResult<TEntity>> CreateAsync(TEntity entity, bool saveChanges = true, CancellationToken cancellationToken = default)
         {
-            return await ValidateAndProcess(entity, async (x) => await InnerAddAsync(x));
+            return await ValidateAndProcess(entity, async (x) => await InnerAddAsync(x, cancellationToken: cancellationToken));
         }
 
-        public virtual async Task<ICollection<CommandResult<TEntity>>> CreateRangeAsync(ICollection<TEntity> entities, bool saveChanges = true)
+        public virtual async Task<ICollection<CommandResult<TEntity>>> CreateRangeAsync(ICollection<TEntity> entities, bool saveChanges = true, CancellationToken cancellationToken = default)
         {
-            return await ValidateAndProcess(entities, async (x) => await InnerAddRangeAsync(x));
+            return await ValidateAndProcess(entities, async (x) => await InnerAddRangeAsync(x, cancellationToken));
         }
 
-        public virtual async Task<int> UpdateRangeAsync(Expression<Func<TEntity, bool>> entityPredicate, Expression<Func<TEntity, TEntity>> updateExpression)
+        public virtual async Task<int> UpdateRangeAsync(Expression<Func<TEntity, bool>> entityPredicate, Expression<Func<TEntity, TEntity>> updateExpression, CancellationToken cancellationToken = default)
         {
             EnsureThatRepositoryExists();
 
-            return await EntityRepository!.UpdateRangeAsync(entityPredicate, updateExpression);
+            return await EntityRepository!.UpdateRangeAsync(entityPredicate, updateExpression, cancellationToken);
         }
 
-        public virtual async Task<CommandResult<TEntity>> UpdateAsync(TEntity entity)
+        public virtual async Task<CommandResult<TEntity>> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
-            return await ValidateAndProcess(entity, async (x) => await InnerUpdateAsync(x));
+            return await ValidateAndProcess(entity, async (x) => await InnerUpdateAsync(x, cancellationToken));
         }
 
         private async Task<CommandResult<TEntity>> ValidateAndProcess(TEntity entity, Func<TEntity, Task<CommandResult<TEntity>>> action)
@@ -195,29 +195,29 @@ namespace makeITeasy.AppFramework.Core.Services
             return results;
         }
 
-        private async Task<CommandResult<TEntity>> InnerUpdateAsync(TEntity entity)
+        private async Task<CommandResult<TEntity>> InnerUpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
             EnsureThatRepositoryExists();
 
-            CommandResult<TEntity> result = await EntityRepository!.UpdateAsync(entity);
+            CommandResult<TEntity> result = await EntityRepository!.UpdateAsync(entity, cancellationToken: cancellationToken);
 
             return new CommandResult<TEntity>() { Entity = entity, Result = result.Result };
         }
 
-        public async Task<CommandResult<TEntity>> InnerAddAsync(TEntity entity, bool saveChanges = true)
+        public async Task<CommandResult<TEntity>> InnerAddAsync(TEntity entity, bool saveChanges = true, CancellationToken cancellationToken = default)
         {
             EnsureThatRepositoryExists();
 
-            TEntity result = await EntityRepository!.AddAsync(entity, saveChanges);
+            TEntity result = await EntityRepository!.AddAsync(entity, saveChanges, cancellationToken);
 
             return new CommandResult<TEntity>() { Entity = result, Result = CommandState.Success };
         }
 
-        private async Task<ICollection<CommandResult<TEntity>>> InnerAddRangeAsync(ICollection<TEntity> entities)
+        private async Task<ICollection<CommandResult<TEntity>>> InnerAddRangeAsync(ICollection<TEntity> entities, CancellationToken cancellationToken = default)
         {
             EnsureThatRepositoryExists();
 
-            await EntityRepository!.AddRangeAsync(entities);
+            await EntityRepository!.AddRangeAsync(entities, cancellationToken: cancellationToken);
 
             return entities.Select(x => new CommandResult<TEntity>(CommandState.Success) { Entity = x }).ToList();
         }
@@ -229,18 +229,18 @@ namespace makeITeasy.AppFramework.Core.Services
         //    return entities.Select(x => new CommandResult<TEntity>(CommandState.Success) { Entity = x }).ToList();
         //}
 
-        public virtual async Task<CommandResult<TEntity>> UpdatePropertiesAsync(TEntity entity, string[] properties)
+        public virtual async Task<CommandResult<TEntity>> UpdatePropertiesAsync(TEntity entity, string[] properties, CancellationToken cancellationToken = default)
         {
             EnsureThatRepositoryExists();
 
-            return await EntityRepository!.UpdatePropertiesAsync(entity, properties);
+            return await EntityRepository!.UpdatePropertiesAsync(entity, properties, cancellationToken: cancellationToken);
         }
 
-        public virtual async Task<CommandResult> DeleteAsync(TEntity entity, bool saveChanges = true)
+        public virtual async Task<CommandResult> DeleteAsync(TEntity entity, bool saveChanges = true, CancellationToken cancellationToken = default)
         {
             EnsureThatRepositoryExists();
 
-            return await EntityRepository!.DeleteAsync(entity, saveChanges);
+            return await EntityRepository!.DeleteAsync(entity, saveChanges, cancellationToken);
         }
 
         public bool Validate(TEntity entity)
