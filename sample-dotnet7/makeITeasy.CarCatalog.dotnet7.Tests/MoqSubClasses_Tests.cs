@@ -23,11 +23,10 @@ namespace makeITeasy.CarCatalog.dotnet7.Tests
         public async Task XX()
         {
             const string brandName = "MyBrand";
-            var cancellationTokenSource = new CancellationTokenSource(1000);
 
             Mock<IAsyncRepository<Brand>> repositoryMock = new() { };
-            repositoryMock.Setup(x => x.AddAsync(It.IsAny<Brand>(), true, cancellationTokenSource.Token)).ReturnsAsync(new Brand() { Name = brandName });
-            repositoryMock.Setup(x => x.DeleteAsync(It.IsAny<Brand>(), true, cancellationTokenSource.Token)).CallBase();
+            repositoryMock.Setup(x => x.AddAsync(It.IsAny<Brand>(), true, It.IsAny<CancellationToken>())).ReturnsAsync(new Brand() { Name = brandName });
+            repositoryMock.Setup(x => x.DeleteAsync(It.IsAny<Brand>(), true, It.IsAny<CancellationToken>())).CallBase();
 
             using (AutoMock autoMock = AutoMock.GetLoose(cfg =>
             {
