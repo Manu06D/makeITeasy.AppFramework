@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	  <Authors>Emmanuel D.</Authors>
+	  <Company>Make IT Easy</Company>
+	  <Description>Infrastructure module for makeITeasy.Appframework for Entity Framework 7</Description>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	  <RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
+	  <PackageTags>framework ef</PackageTags>
+	  <Version>8.1.21</Version>
+	  <PackageReleaseNotes>
+		  8.1.21 : Initial Release
+	  </PackageReleaseNotes>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="13.0.1" />
+		<PackageReference Include="DelegateDecompiler.EntityFrameworkCore5" Version="0.32.0" />
+		<PackageReference Include="EFCore.BulkExtensions" Version="8.0.2" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\makeITeasy.AppFramework.Core\makeITeasy.AppFramework.Core.csproj" />
+	  <ProjectReference Include="..\makeITeasy.AppFramework.Models\makeITeasy.AppFramework.Models.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+	</ItemGroup>
+</Project>

@@ -1,0 +1,13 @@
+﻿@model makeITeasy.CarCatalog.dotnet8.Models.Car
+ID = @Model.Id
+<br />
+Name = @Model.Name
+<br />
+Année = @Model.ReleaseYear
+<br />
+Marque = @Model.Brand?.Name
+<br />
+
+
+
+<button onclick="$.slidePanel.hide();">Close</button>

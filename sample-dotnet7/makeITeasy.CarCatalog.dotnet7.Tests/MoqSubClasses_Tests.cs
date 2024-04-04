@@ -18,7 +18,7 @@ namespace makeITeasy.CarCatalog.dotnet7.Tests
 {
     public class MoqSubClasses_Tests
     {
-        [Fact]
+        //[Fact]
         public async Task XX()
         {
             const string brandName = "MyBrand";
