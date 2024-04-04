@@ -15,7 +15,7 @@ using makeITeasy.AppFramework.Models;
 
 using System.Reflection;
 using ContosoUniversity.Infrastructure;
-using ContosoUniversity.Models;
+using MediatR.Extensions.Autofac.DependencyInjection.Builder;
 
 namespace ContosoUniversity.WebApplication.WebAppElements.Startup
 {
@@ -38,7 +38,12 @@ namespace ContosoUniversity.WebApplication.WebAppElements.Startup
             {
                 builder.RegisterModule(new RegisterAutofacModule() { Assemblies = assembliesToScan });
                 builder.RegisterAutoMapper(assemblies:assembliesToScan);
-                builder.RegisterMediatR(assembliesToScan);
+
+                var mediatrConfiguration = MediatRConfigurationBuilder.Create(assembliesToScan)
+                        .WithAllOpenGenericHandlerTypesRegistered()
+                        .WithRegistrationScope(RegistrationScope.Scoped) // currently only supported values are `Transient` and `Scoped`
+                        .Build();
+                builder.RegisterMediatR(mediatrConfiguration);
 
                 builder.RegisterType<ContosoUniversityDbContext>();
 

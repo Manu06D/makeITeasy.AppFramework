@@ -1,9 +1,7 @@
 using Serilog;
 using ContosoUniversity.WebApplication.WebAppElements.Startup;
 using makeITeasy.AppFramework.Web.Helpers;
-using Autofac.Core;
 using FluentValidation;
-using makeITeasy.AppFramework.Core.Interfaces;
 using ContosoUniversity.WebApplication.BackgroundServices;
 using System.Threading.Channels;
 using makeITeasy.AppFramework.Models;

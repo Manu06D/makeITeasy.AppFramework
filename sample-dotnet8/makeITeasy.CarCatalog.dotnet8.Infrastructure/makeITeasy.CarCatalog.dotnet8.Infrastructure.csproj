@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.3" />
+		<PackageReference Include="Serilog" Version="3.1.1" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\makeITeasy.AppFramework.Infrastructure.EF8\makeITeasy.AppFramework.Infrastructure.EF8.csproj" />
+		<ProjectReference Include="..\makeITeasy.CarCatalog.dotnet8.Core\makeITeasy.CarCatalog.dotnet8.Core.csproj" />
+		<ProjectReference Include="..\makeITeasy.CarCatalog.dotnet8.Models\makeITeasy.CarCatalog.dotnet8.Models.csproj" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+	</ItemGroup>
+
+</Project>
