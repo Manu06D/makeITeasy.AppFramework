@@ -7,7 +7,7 @@
 	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	  <Authors>Emmanuel D.</Authors>
 	  <Company>Make IT Easy</Company>
-	  <Description>Infrastructure module for makeITeasy.Appframework for Entity Framework 7</Description>
+	  <Description>Infrastructure module for makeITeasy.Appframework for Entity Framework 8</Description>
 	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
 	  <RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
 	  <PackageTags>framework ef</PackageTags>
