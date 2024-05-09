@@ -64,6 +64,7 @@
     <Build Include="Country.sql" />
     <Build Include="TemporalCar.sql" />
     <Build Include="CarDetails.sql" />
+    <Build Include="Engine.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="feed.sql" />

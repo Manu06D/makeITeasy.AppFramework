@@ -33,6 +33,13 @@
       {
          "Name": "[dbo].[Country]",
          "ObjectType": 0
+      },
+      {
+         "ExcludedColumns": [
+            "Details"
+         ],
+         "Name": "[dbo].[Engine]",
+         "ObjectType": 0
       }
    ],
    "UiHint": "..\\..\\sample\\makeITeasy.CarCatalog.Database\\makeITeasy.CarCatalog.Database.sqlproj",
