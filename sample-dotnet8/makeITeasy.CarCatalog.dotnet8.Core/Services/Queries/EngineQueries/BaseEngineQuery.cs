@@ -8,6 +8,8 @@ namespace makeITeasy.CarCatalog.dotnet8.Core.Services.Queries.EngineQueries
         public long? ID { get; set; }
 
         public string Name { get; set; }
+        public int? MinimalHorspower { get; set; }
+        public Tuple<string,  string>? Characteristic { get; set; }
 
         public override void BuildQuery()
         {
@@ -20,6 +22,16 @@ namespace makeITeasy.CarCatalog.dotnet8.Core.Services.Queries.EngineQueries
             {
                 AddFunctionToCriteria(x => x.Name.StartsWith(Name));
             }
+
+            if (MinimalHorspower is not null)
+            {
+                AddFunctionToCriteria(x => x.Details.PowerHorse >= MinimalHorspower);
+            }
+
+            if (Characteristic is not null)
+            {
+                AddFunctionToCriteria(x => x.Details.Characteristics.Any(x => x.Name == Characteristic.Item1 && x.Value == Characteristic.Item2));
+            }
         }
-    } 
+    }
 }

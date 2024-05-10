@@ -13,8 +13,9 @@ namespace makeITeasy.CarCatalog.dotnet8.Infrastructure.Data.Configurations
             entity.OwnsOne(x => x.Details, cb =>
             {
                 cb.ToJson();
-                cb.Property(x => x.HasTurbo);
-                cb.Property(x => x.PowerHorse);
+                //cb.Property(x => x.HasTurbo);
+                //cb.Property(x => x.PowerHorse);
+                cb.OwnsMany(x => x.Characteristics);
             });
         }
     }

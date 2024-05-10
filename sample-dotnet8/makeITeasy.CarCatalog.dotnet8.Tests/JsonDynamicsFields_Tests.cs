@@ -87,7 +87,12 @@ namespace makeITeasy.CarCatalog.dotnet8.Tests
                 Details = new EngineDetails()
                 {
                     HasTurbo = hasTurbo,
-                    PowerHorse = powerHorses
+                    PowerHorse = powerHorses,
+                    Characteristics = new List<Characteristic>()
+                    {
+                        new Characteristic() { Name = "Energy", Value = "Petrol"}
+                    }
+                    
                 }
             };
 
@@ -96,6 +101,55 @@ namespace makeITeasy.CarCatalog.dotnet8.Tests
             Engine getResult = await engineService.GetFirstByQueryAsync(new BaseEngineQuery() { ID = result?.Entity?.Id});
             getResult.Details.HasTurbo.Should().Be(hasTurbo);
             getResult.Details.PowerHorse.Should().Be(powerHorses);
+            getResult.Details.Characteristics.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public async Task Query_EF8JsonFieldTest()
+        {
+            Engine engine = new()
+            {
+                Name = "16v 1.2 Puretech",
+                Details = new EngineDetails()
+                {
+                    HasTurbo = true,
+                    PowerHorse = 120,
+                    Characteristics =
+                    [
+                        new () { Name = "Energy", Value = "Petrol"}
+                    ]
+
+                }
+            };
+
+            _ = await engineService.CreateAsync(engine);
+
+            Engine engine2 = new()
+            {
+                Name = "1.3 HDI",
+                Details = new EngineDetails()
+                {
+                    HasTurbo = true,
+                    PowerHorse = 90,
+                    Characteristics =
+                    [
+                        new () { Name = "Energy", Value = "Diesel"}
+                    ]
+
+                }
+            };
+
+            _ = await engineService.CreateAsync(engine2);
+
+            IList<Engine> getResult = (await engineService.QueryAsync(new BaseEngineQuery() { MinimalHorspower = 120 })).Results;
+
+            getResult.Should().HaveCount(1);
+            getResult[0].Name.Should().Be("16v 1.2 Puretech");
+
+            getResult = (await engineService.QueryAsync(new BaseEngineQuery() { Characteristic = new Tuple<string, string>("Energy", "Diesel") })).Results;
+
+            getResult.Should().NotBeEmpty();
+            getResult[0].Name.Should().Be("1.3 HDI");
         }
     }
 }
