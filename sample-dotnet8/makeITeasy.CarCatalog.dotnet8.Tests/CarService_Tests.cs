@@ -475,6 +475,26 @@ namespace makeITeasy.CarCatalog.dotnet8.Tests
         }
 
         [Fact]
+        public async Task UpdatePropertiesAsync_Test()
+        {
+            CreateCarCatalog();
+
+            Car? firstCar = (await carService.QueryAsync(new BaseCarQuery())).Results.FirstOrDefault();
+
+            const string nameSuffix = "XXXX";
+
+            firstCar.Name += nameSuffix;
+
+            CommandResult<Car> updateResult = await carService.UpdatePropertiesAsync(firstCar, [nameof(Car.Name)]);
+
+            updateResult.Result.Should().Be(CommandState.Success);
+
+            Car? carAfterUpdate = (await carService.QueryAsync(new BaseCarQuery())).Results.FirstOrDefault();
+
+            carAfterUpdate.Name.Should().EndWith(nameSuffix);
+        }
+
+        [Fact]
         public async Task RowVersion_Test()
         {
             CreateCarCatalog();
