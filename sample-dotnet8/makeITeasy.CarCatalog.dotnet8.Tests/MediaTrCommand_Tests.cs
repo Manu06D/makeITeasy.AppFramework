@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-
-using FluentAssertions;
+﻿using FluentAssertions;
 
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Queries;
@@ -35,7 +32,7 @@ namespace makeITeasy.CarCatalog.dotnet8.Tests
         [Fact]
         public async Task CreateAndUpdateCommand_BasicTest()
         {
-            Car newCar = new Car()
+            Car newCar = new ()
             {
                 Name = "C3",
                 ReleaseYear = 2011,
@@ -57,11 +54,11 @@ namespace makeITeasy.CarCatalog.dotnet8.Tests
 
             newCar.Name = "C4";
 
-            var resultUpdate = await _mediator.Send(new UpdatePartialEntityCommand<Car>(newCar, new string[] { nameof(newCar.Name) }));
+            var resultUpdate = await _mediator.Send(new UpdatePartialEntityCommand<Car>(newCar, [nameof(newCar.Name)]));
             resultUpdate.Result.Should().Be(CommandState.Success);
 
             var query = await _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQuery() { ID = newCar.Id }));
-            query.Results.First().Name.Should().Be("C4");
+            query.Results[0].Name.Should().Be("C4");
 
             var mediatorLog = Resolve<MediatRLog>();
             mediatorLog.Counter.Should().Be(4);
@@ -70,7 +67,7 @@ namespace makeITeasy.CarCatalog.dotnet8.Tests
         [Fact]
         public async Task CreateAndDeleteCommand_BasicTest()
         {
-            Car car = new Car()
+            Car car = new()
             {
                 Name = "C3",
                 ReleaseYear = 2011,
@@ -102,6 +99,5 @@ namespace makeITeasy.CarCatalog.dotnet8.Tests
             var mediatorLog = Resolve<MediatRLog>();
             mediatorLog.Counter.Should().Be(4);
         }
-
     }
 }
