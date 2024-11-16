@@ -24,6 +24,7 @@
 		<PackageReference Include="DelegateDecompiler.EntityFrameworkCore5" Version="0.32.0" />
 		<PackageReference Include="EFCore.BulkExtensions" Version="5.4.2" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.17" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -31,7 +32,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.1.1" />
+		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
 	</ItemGroup>
 
 </Project>
