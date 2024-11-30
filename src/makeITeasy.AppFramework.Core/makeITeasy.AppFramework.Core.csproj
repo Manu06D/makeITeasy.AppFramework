@@ -1,53 +1,51 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
-    <PackageTags>framework ef</PackageTags>
-    <Version>1.2.2</Version>
-    <PackageReleaseNotes>
-		1.2.2 : Dependencies update
-		1.2.1 : clean code
-		1.2.0 : Remove AutofacValidatorFactory.
-        1.1.14 : Add ListAllAsync to services
-        1.1.13 : Add GenericFindUniqueCommand*
-        1.1.12 : BaseEntityService methods are now all virtual
-        1.1.11 : Update packages dependencies
-        1.1.1 : Add IsolationLevel to query
-        1.1.0 : Add new package makeITeasy.AppFramework.Infrastructure
-        1.0.2 : Remove unwanted EF Core dependencies
-    </PackageReleaseNotes>
-    <Authors>Emmanuel D.</Authors>
-    <Company>Make IT Easy</Company>
-    <Description>Core module for makeITeasy.Appframework</Description>
-    <DebugType>embedded</DebugType>
-    <EmbedAllSources>true</EmbedAllSources>
-    <Nullable>enable</Nullable>	  
-    <LangVersion>9.0</LangVersion>	  
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
+		<PackageTags>framework ef</PackageTags>
+		<Version>1.2.2</Version>
+		<PackageReleaseNotes>
+			1.2.2 : Dependencies update
+			1.2.1 : clean code
+			1.2.0 : Remove AutofacValidatorFactory.
+			1.1.14 : Add ListAllAsync to services
+			1.1.13 : Add GenericFindUniqueCommand*
+			1.1.12 : BaseEntityService methods are now all virtual
+			1.1.11 : Update packages dependencies
+			1.1.1 : Add IsolationLevel to query
+			1.1.0 : Add new package makeITeasy.AppFramework.Infrastructure
+			1.0.2 : Remove unwanted EF Core dependencies
+		</PackageReleaseNotes>
+		<Authors>Emmanuel D.</Authors>
+		<Company>Make IT Easy</Company>
+		<Description>Core module for makeITeasy.Appframework</Description>
+		<DebugType>embedded</DebugType>
+		<EmbedAllSources>true</EmbedAllSources>
+		<Nullable>enable</Nullable>
+		<LangVersion>9.0</LangVersion>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Autofac" Version="8.1.1" />
-    <PackageReference Include="AutoMapper" Version="13.0.1" />
-    <PackageReference Include="DelegateDecompiler" Version="0.34.0" />
-    <PackageReference Include="FluentValidation" Version="11.10.0" />
-    <PackageReference Include="MediatR" Version="12.4.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Autofac" Version="8.1.1" />
+		<PackageReference Include="AutoMapper" Version="13.0.1" />
+		<PackageReference Include="FluentValidation" Version="11.11.0" />
+		<PackageReference Include="MediatR" Version="12.4.1" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\makeITeasy.AppFramework.Models\makeITeasy.AppFramework.Models.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\makeITeasy.AppFramework.Models\makeITeasy.AppFramework.Models.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+	</ItemGroup>
 
 </Project>

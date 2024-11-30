@@ -16,7 +16,6 @@ namespace ContosoUniversity.WebApplication.WebAppElements.Startup
             builder.Services.AddDbContextFactory<ContosoUniversityDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("dbConnectionString"))
-                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
                 .AddInterceptors(new DatabaseInterceptor(builder.Services.BuildServiceProvider().GetRequiredService<ChannelWriter<IBaseEntity>>()))
                 .EnableDetailedErrors()
                 .EnableSensitiveDataLogging()

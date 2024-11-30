@@ -2,7 +2,7 @@
 
 using ContosoUniversity.Infrastructure.Data;
 
-using makeITeasy.AppFramework.Infrastructure.Persistence;
+using makeITeasy.AppFramework.Infrastructure.EF8.Persistence;
 using makeITeasy.AppFramework.Models;
 
 using System;
