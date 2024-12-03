@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 using System.Threading.Channels;
 
-namespace ContosoUniversity.WebApplication.WebAppElements.Startup
+namespace ContosoUniversity.WebApplication.Modules.Startup
 {
     public static class DbStartupConfiguration
     {

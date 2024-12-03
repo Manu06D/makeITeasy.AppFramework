@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Diagnostics;
 
 using System.Net;
 
-namespace ContosoUniversity.WebApplication.WebAppElements
+namespace ContosoUniversity.WebApplication.Modules
 {
     public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> _logger) : IExceptionHandler
     {

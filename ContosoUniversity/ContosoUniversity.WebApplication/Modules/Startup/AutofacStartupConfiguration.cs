@@ -17,7 +17,7 @@ using System.Reflection;
 using ContosoUniversity.Infrastructure;
 using MediatR.Extensions.Autofac.DependencyInjection.Builder;
 
-namespace ContosoUniversity.WebApplication.WebAppElements.Startup
+namespace ContosoUniversity.WebApplication.Modules.Startup
 {
     public static class AutofacStartupConfiguration
     {
@@ -25,19 +25,18 @@ namespace ContosoUniversity.WebApplication.WebAppElements.Startup
         {
             builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
-            Assembly modelAssembly = typeof(StudentService).Assembly;
-            Assembly[] assembliesToScan = new Assembly[]
-                {
+            Assembly[] assembliesToScan =
+                [
                     makeITeasy.AppFramework.Core.AppFrameworkCore.Assembly,
-                    modelAssembly,
+                    typeof(StudentService).Assembly,
                     AppFrameworkModels.Assembly
-                };
+                ];
 
             builder.Host.ConfigureContainer<ContainerBuilder>(
             builder =>
             {
                 builder.RegisterModule(new RegisterAutofacModule() { Assemblies = assembliesToScan });
-                builder.RegisterAutoMapper(assemblies:assembliesToScan);
+                builder.RegisterAutoMapper(assemblies: assembliesToScan);
 
                 var mediatrConfiguration = MediatRConfigurationBuilder.Create(assembliesToScan)
                         .WithAllOpenGenericHandlerTypesRegistered()
