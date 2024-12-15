@@ -19,14 +19,13 @@
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
-		<PackageReference Include="DelegateDecompiler.EntityFrameworkCore5" Version="0.34.0" />
+		<PackageReference Include="DelegateDecompiler.EntityFrameworkCore5" Version="0.34.1" />
 		<PackageReference Include="EFCore.BulkExtensions" Version="7.8.1" />
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.20" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" Version="7.0.20" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.18" />
 		<PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
-		<PackageReference Include="System.Text.Json" Version="8.0.5" />
 	</ItemGroup>
 
 	<ItemGroup>

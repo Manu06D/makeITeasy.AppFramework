@@ -6,8 +6,10 @@ using System.Threading.Channels;
 using makeITeasy.AppFramework.Models;
 using ContosoUniversity.WebApplication.Modules.Startup;
 using ContosoUniversity.WebApplication.Models.ApplicationModels;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddOpenApi();
 
 builder.Host.UseSerilog((context, config) => config.WriteTo.Console().WriteTo.Debug());
 
@@ -43,6 +45,12 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.MapOpenApi();
+app.MapScalarApiReference(o =>
+    o.WithTheme(ScalarTheme.None)
+    .WithEndpointPrefix("none/{documentName}")
+);
 
 app.UseRouting();
 
