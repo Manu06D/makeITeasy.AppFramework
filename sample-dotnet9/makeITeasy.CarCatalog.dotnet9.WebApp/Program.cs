@@ -5,6 +5,8 @@ using makeITeasy.AppFramework.Models;
 using makeITeasy.CarCatalog.dotnet9.WebApp.Components;
 using makeITeasy.CarCatalog.dotnet9.WebApp.Modules.StartupModules;
 
+using Radzen;
+
 using System.Reflection;
 
 Assembly[] assembliesToScan =
@@ -17,6 +19,7 @@ Assembly[] assembliesToScan =
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDatabase(builder.Configuration);
+builder.Services.AddRadzenComponents();
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.RegisterModule(new AutofacModule() { AssembliesToScan = assembliesToScan }));
