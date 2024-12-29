@@ -9,18 +9,23 @@
 	<ItemGroup>
 		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
 		<PackageReference Include="AutoMapper.Contrib.Autofac.DependencyInjection" Version="8.1.0" />
+		<PackageReference Include="EFCore.BulkExtensions.SqlServer" Version="9.0.0" />
 		<PackageReference Include="MediatR.Extensions.Autofac.DependencyInjection" Version="12.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="9.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
-		<PackageReference Include="Radzen.Blazor" Version="5.7.1" />
+		<PackageReference Include="Radzen.Blazor" Version="5.7.2" />
 		<PackageReference Include="Scalar.AspNetCore" Version="1.2.72" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\makeITeasy.CarCatalog.dotnet9.Infrastructure\makeITeasy.CarCatalog.dotnet9.Infrastructure.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
 	</ItemGroup>
 
 </Project>

@@ -11,15 +11,15 @@
 	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
 	  <RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
 	  <PackageTags>framework ef</PackageTags>
-	  <Version>8.1.21</Version>
+	  <Version>8.1.22</Version>
 	  <PackageReleaseNotes>
+		  8.1.22 : Dependencies update
 		  8.1.21 : Initial Release
 	  </PackageReleaseNotes>
   </PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
-		<PackageReference Include="DelegateDecompiler.EntityFrameworkCore5" Version="0.34.1" />
 		<PackageReference Include="EFCore.BulkExtensions" Version="8.1.2" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
 		<PackageReference Include="System.Text.Json" Version="9.0.0" />
