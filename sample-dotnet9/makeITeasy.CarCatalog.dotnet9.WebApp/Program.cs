@@ -5,7 +5,11 @@ using makeITeasy.AppFramework.Models;
 using makeITeasy.CarCatalog.dotnet9.WebApp.Components;
 using makeITeasy.CarCatalog.dotnet9.WebApp.Modules.StartupModules;
 
+using Microsoft.OpenApi.Models;
+
 using Radzen;
+
+using Scalar.AspNetCore;
 
 using System.Reflection;
 
@@ -20,6 +24,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddRadzenComponents();
+
+builder.AddApiSupport();
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.RegisterModule(new AutofacModule() { AssembliesToScan = assembliesToScan }));
@@ -44,5 +50,7 @@ app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+app.EnableApiSupport();
 
 app.Run();
