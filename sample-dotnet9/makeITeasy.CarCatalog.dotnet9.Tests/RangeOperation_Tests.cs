@@ -38,19 +38,19 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task BasicRangeCreation_Test()
         {
-            (await carService.QueryAsync(new BaseCarQuery())).Results.Should().BeEmpty();
+            (await carService.QueryAsync(new BasicCarQuery())).Results.Should().BeEmpty();
 
             var createResult = await carService.CreateRangeAsync(carList);
 
             createResult.Should().Match(x => x.All(y => y.Result == AppFramework.Core.Commands.CommandState.Success));
 
-            (await carService.QueryAsync(new BaseCarQuery())).Results.Should().HaveCount(carList.Count);
+            (await carService.QueryAsync(new BasicCarQuery())).Results.Should().HaveCount(carList.Count);
         }
 
         [Fact]
         public async Task BasicRangeCreationWithOneError_Test()
         {
-            (await carService.QueryAsync(new BaseCarQuery())).Results.Should().BeEmpty();
+            (await carService.QueryAsync(new BasicCarQuery())).Results.Should().BeEmpty();
 
             carList[^1].Name = carList[0].Name;
 
@@ -58,7 +58,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             action.Should().ThrowAsync<Exception>();
 
-            IList<Car> dbQueryResult = (await carService.QueryAsync(new BaseCarQuery() { Includes = new List<System.Linq.Expressions.Expression<Func<Car, object>>>() { x => x.Brand } })).Results;
+            IList<Car> dbQueryResult = (await carService.QueryAsync(new BasicCarQuery() { Includes = new List<System.Linq.Expressions.Expression<Func<Car, object>>>() { x => x.Brand } })).Results;
 
             dbQueryResult.Should().BeEmpty();
         }
@@ -66,7 +66,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task RangeCreationWithInvalidObject_Test()
         {
-            (await carService.QueryAsync(new BaseCarQuery())).Results.Should().BeEmpty();
+            (await carService.QueryAsync(new BasicCarQuery())).Results.Should().BeEmpty();
 
             carList[0].Name = "A";
 
@@ -76,7 +76,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
                 .And.Match(x => x.Count(y => y.Result == AppFramework.Core.Commands.CommandState.Error) == 1)
                 ;
 
-            var queryResult = await carService.QueryAsync(new BaseCarQuery());
+            var queryResult = await carService.QueryAsync(new BasicCarQuery());
 
             queryResult.Results.Should().HaveCount(carList.Count - 1);
         }
@@ -90,7 +90,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             var udbUpdate = await carService.UpdateRangeAsync(x => x.Id > 0, x => new Car { Name = x.Name + "XX" });
 
-            var queryResult = await carService.QueryAsync(new BaseCarQuery());
+            var queryResult = await carService.QueryAsync(new BasicCarQuery());
 
             queryResult.Results.Should().Match(x => x.All(y => y.Name.EndsWith("XX")));
         }

@@ -37,7 +37,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             _mediator = null;
         }
 
-        public class BaseCarQueryWithValidation : BaseCarQuery, IIsValidSpecification
+        public class BaseCarQueryWithValidation : BasicCarQuery, IIsValidSpecification
         {
             public bool IsValid()
             {

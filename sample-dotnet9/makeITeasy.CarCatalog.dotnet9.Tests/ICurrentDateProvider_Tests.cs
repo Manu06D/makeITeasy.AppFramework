@@ -49,7 +49,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             var car = await carService.CreateAsync(TestCarsCatalog.GetCars().First());
 
-            var getResult = await carService.QueryAsync(new BaseCarQuery() { });
+            var getResult = await carService.QueryAsync(new BasicCarQuery() { });
 
             getResult.Results.Count.Should().BePositive();
 

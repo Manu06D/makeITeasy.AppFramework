@@ -13,7 +13,7 @@
 	  <PackageTags>framework ef</PackageTags>
 	  <Version>7.1.22</Version>
 	  <PackageReleaseNotes>
-		  7.1.22 : Dependencies update
+		  7.1.22 : Dependencies update. Add StringSelector to ISpecification
 		  7.1.21 : Initial Release
 	  </PackageReleaseNotes>
   </PropertyGroup>
@@ -26,6 +26,7 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" Version="7.0.20" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.18" />
 		<PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.5.1" />
 	</ItemGroup>
 
 	<ItemGroup>

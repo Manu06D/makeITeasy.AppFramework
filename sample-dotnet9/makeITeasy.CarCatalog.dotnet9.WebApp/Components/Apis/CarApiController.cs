@@ -19,7 +19,7 @@ namespace makeITeasy.CarCatalog.dotnet9.WebApp.Components.Apis
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<CarResponse> GetCarById(int id)
         {
-            return await mediator.Send(new GenericFindUniqueWithProjectCommand<Car, CarResponse>(new BaseCarQuery() { ID = id }));
+            return await mediator.Send(new GenericFindUniqueWithProjectCommand<Car, CarResponse>(new BasicCarQuery() { ID = id }));
         }
 
         [HttpGet("/update")]

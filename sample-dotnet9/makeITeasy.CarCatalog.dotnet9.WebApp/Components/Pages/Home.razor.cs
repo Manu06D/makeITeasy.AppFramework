@@ -6,6 +6,9 @@ using MediatR;
 
 using Microsoft.AspNetCore.Components;
 
+using Radzen.Blazor;
+using Radzen;
+
 namespace makeITeasy.CarCatalog.dotnet9.WebApp.Components.Pages
 {
     public partial class Home
@@ -17,7 +20,7 @@ namespace makeITeasy.CarCatalog.dotnet9.WebApp.Components.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            var dbQuery = await Mediator.Send(new GenericQueryCommand<Car>(new BaseCarQuery() { }));
+            var dbQuery = await Mediator.Send(new GenericQueryCommand<Car>(new BasicCarQuery() { }));
             if(dbQuery.Results != null)
             {
                 cars = dbQuery.Results.AsQueryable();

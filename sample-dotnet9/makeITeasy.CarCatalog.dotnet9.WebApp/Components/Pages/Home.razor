@@ -1,8 +1,6 @@
 ﻿@page "/"
+@rendermode InteractiveServer
 @using Microsoft.AspNetCore.Components.QuickGrid
-@using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries
-@using makeITeasy.CarCatalog.dotnet9.Models
-@using makeITeasy.CarCatalog.dotnet9.WebApp.Components.Layout
 
 <PageTitle>Home</PageTitle>
 
@@ -16,11 +14,5 @@ Welcome to your new app.
     <PropertyColumn Property="@(c => c.Name)" Sortable="true" />
     <PropertyColumn Property="@(c => c.CreationDate)" Format="yyyy-MM-dd" Sortable="true" />
 </QuickGrid>
+ 
 
-
-@* 
-<Grid TEntity="Car" TEntityQuery="BasicCarQuery"LoadOnDisplay=true>
-    <RadzenDataGridColumn TItem=Car Property="@nameof(Car.Id)" Filterable="false" Title="ID"
-                          Frozen="true" Width="80px" TextAlign="TextAlign.Center" />
-
-</Grid> *@

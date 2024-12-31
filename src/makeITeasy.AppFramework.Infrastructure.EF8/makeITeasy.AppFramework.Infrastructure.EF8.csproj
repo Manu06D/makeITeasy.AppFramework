@@ -13,7 +13,7 @@
 	  <PackageTags>framework ef</PackageTags>
 	  <Version>8.1.22</Version>
 	  <PackageReleaseNotes>
-		  8.1.22 : Dependencies update
+		  8.1.22 : Dependencies update. Add StringSelector to ISpecification
 		  8.1.21 : Initial Release
 	  </PackageReleaseNotes>
   </PropertyGroup>
@@ -23,6 +23,7 @@
 		<PackageReference Include="EFCore.BulkExtensions" Version="8.1.2" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
 		<PackageReference Include="System.Text.Json" Version="9.0.0" />
+		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.5.1" />
 	</ItemGroup>
 
 	<ItemGroup>

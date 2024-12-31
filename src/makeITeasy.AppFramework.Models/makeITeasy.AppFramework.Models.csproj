@@ -14,7 +14,7 @@
 		<Version>1.1.8</Version>
 		<Description>
 			Models for makeITeasy.Appframework
-			1.1.8 : Dependencies update
+			1.1.8 : Dependencies update. Add StringSelector to ISpecification
 			1.1.7 : Embed DelegateCompiler
 			1.1.6 : Add ReadUncommitedQuery
 			1.1.5 : Add ICurrentDateProvider model

@@ -4,11 +4,13 @@ using AutoMapper.QueryableExtensions;
 using DelegateDecompiler.EntityFrameworkCore;
 
 using EFCore.BulkExtensions;
+using System.Linq.Dynamic.Core;
 
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.AppFramework.Models;
+using makeITeasy.AppFramework.Models.Exceptions;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -151,6 +153,18 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
             }
 
             IQueryable<T>? filteredSet = BaseEfRepository<T, U>.ApplySpecification(spec, dbContext);
+
+            if (!string.IsNullOrEmpty(spec.StringSelector))
+            {
+                try
+                {
+                    filteredSet = filteredSet?.Where(spec.StringSelector);
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidSelectorException($"An error has occured while setting dynamic sql filer : {spec.StringSelector}", ex);
+                }
+            }
 
             int totalItems = await ApplyCountIfNeededAsync(filteredSet, includeCount);
 

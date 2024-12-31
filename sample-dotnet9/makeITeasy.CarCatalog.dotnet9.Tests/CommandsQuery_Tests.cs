@@ -44,7 +44,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             newCarResult.Result.Should().Be(CommandState.Success);
 
-            QueryResult<Car> result = await _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQuery() { ID = newCarResult.Entity.Id }));
+            QueryResult<Car> result = await _mediator.Send(new GenericQueryCommand<Car>(new BasicCarQuery() { ID = newCarResult.Entity.Id }));
 
             result.Results.Count.Should().Be(1);
         }
@@ -59,7 +59,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             createResult.Result.Should().Be(CommandState.Success);
             createResult.Entity.Id.Should().BePositive();
 
-            QueryResult<Car> searchResult = await _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQuery() { ID = createResult.Entity.Id }));
+            QueryResult<Car> searchResult = await _mediator.Send(new GenericQueryCommand<Car>(new BasicCarQuery() { ID = createResult.Entity.Id }));
             searchResult.Results.Should().HaveCount(1);
             searchResult.Results[0].Name.Should().Be(car.Name);
         }
@@ -78,7 +78,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             CommandResult<Car> updateResult = await _mediator.Send(new UpdateEntityCommand<Car>(car));
             updateResult.Result.Should().Be(CommandState.Success);
 
-            QueryResult<Car> searchResult = await _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQuery() { ID = car.Id }));
+            QueryResult<Car> searchResult = await _mediator.Send(new GenericQueryCommand<Car>(new BasicCarQuery() { ID = car.Id }));
             searchResult.Results.Should().HaveCount(1);
             searchResult.Results[0].Name.Should().Be(car.Name);
         }
@@ -89,11 +89,11 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             var carService = Resolve<ICarService>();
             CommandResult<Car> newCarResult = await carService.CreateAsync(TestCarsCatalog.GetCars().First(x => x.Name == "A3"));
 
-            Car searchResult = await _mediator.Send(new GenericFindUniqueCommand<Car>(new BaseCarQuery() { Name = "A3" }));
+            Car searchResult = await _mediator.Send(new GenericFindUniqueCommand<Car>(new BasicCarQuery() { Name = "A3" }));
             searchResult.Should().NotBeNull();
             searchResult.Name.Should().Be("A3");
 
-            searchResult = await _mediator.Send(new GenericFindUniqueCommand<Car>(new BaseCarQuery() { Name = "XX" }));
+            searchResult = await _mediator.Send(new GenericFindUniqueCommand<Car>(new BasicCarQuery() { Name = "XX" }));
             searchResult.Should().BeNull();
         }
 
@@ -108,11 +108,11 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             var carService = Resolve<ICarService>();
             CommandResult<Car> newCarResult = await carService.CreateAsync(TestCarsCatalog.GetCars().First(x => x.Name == "A3"));
 
-            SmallCarInfo searchResult = await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, SmallCarInfo>(new BaseCarQuery() { Name = "A3" }));
+            SmallCarInfo searchResult = await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, SmallCarInfo>(new BasicCarQuery() { Name = "A3" }));
             searchResult.Should().NotBeNull();
             searchResult.Name.Should().Be("A3");
 
-            searchResult = await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, SmallCarInfo>(new BaseCarQuery() { Name = "XX" }));
+            searchResult = await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, SmallCarInfo>(new BasicCarQuery() { Name = "XX" }));
             searchResult.Should().BeNull();
         }
     }

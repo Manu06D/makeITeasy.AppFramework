@@ -117,7 +117,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             var brandSearch = await brandService.QueryAsync(new BaseBrandQuery());
             brandSearch.Results.Should().HaveCount(1);
 
-            var query = new BaseCarQuery();
+            var query = new BasicCarQuery();
             query.AddInclude(x => x.Brand);
 
             var carSearch = await carService.QueryAsync(query);

@@ -107,11 +107,11 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             creationDateTime.Should().NotBeNull();
             creationDateTime.Value.Should().Be(lastModificationDate.Value).And.BeAfter(dateTimeBeforeSave).And.BeBefore(dateTimeAfterSave);
 
-            var carQuery = await carService.GetFirstByQueryAsync(new BaseCarQuery() { ID = dbCreation.Entity.Id });
+            var carQuery = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = dbCreation.Entity.Id });
 
             await carService.UpdateAsync(carQuery);
 
-            carQuery = await carService.GetFirstByQueryAsync(new BaseCarQuery() { ID = dbCreation.Entity.Id });
+            carQuery = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = dbCreation.Entity.Id });
 
             carQuery.CreationDate.Should().Be(dbCreation.Entity.CreationDate);
 
@@ -133,7 +133,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             creationDateTime.Should().NotBeNull();
             creationDateTime.Value.Should().Be(lastModificationDate.Value).And.BeAfter(dateTimeBeforeSave).And.BeBefore(dateTimeAfterSave);
 
-            var carQuery = await carService.GetFirstByQueryAsync(new BaseCarQuery() { ID = dbCreation.Entity.Id });
+            var carQuery = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = dbCreation.Entity.Id });
 
             carQuery.Name = "XXXx";
 

@@ -1,14 +1,16 @@
 using makeITeasy.AppFramework.Core.Commands;
+using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Models;
 
 using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore;
 
 using Radzen;
 using Radzen.Blazor;
 
 namespace makeITeasy.CarCatalog.dotnet9.WebApp.Components.Layout
 {
-    public partial class Grid <TEntity, TEntityQuery>
+    public partial class Grid <TEntity, TEntityQuery>  : ComponentBase
         where TEntityQuery : ISpecification<TEntity>, new()
         where TEntity : class, IBaseEntity, new()
     {
@@ -17,7 +19,6 @@ namespace makeITeasy.CarCatalog.dotnet9.WebApp.Components.Layout
         private bool isLoading;
         private int totalCount;
 
-
         [Inject]
         private ILogger<TEntity> Logger { get; set; } = default!;
         [Inject]
@@ -25,8 +26,8 @@ namespace makeITeasy.CarCatalog.dotnet9.WebApp.Components.Layout
         [Inject]
         private NotificationService NotificationService { get; set; } = default!;
 
-        //[Inject]
-        //public required IBaseEntityServiceWithSearchQuery<TEntity> EntityService { get; set; }
+        [Inject]
+        public required IBaseEntityService<TEntity> EntityService { get; set; }
         [Parameter]
         public int PageSize { get; set; } = 20;
         [Parameter]
@@ -87,11 +88,11 @@ namespace makeITeasy.CarCatalog.dotnet9.WebApp.Components.Layout
                 isLoading = true;
                 await Task.Yield();
                 await Task.Delay(1);
-                (ISpecification<TEntity> query, string filters) = BuildSearchQuery(args);
-                //var result = await EntityService.QueryAsync(query, filters, true);
+                ISpecification<TEntity> query = BuildSearchQuery(args);
+                var result = await EntityService.QueryAsync(query, true);
 
-                //gridEntities = result.Results;
-                //totalCount = result.TotalItems;
+                gridEntities = result.Results;
+                totalCount = result.TotalItems;
             }
             catch (Exception ex)
             {
@@ -108,7 +109,7 @@ namespace makeITeasy.CarCatalog.dotnet9.WebApp.Components.Layout
             isLoading = false;
         }
 
-        private (TEntityQuery, string) BuildSearchQuery(LoadDataArgs args)
+        private TEntityQuery BuildSearchQuery(LoadDataArgs args)
         {
             TEntityQuery query = new();
 
@@ -123,7 +124,7 @@ namespace makeITeasy.CarCatalog.dotnet9.WebApp.Components.Layout
             }
             else
             {
-                //search by default
+                //default search
 
                 //don't know why this is not working : typeof(TEntity).IsAssignableFrom(typeof(ITimeTrackingEntity)))
                 if (typeof(TEntity).GetInterfaces().Contains(typeof(ITimeTrackingEntity)))
@@ -135,17 +136,17 @@ namespace makeITeasy.CarCatalog.dotnet9.WebApp.Components.Layout
             string filters = string.Empty;
             if (args.Filter != null)
             {
-                filters = args.Filter;
+                query.StringSelector = args.Filter;
             }
             else if (args.Filters.Any())
             {
-                filters = grid.ColumnsCollection.ToFilterString();
+                query.StringSelector = grid.ColumnsCollection.ToFilterString();
             }
 
             query.Skip = args.Skip;
             query.Take = args.Top;
 
-            return (query, filters);
+            return (query);
         }
 
         private TEntity? entityToUpdate;
@@ -235,25 +236,39 @@ namespace makeITeasy.CarCatalog.dotnet9.WebApp.Components.Layout
 
         private async Task OnCreateRow(TEntity entity)
         {
-            //var dbResult = await EntityService.CreateAsync(entity);
 
-            //if (dbResult.Result != CommandState.Success)
-            //{
-            //    NotifyError(dbResult, "An error has occured during creation");
-            //}
-            //else
-            //{
-            //    ResetEdit();
-            //}
+            bool hasEditSucceed = false;
+            try
+            {
+                var dbResult = await EntityService.CreateAsync(entity);
+                if (dbResult.Result != CommandState.Success)
+                {
+                    NotifyError(dbResult, "An error has occured during creation");
+                }
+                else
+                {
+                    hasEditSucceed = true;
+                }
+            }
+            catch (Exception exception)
+            {
+                NotifyError(null, $"An error has occured during creation : {exception.Message}");
+                throw;
+            }
+
+            if(hasEditSucceed)
+            {
+                ResetEdit();
+            }
         }
 
-        private void NotifyError(CommandResult<TEntity> dbResult, string errorMessage)
+        private void NotifyError(CommandResult<TEntity>? dbResult, string errorMessage)
         {
             NotificationService.Notify(new NotificationMessage
             {
                 Severity = NotificationSeverity.Error,
                 Summary = errorMessage,
-                Detail = dbResult.Message
+                Detail = dbResult?.Message
             });
         }
     }

@@ -57,7 +57,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             var resultUpdate = await _mediator.Send(new UpdatePartialEntityCommand<Car>(newCar, [nameof(newCar.Name)]));
             resultUpdate.Result.Should().Be(CommandState.Success);
 
-            var query = await _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQuery() { ID = newCar.Id }));
+            var query = await _mediator.Send(new GenericQueryCommand<Car>(new BasicCarQuery() { ID = newCar.Id }));
             query.Results[0].Name.Should().Be("C4");
 
             var mediatorLog = Resolve<MediatRLog>();
@@ -93,7 +93,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             var resultUpdate = await _mediator.Send(new DeleteEntityCommand<Car>(clonedCar));
             resultUpdate.Result.Should().Be(CommandState.Success);
 
-            var query = await _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQuery() { ID = car.Id }));
+            var query = await _mediator.Send(new GenericQueryCommand<Car>(new BasicCarQuery() { ID = car.Id }));
             query.Results.FirstOrDefault().Should().BeNull();
 
             var mediatorLog = Resolve<MediatRLog>();

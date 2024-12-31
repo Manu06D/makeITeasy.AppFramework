@@ -60,7 +60,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             var result = await carService.CreateAsync(newCar);
 
-            var getResult = await carService.GetFirstByQueryAsync(new BaseCarQuery()
+            var getResult = await carService.GetFirstByQueryAsync(new BasicCarQuery()
             {
                 ID = result?.Entity?.Id,
                 Includes = new List<System.Linq.Expressions.Expression<Func<Car, object>>>(){

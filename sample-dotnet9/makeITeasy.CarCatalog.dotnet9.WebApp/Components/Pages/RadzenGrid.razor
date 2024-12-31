@@ -1,0 +1,32 @@
+﻿@page "/radzenGrid"
+@rendermode InteractiveServer
+@using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries
+@using makeITeasy.CarCatalog.dotnet9.Models
+@using makeITeasy.CarCatalog.dotnet9.WebApp.Components.Layout
+<h3>RadzenGrid</h3>
+
+
+<Grid TEntity="Car" TEntityQuery="BasicCarQuery" LoadOnDisplay=true ShowReloadButton="true" AllowInlineEdit="true">
+    <RadzenDataGridColumn TItem=Car Property="@nameof(Car.Id)" Filterable="false" Title="ID" />
+    <RadzenDataGridColumn TItem=Car Property="@nameof(Car.Name)" Filterable="true" Title="Name" FilterValue="@nameFilterValue">
+        <FilterTemplate>
+            <RadzenTextBox @bind-Value=nameFilterValue Style="width:100%;" />
+        </FilterTemplate>
+        <EditTemplate Context="car">
+            <RadzenTextBox @bind-Value="car.Name" Style="width:200px; display: block" Name="ShipName" aria-label="Enter car name" />
+        </EditTemplate>
+    </RadzenDataGridColumn>
+    <RadzenDataGridColumn TItem=Car Property="@nameof(Car.ReleaseYear)" Filterable="true" Title="ReleaseYear">
+        <EditTemplate Context="car">
+            <RadzenNumeric @bind-Value="car.ReleaseYear" Style="width:100%" InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "Select year of release" }})" />
+        </EditTemplate>            
+        <Template Context="car">
+            @String.Format("{0:d}", car.ReleaseYear)
+        </Template>
+    </RadzenDataGridColumn>
+</Grid>
+
+@code {
+    public string nameFilterValue { get; set; }
+
+}

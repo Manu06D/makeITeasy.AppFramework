@@ -7,7 +7,7 @@ using makeITeasy.CarCatalog.dotnet9.Models;
 
 namespace makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries
 {
-    public class BaseCarQuery : BaseTransactionQuery<Car>
+    public class BasicCarQuery : BaseTransactionQuery<Car>
     {
         public long? ID { get; set; }
 

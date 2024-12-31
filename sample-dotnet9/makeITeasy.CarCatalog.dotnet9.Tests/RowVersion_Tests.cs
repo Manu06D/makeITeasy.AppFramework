@@ -58,7 +58,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             await Task.Delay(25);
 
-            var afterFirstUpdateQueryResult = await carService.QueryAsync(new BaseCarQuery() { ID = result.Entity.Id }, includeCount: true);
+            var afterFirstUpdateQueryResult = await carService.QueryAsync(new BasicCarQuery() { ID = result.Entity.Id }, includeCount: true);
 
             afterFirstUpdateQueryResult.Results.First().Version.Should().BeGreaterThan(0);
 
@@ -67,7 +67,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             await Task.Delay(25);
 
-            var afterSecondUpdateQueryResult = await carService.QueryAsync(new BaseCarQuery() { ID = result.Entity.Id }, includeCount: true);
+            var afterSecondUpdateQueryResult = await carService.QueryAsync(new BasicCarQuery() { ID = result.Entity.Id }, includeCount: true);
 
             afterFirstUpdateQueryResult.Results.First().Version.Should().NotBe(afterSecondUpdateQueryResult.Results.First().Version);
         }
@@ -96,7 +96,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             await Task.Delay(25);
 
-            var afterFirstUpdateQueryResult = await carService.QueryAsync(new BaseCarQuery() { ID = result.Entity.Id }, includeCount: true);
+            var afterFirstUpdateQueryResult = await carService.QueryAsync(new BasicCarQuery() { ID = result.Entity.Id }, includeCount: true);
 
             afterFirstUpdateQueryResult.Results.First().Version.Should().BeGreaterThan(0);
 
@@ -106,7 +106,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             
             await Task.Delay(25);
 
-            var afterSecondUpdateQueryResult = await carService.QueryAsync(new BaseCarQuery() { ID = result.Entity.Id }, includeCount: true);
+            var afterSecondUpdateQueryResult = await carService.QueryAsync(new BasicCarQuery() { ID = result.Entity.Id }, includeCount: true);
 
             afterFirstUpdateQueryResult.Results.First().Version.Should().Be(afterSecondUpdateQueryResult.Results.First().Version);
 
@@ -114,7 +114,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             result = await carService.UpdateAsync(afterSecondUpdateQueryResult.Results.First());
 
-            var afterThirdUpdateQueryResult = await carService.QueryAsync(new BaseCarQuery() { ID = result.Entity.Id }, includeCount: true);
+            var afterThirdUpdateQueryResult = await carService.QueryAsync(new BasicCarQuery() { ID = result.Entity.Id }, includeCount: true);
 
             afterThirdUpdateQueryResult.Results.First().Version.Should().BeGreaterThan(afterSecondUpdateQueryResult.Results.First().Version);
 
