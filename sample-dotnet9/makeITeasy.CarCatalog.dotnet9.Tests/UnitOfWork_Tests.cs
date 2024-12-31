@@ -114,7 +114,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             car.Id.Should().BePositive();
             brand.Id.Should().BePositive();
 
-            var brandSearch = await brandService.QueryAsync(new BaseBrandQuery());
+            var brandSearch = await brandService.QueryAsync(new BasicBrandQuery());
             brandSearch.Results.Should().HaveCount(1);
 
             var query = new BasicCarQuery();
@@ -163,7 +163,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             int i = await uo.CommitAsync();
 
-            var brandSearch = await brandService.QueryAsync(new BaseBrandQuery());
+            var brandSearch = await brandService.QueryAsync(new BasicBrandQuery());
         }
     }
 }

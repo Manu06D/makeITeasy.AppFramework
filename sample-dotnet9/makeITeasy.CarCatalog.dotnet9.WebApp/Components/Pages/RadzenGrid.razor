@@ -1,12 +1,16 @@
 ﻿@page "/radzenGrid"
 @rendermode InteractiveServer
+@using MediatR
+@using makeITeasy.AppFramework.Core.Queries
+@using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.BrandQueries
 @using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries
 @using makeITeasy.CarCatalog.dotnet9.Models
 @using makeITeasy.CarCatalog.dotnet9.WebApp.Components.Layout
 <h3>RadzenGrid</h3>
 
 
-<Grid TEntity="Car" TEntityQuery="BasicCarQuery" LoadOnDisplay=true ShowReloadButton="true" AllowInlineEdit="true">
+<Grid TEntity="Car" TEntityQuery="BasicCarQuery" LoadOnDisplay=true ShowReloadButton="true" AllowInlineEdit="true"
+      Query="query" OnObjectCreatedEventCallBack="OnNewCarCreation">
     <RadzenDataGridColumn TItem=Car Property="@nameof(Car.Id)" Filterable="false" Title="ID" />
     <RadzenDataGridColumn TItem=Car Property="@nameof(Car.Name)" Filterable="true" Title="Name" FilterValue="@nameFilterValue">
         <FilterTemplate>
@@ -24,9 +28,41 @@
             @String.Format("{0:d}", car.ReleaseYear)
         </Template>
     </RadzenDataGridColumn>
+    <RadzenDataGridColumn TItem=Car Property="Brand.Name" Filterable="true" Title="Brand">
+        <EditTemplate Context="car">
+            <RadzenDropDown Data=@brands TValue="Brand" @bind-Value=@selectedBrand TextProperty="@nameof(Brand.Name)" LoadData=@LoadBrandData
+                AllowClear="true" AllowFiltering="true" Style="width: 100%; max-width: 400px;" Name="DropDownCustomObjects"
+                Change="@(args => car.BrandId = ((Brand)args).Id )"
+            >
+            </RadzenDropDown>
+        </EditTemplate>
+    </RadzenDataGridColumn>
 </Grid>
 
 @code {
+    [Inject]
+    public IMediator mediator { get; set; }
+
     public string nameFilterValue { get; set; }
+    public Brand selectedBrand { get; set; }
+    public IList<Brand> brands;
+    private BasicCarQuery query = new BasicCarQuery() { IncludeBrand = true };
+
+    async Task LoadBrandData(LoadDataArgs args)
+    {
+        if(brands == null){
+            brands = (await mediator.Send(new GenericQueryCommand<Brand>(new BasicBrandQuery()))).Results;
+        }
+    }
+
+    private async Task OnNewCarCreation(Car newCar)
+    {
+        newCar.BrandId = selectedBrand?.Id ?? -1;
+    }
+
+    private async Task OnDropdownlistChange(EventArgs args)
+    {
+        // car.BrandId = selectedBrand?.Id ?? -1;
+    }
 
 }

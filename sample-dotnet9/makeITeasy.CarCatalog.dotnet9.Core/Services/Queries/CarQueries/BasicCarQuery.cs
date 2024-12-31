@@ -15,6 +15,8 @@ namespace makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries
 
         public bool? IsModernCar { get; set; }
 
+        public bool? IncludeBrand { get; set; }
+
         public override void BuildQuery()
         {
             if (ID.HasValue && ID.Value > 0)
@@ -27,8 +29,12 @@ namespace makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries
                 AddFunctionToCriteria(x => x.Name.StartsWith(Name));
             }
 
-            HandleNullableBoolSearch(IsModernCar, Car.ModernCarFunction);
+            if (IncludeBrand.GetValueOrDefault())
+            {
+                AddInclude(x => x.Brand);
+            }
 
+            HandleNullableBoolSearch(IsModernCar, Car.ModernCarFunction);
         }
 
         public void HandleNullableBoolSearch(bool? searchValue, Expression<Func<Car, bool>> searchExp)

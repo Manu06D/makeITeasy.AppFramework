@@ -38,6 +38,8 @@ namespace makeITeasy.CarCatalog.dotnet9.WebApp.Components.Layout
         public bool AllowInlineEdit { get; set; }
         [Parameter]
         public RenderFragment? ChildContent { get; set; }
+        [Parameter]
+        public TEntityQuery? Query { get; set; }
 
         [Parameter]
         public EventCallback<object> OnRowDoubleClickEventCallBack { get; set; }
@@ -111,7 +113,7 @@ namespace makeITeasy.CarCatalog.dotnet9.WebApp.Components.Layout
 
         private TEntityQuery BuildSearchQuery(LoadDataArgs args)
         {
-            TEntityQuery query = new();
+            TEntityQuery query = Query ?? new();
 
             if (args.Sorts?.FirstOrDefault() != null && !string.IsNullOrEmpty(args.Sorts.First().Property))
             {
@@ -200,16 +202,16 @@ namespace makeITeasy.CarCatalog.dotnet9.WebApp.Components.Layout
 
             if (dialogResult.GetValueOrDefault())
             {
-                //var dbResult = await EntityService.DeleteAsync(entity);
+                var dbResult = await EntityService.DeleteAsync(entity);
 
-                //if (dbResult.Result != CommandState.Success)
-                //{
-                //    NotifyError(dbResult, "An error has occured during deletion");
-                //}
-                //else
-                //{
-                //    await grid.RefreshDataAsync();
-                //}
+                if (dbResult.Result != CommandState.Success)
+                {
+                    NotifyError(null, "An error has occured during deletion");
+                }
+                else
+                {
+                    await grid.RefreshDataAsync();
+                }
             }
         }
 
@@ -224,14 +226,14 @@ namespace makeITeasy.CarCatalog.dotnet9.WebApp.Components.Layout
         private async Task OnUpdateRow(TEntity entity)
         {
             ResetEdit();
-            //var dbResult = await EntityService.UpdateAsync(entity);
+            var dbResult = await EntityService.UpdateAsync(entity);
 
-            //if (dbResult.Result != CommandState.Success)
-            //{
-            //    NotifyError(dbResult, "An error has occured during update");
+            if (dbResult.Result != CommandState.Success)
+            {
+                NotifyError(dbResult, "An error has occured during update");
 
-            //    await grid.EditRow(entity);
-            //}
+                await grid.EditRow(entity);
+            }
         }
 
         private async Task OnCreateRow(TEntity entity)

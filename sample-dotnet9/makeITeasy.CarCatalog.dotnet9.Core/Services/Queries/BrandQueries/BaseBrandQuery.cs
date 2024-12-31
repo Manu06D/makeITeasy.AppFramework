@@ -3,7 +3,7 @@ using makeITeasy.CarCatalog.dotnet9.Models;
 
 namespace makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.BrandQueries
 {
-    public class BaseBrandQuery : BaseQuery<Brand>
+    public class BasicBrandQuery : BaseQuery<Brand>
     {
         public int ID { get; set; }
 

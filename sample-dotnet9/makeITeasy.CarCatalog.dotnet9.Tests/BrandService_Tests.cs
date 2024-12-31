@@ -59,7 +59,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         {
             var newCars = TestCarsCatalog.SaveCarsInDB(carService);
 
-            var getResult = await brandService.QueryWithProjectionAsync<BrandInfo>(new BaseBrandQuery());
+            var getResult = await brandService.QueryWithProjectionAsync<BrandInfo>(new BasicBrandQuery());
 
             getResult.Results.Should().OnlyContain(x => x.FirstRelease > 0 && x.NbCars > 0);
         }
@@ -82,7 +82,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             newCars.ForEach(async x => await carService.CreateAsync(x));
 
-            var getResult = await brandService.QueryWithProjectionAsync<SmallBrandInfo>(new BaseBrandQuery());
+            var getResult = await brandService.QueryWithProjectionAsync<SmallBrandInfo>(new BasicBrandQuery());
 
             getResult.Results.Should().OnlyContain(x => x.Name != null && x.Cars != null && x.Cars.Select(x => x.Name).Count() >= 1);
 
@@ -125,7 +125,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
                 {
                     _ = await brandService.CreateAsync(newBrand);
 
-                    var localSearch = await brandService.QueryAsync(new BaseBrandQuery() { });
+                    var localSearch = await brandService.QueryAsync(new BasicBrandQuery() { });
                     localSearch.Results.Should().HaveCount(1);
 
                     _ = await brandService.CreateAsync(newBrand2);
@@ -141,7 +141,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
                 }
             }
 
-            var search = await brandService.QueryAsync(new BaseBrandQuery() { });
+            var search = await brandService.QueryAsync(new BasicBrandQuery() { });
             //this should be 0 count
             search.Results.Should().HaveCount(1);
         }
@@ -152,7 +152,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             TestCarsCatalog.SaveCarsInDB(carService);
 
             var getResult = await brandService.QueryAsync(
-                new BaseBrandQuery()
+                new BasicBrandQuery()
                 {
                     Includes = new List<System.Linq.Expressions.Expression<Func<Brand, object>>>() { x => x.Cars.Where(x => x.Name.StartsWith("A3")) },
                 }
@@ -176,7 +176,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             TestCarsCatalog.SaveCarsInDB(carService);
 
             var getResult = await brandService.QueryWithProjectionAsync<CustomBrand>(
-                new BaseBrandQuery()
+                new BasicBrandQuery()
                 {
                     Includes =
                         new List<System.Linq.Expressions.Expression<Func<Brand, object>>>() {
