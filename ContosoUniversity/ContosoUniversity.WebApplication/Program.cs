@@ -1,17 +1,28 @@
 using Serilog;
-using ContosoUniversity.WebApplication.WebAppElements.Startup;
 using makeITeasy.AppFramework.Web.Helpers;
 using FluentValidation;
 using ContosoUniversity.WebApplication.BackgroundServices;
 using System.Threading.Channels;
 using makeITeasy.AppFramework.Models;
+using ContosoUniversity.WebApplication.Modules.Startup;
+using ContosoUniversity.WebApplication.Models.ApplicationModels;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddOpenApi();
 
 builder.Host.UseSerilog((context, config) => config.WriteTo.Console().WriteTo.Debug());
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddOptions();
+
+builder.Services.AddOptions<ApplicationConfiguration>()
+    .BindConfiguration("ApplicationConfiguration")
+    .ValidateDataAnnotations()
+    .Validate(conf => !string.IsNullOrWhiteSpace(conf.Name), "Invalid Configuration")
+    .ValidateOnStart()
+    ;
+
 builder.Services.RegisterDatatablesService();
 builder.Services.AddValidatorsFromAssembly(typeof(ContosoUniversity.Models.Instructor).Assembly);
 
@@ -34,6 +45,12 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.MapOpenApi();
+app.MapScalarApiReference(o =>
+    o.WithTheme(ScalarTheme.None)
+    .WithEndpointPrefix("none/{documentName}")
+);
 
 app.UseRouting();
 

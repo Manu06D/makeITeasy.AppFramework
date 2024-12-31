@@ -7,7 +7,7 @@ namespace makeITeasy.AppFramework.Models
     public abstract class BaseQuery<T> : ISpecification<T> where T : IBaseEntity
     {
         public Expression<Func<T, bool>> Criteria { get; set; }
-
+        public string StringCriteria { get; set; }
         public List<Expression<Func<T, object>>> Includes { get; set; }
 
         public List<string> IncludeStrings { get; set; }
@@ -25,7 +25,6 @@ namespace makeITeasy.AppFramework.Models
         protected BaseQuery()
         {
         }
-
 
         protected BaseQuery(Expression<Func<T, bool>> criteria)
         {

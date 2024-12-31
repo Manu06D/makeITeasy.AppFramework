@@ -7,6 +7,7 @@ namespace makeITeasy.AppFramework.Models
     public interface ISpecification<T>
     {
         Expression<Func<T, bool>> Criteria { get; }
+        string StringCriteria { get; set; }
         List<Expression<Func<T, object>>> Includes { get; }
         List<string> IncludeStrings { get; }
         List<OrderBySpecification<string>> OrderByStrings { get; set; }

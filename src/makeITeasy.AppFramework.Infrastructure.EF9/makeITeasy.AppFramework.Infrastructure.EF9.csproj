@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Authors>Emmanuel D.</Authors>
+		<Company>Make IT Easy</Company>
+		<Description>Infrastructure module for makeITeasy.Appframework for Entity Framework 9</Description>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
+		<PackageTags>framework ef</PackageTags>
+		<Version>9.1.22</Version>
+		<PackageReleaseNotes>
+			9.1.22 : Initial Release
+		</PackageReleaseNotes>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="13.0.1" />
+		<PackageReference Include="EFCore.BulkExtensions.Core" Version="9.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.5.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\makeITeasy.AppFramework.Core\makeITeasy.AppFramework.Core.csproj" />
+		<ProjectReference Include="..\makeITeasy.AppFramework.Models\makeITeasy.AppFramework.Models.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+	</ItemGroup>
+</Project>

@@ -1,0 +1,18 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.QuickGrid
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+
+<QuickGrid Items="cars">
+    <PropertyColumn Property="@(c => c.Id)" Sortable="true" />
+    <PropertyColumn Property="@(c => c.Name)" Sortable="true" />
+    <PropertyColumn Property="@(c => c.CreationDate)" Format="yyyy-MM-dd" Sortable="true" />
+</QuickGrid>
+ 
+

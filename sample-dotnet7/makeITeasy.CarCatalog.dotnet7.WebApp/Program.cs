@@ -25,6 +25,7 @@ using makeITeasy.CarCatalog.dotnet7.Core.Ports;
 using makeITeasy.CarCatalog.dotnet7.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet7.Core.Services;
 using makeITeasy.CarCatalog.dotnet7.Core;
+using MediatR.Extensions.Autofac.DependencyInjection.Builder;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,7 +65,11 @@ builder.Host.ConfigureContainer<ContainerBuilder>(
     {
         builder.RegisterModule(new RegisterAutofacModule() { Assemblies = assembliesToScan });
         builder.RegisterAutoMapper(assemblies: assembliesToScan);
-        builder.RegisterMediatR(assembliesToScan);
+        var mediatrConfiguration = MediatRConfigurationBuilder.Create(assembliesToScan)
+                .WithAllOpenGenericHandlerTypesRegistered()
+                .WithRegistrationScope(RegistrationScope.Scoped) // currently only supported values are `Transient` and `Scoped`
+                .Build();
+        builder.RegisterMediatR(mediatrConfiguration);
 
         builder.RegisterType<CarCatalogContext>();
 

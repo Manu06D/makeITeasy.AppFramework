@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using Xunit;
 using makeITeasy.CarCatalog.dotnet7.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet7.Core.Services.Queries.CarQueries;
+using makeITeasy.AppFramework.Core.Queries;
 
 namespace makeITeasy.CarCatalog.dotnet7.Tests
 {
@@ -470,6 +471,18 @@ namespace makeITeasy.CarCatalog.dotnet7.Tests
             var getResult = await carService.QueryAsync(
                 QueryBuilder.Create(new BaseCarQuery()).Where(x => x.ReleaseYear >= 2010).OrderBy("ReleaseYear", true).Build()
             );
+
+            getResult.Results.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public async Task StringSelector_BasicTest()
+        {
+            CreateCarCatalog();
+
+            QueryResult<Car> getResult = await carService.QueryAsync(new BaseCarQuery() { StringCriteria = "(Name == null ? \"\" : Name).Contains(\"3\")" });
+
+            getResult.Results.Count.Should().Be(TestCarsCatalog.GetCars().Count(x => x.Name.Contains("3")));
 
             getResult.Results.Should().NotBeEmpty();
         }
