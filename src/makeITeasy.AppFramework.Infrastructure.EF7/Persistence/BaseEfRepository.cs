@@ -156,15 +156,15 @@ namespace makeITeasy.AppFramework.Infrastructure.EF7.Persistence
 
             int totalItems = await ApplyCountIfNeededAsync(filteredSet, includeCount);
 
-            if (!string.IsNullOrEmpty(spec.StringSelector))
+            if (!string.IsNullOrEmpty(spec.StringCriteria))
             {
                 try
                 {
-                    filteredSet = filteredSet?.Where(spec.StringSelector);
+                    filteredSet = filteredSet?.Where(spec.StringCriteria);
                 }
                 catch (Exception ex)
                 {
-                    throw new InvalidSelectorException($"An error has occured while setting dynamic sql filer : {spec.StringSelector}", ex);
+                    throw new InvalidSelectorException($"An error has occured while setting dynamic sql filer : {spec.StringCriteria}", ex);
                 }
             }
 

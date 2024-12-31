@@ -138,11 +138,11 @@ namespace makeITeasy.CarCatalog.dotnet9.WebApp.Components.Layout
             string filters = string.Empty;
             if (args.Filter != null)
             {
-                query.StringSelector = args.Filter;
+                query.StringCriteria = args.Filter;
             }
             else if (args.Filters.Any())
             {
-                query.StringSelector = grid.ColumnsCollection.ToFilterString();
+                query.StringCriteria = grid.ColumnsCollection.ToFilterString();
             }
 
             query.Skip = args.Skip;
