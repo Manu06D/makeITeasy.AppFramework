@@ -9,8 +9,8 @@
 <h3>RadzenGrid</h3>
 
 
-<Grid TEntity="Car" TEntityQuery="BasicCarQuery" LoadOnDisplay=true ShowReloadButton="true" AllowInlineEdit="true"
-      Query="query" OnObjectCreatedEventCallBack="OnNewCarCreation">
+<Grid TEntity="Car" TEntityQuery="CarWithBrandQuery" LoadOnDisplay=true ShowReloadButton="true" AllowInlineEdit="true"
+      OnObjectCreatedEventCallBack="OnNewCarCreation">
     <RadzenDataGridColumn TItem=Car Property="@nameof(Car.Id)" Filterable="false" Title="ID" />
     <RadzenDataGridColumn TItem=Car Property="@nameof(Car.Name)" Filterable="true" Title="Name" FilterValue="@nameFilterValue">
         <FilterTemplate>
@@ -46,7 +46,6 @@
     public string nameFilterValue { get; set; }
     public Brand selectedBrand { get; set; }
     public IList<Brand> brands;
-    private BasicCarQuery query = new BasicCarQuery() { IncludeBrand = true };
 
     async Task LoadBrandData(LoadDataArgs args)
     {
@@ -59,10 +58,4 @@
     {
         newCar.BrandId = selectedBrand?.Id ?? -1;
     }
-
-    private async Task OnDropdownlistChange(EventArgs args)
-    {
-        // car.BrandId = selectedBrand?.Id ?? -1;
-    }
-
 }

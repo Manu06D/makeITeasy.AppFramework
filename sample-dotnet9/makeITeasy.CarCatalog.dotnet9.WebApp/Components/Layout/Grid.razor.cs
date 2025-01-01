@@ -38,8 +38,6 @@ namespace makeITeasy.CarCatalog.dotnet9.WebApp.Components.Layout
         public bool AllowInlineEdit { get; set; }
         [Parameter]
         public RenderFragment? ChildContent { get; set; }
-        [Parameter]
-        public TEntityQuery? Query { get; set; }
 
         [Parameter]
         public EventCallback<object> OnRowDoubleClickEventCallBack { get; set; }
@@ -113,7 +111,7 @@ namespace makeITeasy.CarCatalog.dotnet9.WebApp.Components.Layout
 
         private TEntityQuery BuildSearchQuery(LoadDataArgs args)
         {
-            TEntityQuery query = Query ?? new();
+            TEntityQuery query = new();
 
             if (args.Sorts?.FirstOrDefault() != null && !string.IsNullOrEmpty(args.Sorts.First().Property))
             {
