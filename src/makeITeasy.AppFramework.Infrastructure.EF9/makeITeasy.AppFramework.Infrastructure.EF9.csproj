@@ -18,10 +18,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AutoMapper" Version="13.0.1" />
-		<PackageReference Include="EFCore.BulkExtensions.Core" Version="9.0.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
-		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.5.1" />
+		<PackageReference Include="EFCore.BulkExtensions.Core" Version="9.0.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
+		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>

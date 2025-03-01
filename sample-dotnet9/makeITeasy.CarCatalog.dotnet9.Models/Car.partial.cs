@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using DelegateDecompiler;
 using makeITeasy.AppFramework.Models;
-using Newtonsoft.Json;
 
 namespace makeITeasy.CarCatalog.dotnet9.Models
 {
@@ -17,15 +15,12 @@ namespace makeITeasy.CarCatalog.dotnet9.Models
         public static Expression<Func<Country, bool>> ItalianCarFunction => (x) => x.CountryCode == "IT";
 
         [Computed]
-        [JsonIgnore]
         public bool IsItalianCar => ItalianCarFunction.Compile()(Brand?.Country);
 
         [Computed]
-        [JsonIgnore]
         public bool IsSuperModernCar => ReleaseYear > 2020;
 
         [Computed]
-        [JsonIgnore]
         public bool CurrentCentury => ReleaseYear >= 2000;
 
     }
