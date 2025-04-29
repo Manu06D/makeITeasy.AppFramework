@@ -12,6 +12,7 @@
 		<PackageTags>framework ef</PackageTags>
 		<Version>1.2.3</Version>
 		<PackageReleaseNotes>
+			1.2.4 : Dependencies update and fix issue with validator
 			1.2.3 : Dependencies update
 			1.2.2 : Dependencies update
 			1.2.1 : clean code
