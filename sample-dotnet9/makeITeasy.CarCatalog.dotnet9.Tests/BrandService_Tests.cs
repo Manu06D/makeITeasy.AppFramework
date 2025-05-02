@@ -4,15 +4,11 @@ using makeITeasy.CarCatalog.dotnet9.Infrastructure.Data;
 using makeITeasy.CarCatalog.dotnet9.Models;
 using Xunit;
 using makeITeasy.CarCatalog.dotnet9.Models.Collections;
-using System.Threading.Tasks;
 using FluentAssertions;
-using System.Collections.Generic;
-using System.Linq;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.BrandQueries;
 using makeITeasy.AppFramework.Core.Models.Exceptions;
 using System.Transactions;
-using System;
 using makeITeasy.CarCatalog.dotnet9.Tests.Catalogs;
 
 namespace makeITeasy.CarCatalog.dotnet9.Tests
@@ -21,11 +17,13 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
     {
         private IBrandService brandService;
         private ICarService carService;
+        private ICountryService countryService;
 
         public BrandService_Tests()
         {
             brandService = Resolve<IBrandService>();
             carService = Resolve<ICarService>();
+            countryService = Resolve<ICountryService>();
 
             var t = Resolve<CarCatalogContext>();
             t.Database.EnsureCreated();
@@ -84,21 +82,19 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             var getResult = await brandService.QueryWithProjectionAsync<SmallBrandInfo>(new BasicBrandQuery());
 
-            getResult.Results.Should().OnlyContain(x => x.Name != null && x.Cars != null && x.Cars.Select(x => x.Name).Count() >= 1);
-
+            getResult.Results.Should().OnlyContain(x => x.Name != null && x.Cars != null && x.Cars.Select(x => x.Name).Any());
         }
 
         [Fact]
         public void MissingValidator_Test()
         {
-            var newBrand = new Brand
+            var newCountry = new Country
             {
                 Name = "x"
             };
 
-            brandService.Invoking(y => y.Validate(newBrand)).Should().Throw<ValidatorNotFoundException>();
+            countryService.Invoking(y => y.Validate(newCountry)).Should().Throw<ValidatorNotFoundException>();
         }
-
 
         [Fact]
         public async Task Transaction_Tests()
@@ -125,7 +121,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
                 {
                     _ = await brandService.CreateAsync(newBrand);
 
-                    var localSearch = await brandService.QueryAsync(new BasicBrandQuery() { });
+                    var localSearch = await brandService.QueryAsync(new BasicBrandQuery());
                     localSearch.Results.Should().HaveCount(1);
 
                     _ = await brandService.CreateAsync(newBrand2);
@@ -141,7 +137,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
                 }
             }
 
-            var search = await brandService.QueryAsync(new BasicBrandQuery() { });
+            var search = await brandService.QueryAsync(new BasicBrandQuery());
             //this should be 0 count
             search.Results.Should().HaveCount(1);
         }
@@ -154,7 +150,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             var getResult = await brandService.QueryAsync(
                 new BasicBrandQuery()
                 {
-                    Includes = new List<System.Linq.Expressions.Expression<Func<Brand, object>>>() { x => x.Cars.Where(x => x.Name.StartsWith("A3")) },
+                    Includes = [x => x.Cars.Where(x => x.Name.StartsWith("A3"))],
                 }
                 , includeCount: true);
 
