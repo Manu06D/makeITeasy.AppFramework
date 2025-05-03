@@ -30,10 +30,12 @@ using Microsoft.Extensions.Logging;
 
 using Module = Autofac.Module;
 
-namespace makeITeasy.CarCatalog.dotnet9.Tests
+namespace makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup
 {
     public class ServiceRegistrationAutofacModule : Module
     {
+        public string DatabaseConnectionString { get; set; }
+
         protected override void Load(ContainerBuilder builder)
         {
             var services = new ServiceCollection();
@@ -59,9 +61,16 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             //services.AddDbContext<CarCatalogContext>(options =>
             _ = services.AddDbContextFactory<CarCatalogContext>(options =>
                         {
-                            options.UseSqlite(sqlLiteMemoryConnection);
                             options.AddInterceptors(new DatabaseInterceptor());
-                            //options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CarCatalog3;Trusted_Connection=True;MultipleActiveResultSets=true");
+                            if (string.IsNullOrWhiteSpace(DatabaseConnectionString))
+                            {
+                                options.UseSqlite(sqlLiteMemoryConnection);
+                            }
+                            else
+                            {
+                                options.UseSqlServer(DatabaseConnectionString);
+
+                            }
                             options.EnableSensitiveDataLogging(true);
                             options.ConfigureWarnings(x => x.Ignore(RelationalEventId.AmbientTransactionWarning));
                         });
