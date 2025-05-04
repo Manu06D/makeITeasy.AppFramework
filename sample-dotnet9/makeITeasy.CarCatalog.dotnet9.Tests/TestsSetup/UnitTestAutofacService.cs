@@ -1,24 +1,40 @@
 ﻿using Autofac;
-using Autofac.Core;
 
-using DotNet.Testcontainers.Builders;
-
+using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet9.Infrastructure.Data;
-
-using Microsoft.EntityFrameworkCore;
+using makeITeasy.CarCatalog.dotnet9.Models;
+using makeITeasy.CarCatalog.dotnet9.Tests.Catalogs;
 
 using Testcontainers.MsSql;
 
 using Xunit;
 
-
 namespace makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup
 {
-
     public class UnitTestAutofacService : DatabaseFixture
     {
         public UnitTestAutofacService(DatabaseEngineFixture databaseEngineFixture) : base(databaseEngineFixture)
         {
+        }
+
+        public async Task<(ICarService carService, IBrandService brandService, Brand citroenBrand, string suffix)> CreateCarsAsync()
+        {
+            ICarService carService = Resolve<ICarService>();
+            IBrandService brandService = Resolve<IBrandService>();
+            ICountryService countryService = Resolve<ICountryService>();
+
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
+
+            Country country = CarsCatalog.France;
+            await countryService.CreateAsync(country);
+
+            Brand citroenBrand = CarsCatalog.Citroen(suffix, countryId: country.Id);
+            await brandService.CreateAsync(citroenBrand);
+
+            await carService.CreateAsync(CarsCatalog.CitroenC4(suffix, brandId: citroenBrand.Id));
+            await carService.CreateAsync(CarsCatalog.CitroenC5(suffix, brandId: citroenBrand.Id));
+
+            return (carService, brandService, citroenBrand, suffix);
         }
     }
 

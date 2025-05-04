@@ -29,29 +29,10 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             }
         }
 
-        private async Task<(IBrandService brandService, Brand citroenBrand, string suffix)> CreateCars()
-        {
-            ICarService carService = Resolve<ICarService>();
-            IBrandService brandService = Resolve<IBrandService>();
-            ICountryService countryService = Resolve<ICountryService>();
-
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
-
-            Country country = CarsCatalog.France;
-            await countryService.CreateAsync(country);
-
-            Brand citroenBrand = CarsCatalog.Citroen(suffix, countryId: country.Id);
-            await brandService.CreateAsync(citroenBrand);
-
-            await carService.CreateAsync(CarsCatalog.CitroenC4(suffix, brandId: citroenBrand.Id));
-            await carService.CreateAsync(CarsCatalog.CitroenC5(suffix, brandId: citroenBrand.Id));
-            return (brandService, citroenBrand, suffix);
-        }
-
         [Fact]
         public async Task CreateAndGet_ListWithFunctionTest()
         {
-            (IBrandService brandService, Brand citroenBrand, string suffix) = await CreateCars();
+            (_, IBrandService brandService, Brand citroenBrand, string suffix) = await CreateCarsAsync();
 
             var getResult = await brandService.QueryWithProjectionAsync<BrandInfo>(new BasicBrandQuery());
 
@@ -75,7 +56,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task CreateAndGet_ListWith2LevelMappingTest()
         {
-            (IBrandService brandService, Brand citroenBrand, string suffix) = await CreateCars();
+            (_, IBrandService brandService, Brand citroenBrand, string suffix) = await CreateCarsAsync();
 
             var getResult = await brandService.QueryWithProjectionAsync<SmallBrandInfo>(new BasicBrandQuery());
 
@@ -155,8 +136,8 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task EFCoreIncludeWithFunction_Test()
         {
-            (IBrandService brandService, Brand citroenBrand, string suffix) = await CreateCars();
-            (_, Brand citroenBrand2, string suffix2) = await CreateCars();
+            (_, IBrandService brandService, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+            (_, _, Brand citroenBrand2, string suffix2) = await CreateCarsAsync();
 
             var getResult = await brandService.QueryAsync(
                 new BasicBrandQuery()
@@ -180,7 +161,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task EFCoreIncludeWithFunctionAndProjection_Test()
         {
-            (IBrandService brandService, Brand citroenBrand, string suffix) = await CreateCars();
+            (_, IBrandService brandService, Brand citroenBrand, string suffix) = await CreateCarsAsync();
 
             var getResult = await brandService.QueryWithProjectionAsync<CustomBrand>(
                 new BasicBrandQuery()

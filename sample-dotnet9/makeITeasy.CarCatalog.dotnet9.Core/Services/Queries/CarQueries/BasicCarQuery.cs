@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 using makeITeasy.AppFramework.Core.Extensions;
 using makeITeasy.AppFramework.Models;
@@ -11,11 +10,13 @@ namespace makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries
     {
         public long? ID { get; set; }
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         public bool? IsModernCar { get; set; }
 
         public bool? IncludeBrand { get; set; }
+
+        public string? NameSuffix { get; set; }
 
         public override void BuildQuery()
         {
@@ -32,6 +33,11 @@ namespace makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries
             if (IncludeBrand.GetValueOrDefault())
             {
                 AddInclude(x => x.Brand);
+            }
+
+            if (!string.IsNullOrWhiteSpace(NameSuffix))
+            {
+                AddFunctionToCriteria(x => x.Name.EndsWith(NameSuffix));
             }
 
             HandleNullableBoolSearch(IsModernCar, Car.ModernCarFunction);

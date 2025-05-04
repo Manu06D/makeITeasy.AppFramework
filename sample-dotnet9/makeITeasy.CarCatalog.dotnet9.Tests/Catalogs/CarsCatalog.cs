@@ -3,7 +3,7 @@ using makeITeasy.CarCatalog.dotnet9.Models;
 
 namespace makeITeasy.CarCatalog.dotnet9.Tests.Catalogs
 {
-    public static class CarsCatalog
+    public class CarsCatalog
     {
         public static Car CitroenC4(string? suffix = "", Brand? brand = null, int? brandId = null) => new()
         {
