@@ -1,74 +1,60 @@
-﻿//using Autofac;
+﻿using Autofac;
 
-//using FluentAssertions;
+using FluentAssertions;
 
-//using makeITeasy.AppFramework.Models;
-//using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
-//using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.BrandQueries;
-//using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries;
-//using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CountryQueries;
-//using makeITeasy.CarCatalog.dotnet9.Infrastructure.Data;
-//using makeITeasy.CarCatalog.dotnet9.Tests.Catalogs;
-//using makeITeasy.CarCatalog.dotnet9.Tests.TestConfig;
+using makeITeasy.AppFramework.Models;
+using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
+using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries;
+using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CountryQueries;
+using makeITeasy.CarCatalog.dotnet9.Models;
+using makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup;
 
-//using System;
-//using System.Linq;
-//using System.Threading.Tasks;
+using Xunit;
 
-//using Xunit;
+namespace makeITeasy.CarCatalog.dotnet9.Tests
+{
+    public class CustomerDateTimeProvider : ICurrentDateProvider
+    {
+        public DateTime Now => new(2000, 12, 25);
+    }
 
-//namespace makeITeasy.CarCatalog.dotnet9.Tests
-//{
-//    public class CustomerDateTimeProvider : ICurrentDateProvider
-//    {
-//        public DateTime Now => new(2000, 12, 25);
-//    }
+    public class CustomerDateTimeProviderModule : Module
+    {
+        protected override void Load(ContainerBuilder builder)
+        {
+            builder.RegisterType<CustomerDateTimeProvider>().As<ICurrentDateProvider>();
 
-//    public class ServiceRegistrationAutofacModuleWithDateProvider : ServiceRegistrationAutofacModule
-//    {
-//        protected override void Load(ContainerBuilder builder)
-//        {
-//            builder.RegisterType<CustomerDateTimeProvider>().As<ICurrentDateProvider>();
+            base.Load(builder);
+        }
+    }
 
-//            base.Load(builder);
-//        }
-//    }
+    public class ICurrentDateProvider_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture, [typeof(CustomerDateTimeProviderModule)])
+    {
+        [Fact]
+        public async Task CustomDateTimeProviderWithCustomService_DateTime()
+        {
+            (ICarService carService, IBrandService brandService, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
-//    public class ICurrentDateProvider_Tests : UnitTestAutofacService<ServiceRegistrationAutofacModuleWithDateProvider>
-//    {
-//        public ICurrentDateProvider_Tests()
-//        {
-//            var t = Resolve<CarCatalogContext>();
+            var getResult = await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix});
 
-//            t.Database.EnsureCreated();
-//        }
+            getResult.Results.Count.Should().Be(2);
 
-//        [Fact]
-//        public async Task CustomerDateTimeProviderWithCustomerService_DateTime()
-//        {
-//            ICarService carService = Resolve<ICarService>();
+            getResult.Results.All(x => x.CreationDate == new DateTime(2000, 12, 25)).Should().BeTrue();
+        }
 
-//            var car = await carService.CreateAsync(TestCarsCatalog.GetCars().First());
+        [Fact]
+        public async Task CustomerDateTimeProviderWithGenericService_DateTime()
+        {
+            ICountryService countryService = Resolve<ICountryService>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
 
-//            var getResult = await carService.QueryAsync(new BasicCarQuery() { });
+            var car = await countryService.CreateAsync(new Country() { Name = "FR" + suffix, CountryCode = "FR" });
 
-//            getResult.Results.Count.Should().BePositive();
+            var getResult = await countryService.QueryAsync(new BaseCountryQuery() { NameSuffix = suffix });
 
-//            getResult.Results.All(x => x.CreationDate == new DateTime(2000, 12, 25)).Should().BeTrue();
-//        }
+            getResult.Results.Count.Should().BePositive();
 
-//        [Fact]
-//        public async Task CustomerDateTimeProviderWithGenericService_DateTime()
-//        {
-//            ICountryService countryService = Resolve<ICountryService>();
-
-//            var car = await countryService.CreateAsync(TestCarsCatalog.GetCars().First().Brand.Country);
-
-//            var getResult = await countryService.QueryAsync(new BaseCountryQuery() { });
-
-//            getResult.Results.Count.Should().BePositive();
-
-//            getResult.Results.All(x => x.CreationDate == new DateTime(2000, 12, 25)).Should().BeTrue();
-//        }
-//    }
-//}
+            getResult.Results.All(x => x.CreationDate == new DateTime(2000, 12, 25)).Should().BeTrue();
+        }
+    }
+}

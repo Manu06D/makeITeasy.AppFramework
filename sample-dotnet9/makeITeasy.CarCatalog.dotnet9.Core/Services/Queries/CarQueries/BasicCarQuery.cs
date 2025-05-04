@@ -16,6 +16,8 @@ namespace makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries
 
         public bool? IncludeBrand { get; set; }
 
+        public bool? IncludeBrandAndCountry { get; set; }
+
         public string? NameSuffix { get; set; }
 
         public override void BuildQuery()
@@ -30,14 +32,18 @@ namespace makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries
                 AddFunctionToCriteria(x => x.Name.StartsWith(Name));
             }
 
-            if (IncludeBrand.GetValueOrDefault())
-            {
-                AddInclude(x => x.Brand);
-            }
-
             if (!string.IsNullOrWhiteSpace(NameSuffix))
             {
                 AddFunctionToCriteria(x => x.Name.EndsWith(NameSuffix));
+            }
+
+            if (IncludeBrandAndCountry.GetValueOrDefault())
+            {
+                AddInclude("Brand.Country");
+            }
+            else if (IncludeBrand.GetValueOrDefault())
+            {
+                AddInclude(x => x.Brand);
             }
 
             HandleNullableBoolSearch(IsModernCar, Car.ModernCarFunction);

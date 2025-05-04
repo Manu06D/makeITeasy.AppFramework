@@ -1,5 +1,6 @@
 ﻿using Autofac;
 
+using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet9.Infrastructure.Data;
 using makeITeasy.CarCatalog.dotnet9.Models;
@@ -13,17 +14,18 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup
 {
     public class UnitTestAutofacService : DatabaseFixture
     {
-        public UnitTestAutofacService(DatabaseEngineFixture databaseEngineFixture) : base(databaseEngineFixture)
+        public UnitTestAutofacService(DatabaseEngineFixture databaseEngineFixture, List<Type> modules = null) : base(databaseEngineFixture, modules)
         {
         }
 
-        public async Task<(ICarService carService, IBrandService brandService, Brand citroenBrand, string suffix)> CreateCarsAsync()
+        public async Task<(ICarService carService, IBrandService brandService, Brand citroenBrand, string suffix, List<Car> cars)> CreateCarsAsync()
         {
             ICarService carService = Resolve<ICarService>();
             IBrandService brandService = Resolve<IBrandService>();
             ICountryService countryService = Resolve<ICountryService>();
 
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
+            List<Car> cars = [];
 
             Country country = CarsCatalog.France;
             await countryService.CreateAsync(country);
@@ -31,10 +33,19 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup
             Brand citroenBrand = CarsCatalog.Citroen(suffix, countryId: country.Id);
             await brandService.CreateAsync(citroenBrand);
 
-            await carService.CreateAsync(CarsCatalog.CitroenC4(suffix, brandId: citroenBrand.Id));
-            await carService.CreateAsync(CarsCatalog.CitroenC5(suffix, brandId: citroenBrand.Id));
+            Car c4car = CarsCatalog.CitroenC4(suffix, brandId: citroenBrand.Id);
+            if ((await carService.CreateAsync(c4car)).Result == CommandState.Success)
+            {
+                cars.Add(c4car);
+            }
 
-            return (carService, brandService, citroenBrand, suffix);
+            Car c5car = CarsCatalog.CitroenC5(suffix, brandId: citroenBrand.Id);
+            if ((await carService.CreateAsync(c5car)).Result == CommandState.Success)
+            {
+                cars.Add(c5car);
+            }
+
+            return (carService, brandService, citroenBrand, suffix, cars);
         }
     }
 
@@ -42,11 +53,13 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup
     {
         protected string connectionString;
         protected IContainer? container;
+        private readonly List<Type> modules;
 
-        public DatabaseFixture(DatabaseEngineFixture databaseEngineFixture)
+        public DatabaseFixture(DatabaseEngineFixture databaseEngineFixture, List<Type> modules = null)
         {
             string s = "";
             DatabaseEngineFixture = databaseEngineFixture;
+            this.modules = modules;
         }
 
         public DatabaseEngineFixture DatabaseEngineFixture { get; }
@@ -68,8 +81,15 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup
 
             connectionString = msSqlContainer.GetConnectionString();
 
-            var builder = new Autofac.ContainerBuilder();
+            var builder = new ContainerBuilder();
             builder.RegisterModule(new ServiceRegistrationAutofacModule() { DatabaseConnectionString = connectionString });
+            if(modules?.Count > 0)
+            {
+                foreach (var module in modules)
+                {
+                    builder.RegisterModule(Activator.CreateInstance(module) as Module);
+                }
+            }
 
             container = builder.Build();
 

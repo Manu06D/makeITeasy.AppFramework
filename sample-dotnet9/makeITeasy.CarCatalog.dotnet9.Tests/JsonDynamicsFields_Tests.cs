@@ -1,154 +1,143 @@
-﻿//using FluentAssertions;
+﻿using FluentAssertions;
 
-//using makeITeasy.AppFramework.Core.Commands;
-//using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
-//using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries;
-//using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.EngineQueries;
-//using makeITeasy.CarCatalog.dotnet9.Infrastructure.Data;
-//using makeITeasy.CarCatalog.dotnet9.Models;
-//using makeITeasy.CarCatalog.dotnet9.Tests.TestConfig;
+using makeITeasy.AppFramework.Core.Commands;
+using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
+using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries;
+using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.EngineQueries;
+using makeITeasy.CarCatalog.dotnet9.Models;
+using makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup;
 
-//using Xunit;
+using Xunit;
 
-//namespace makeITeasy.CarCatalog.dotnet9.Tests
-//{
-//    public class JsonDynamicsFields_Tests : UnitTestAutofacService<ServiceRegistrationAutofacModule>
-//    {
-//        private ICarService carService;
-//        private IEngineService engineService;
+namespace makeITeasy.CarCatalog.dotnet9.Tests
+{
+    public class JsonDynamicsFields_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
+    {
+        [Fact]
+        public async Task CreateAndGet_JsonDynamicFieldTest()
+        {
+            ICarService carService = Resolve<ICarService>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
 
-//        public JsonDynamicsFields_Tests()
-//        {
-//            carService = Resolve<ICarService>();
-//            engineService = Resolve<IEngineService>();
-//            var t = Resolve<CarCatalogContext>();
-//            t.Database.EnsureCreated();
-//        }
+            Car newCar = new()
+            {
+                Name = "C3" + suffix,
+                ReleaseYear = 2011,
+                Brand = new()
+                {
+                    Name = "Citroen",
+                    Country = new Country()
+                    {
+                        Name = "France",
+                        CountryCode = "FR"
+                    }
+                },
+                CarDetails =
+                [
+                    new() {
+                        CarDetails = new Models.DynamicModels.CarDetailsModel()
+                        {
+                            Name = "XXX",
+                            ImageUrl="http://foo.bar"
+                        }
+                    }
+                ]
+            };
 
-//        ~JsonDynamicsFields_Tests()
-//        {
-//            carService = null;
-//        }
+            var result = await carService.CreateAsync(newCar);
 
-//        [Fact]
-//        public async Task CreateAndGet_JsonDynamicFieldTest()
-//        {
+            var getResult = await carService.GetFirstByQueryAsync(new BasicCarQuery()
+            {
+                ID = result?.Entity?.Id,
+                Includes = new List<System.Linq.Expressions.Expression<Func<Car, object>>>(){
+                {
+                    x => x.CarDetails
+                }
+            }
+            });
 
-//            Car newCar = new()
-//            {
-//                Name = "C3",
-//                ReleaseYear = 2011,
-//                Brand = new ()
-//                {
-//                    Name = "Citroen",
-//                    Country = new Country()
-//                    {
-//                        Name = "France",
-//                        CountryCode = "FR"
-//                    }
-//                },
-//                CarDetails =
-//                [
-//                    new() {
-//                        CarDetails = new Models.DynamicModels.CarDetailsModel()
-//                        {
-//                            Name = "XXX",
-//                            ImageUrl="http://foo.bar"
-//                        }
-//                    }
-//                ]
-//            };
+            getResult.CarDetails.Should().NotBeNullOrEmpty();
+            getResult.CarDetails.First().CarDetails.Name.Should().NotBeNullOrEmpty();
+        }
 
-//            var result = await carService.CreateAsync(newCar);
+        [Fact]
+        public async Task CreateAndGet_EF9JsonFieldTest()
+        {
+            IEngineService engineService = Resolve<IEngineService>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
 
-//            var getResult = await carService.GetFirstByQueryAsync(new BasicCarQuery()
-//            {
-//                ID = result?.Entity?.Id,
-//                Includes = new List<System.Linq.Expressions.Expression<Func<Car, object>>>(){
-//                {
-//                    x => x.CarDetails
-//                }
-//            }});
+            const bool hasTurbo = true;
+            const int powerHorses = 120;
 
-//            getResult.CarDetails.Should().NotBeNullOrEmpty();
-//            getResult.CarDetails.First().CarDetails.Name.Should().NotBeNullOrEmpty();
-//        }
+            Engine engine = new()
+            {
+                Name = "16v 1.2 Puretech" + suffix,
+                Details = new EngineDetails()
+                {
+                    HasTurbo = hasTurbo,
+                    PowerHorse = powerHorses,
+                    Characteristics =
+                    [
+                        new Characteristic() { Name = "Energy", Value = "Petrol"}
+                    ]
+                }
+            };
 
-//        [Fact]
-//        public async Task CreateAndGet_EF9JsonFieldTest()
-//        {
-//            bool hasTurbo = true;
-//            int powerHorses = 120;
+            CommandResult<Engine> result = await engineService.CreateAsync(engine);
 
-//            Engine engine = new ()
-//            {
-//                Name="16v 1.2 Puretech",
-//                Details = new EngineDetails()
-//                {
-//                    HasTurbo = hasTurbo,
-//                    PowerHorse = powerHorses,
-//                    Characteristics = new List<Characteristic>()
-//                    {
-//                        new Characteristic() { Name = "Energy", Value = "Petrol"}
-//                    }
-                    
-//                }
-//            };
+            Engine getResult = await engineService.GetFirstByQueryAsync(new BaseEngineQuery() { ID = result?.Entity?.Id });
+            getResult.Details.HasTurbo.Should().Be(hasTurbo);
+            getResult.Details.PowerHorse.Should().Be(powerHorses);
+            getResult.Details.Characteristics.Should().NotBeEmpty();
+        }
 
-//            CommandResult<Engine> result = await engineService.CreateAsync(engine);
+        [Fact]
+        public async Task Query_EF9JsonFieldTest()
+        {
+            IEngineService engineService = Resolve<IEngineService>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
 
-//            Engine getResult = await engineService.GetFirstByQueryAsync(new BaseEngineQuery() { ID = result?.Entity?.Id});
-//            getResult.Details.HasTurbo.Should().Be(hasTurbo);
-//            getResult.Details.PowerHorse.Should().Be(powerHorses);
-//            getResult.Details.Characteristics.Should().NotBeEmpty();
-//        }
+            Engine engine = new()
+            {
+                Name = "16v 1.2 Puretech" + suffix,
+                Details = new EngineDetails()
+                {
+                    HasTurbo = true,
+                    PowerHorse = 120,
+                    Characteristics =
+                    [
+                        new () { Name = "Energy", Value = "Petrol"}
+                    ]
+                }
+            };
 
-//        [Fact]
-//        public async Task Query_EF9JsonFieldTest()
-//        {
-//            Engine engine = new()
-//            {
-//                Name = "16v 1.2 Puretech",
-//                Details = new EngineDetails()
-//                {
-//                    HasTurbo = true,
-//                    PowerHorse = 120,
-//                    Characteristics =
-//                    [
-//                        new () { Name = "Energy", Value = "Petrol"}
-//                    ]
+            _ = await engineService.CreateAsync(engine);
 
-//                }
-//            };
+            Engine engine2 = new()
+            {
+                Name = "1.3 HDI" + suffix,
+                Details = new EngineDetails()
+                {
+                    HasTurbo = true,
+                    PowerHorse = 90,
+                    Characteristics =
+                    [
+                        new () { Name = "Energy", Value = "Diesel"}
+                    ]
+                }
+            };
 
-//            _ = await engineService.CreateAsync(engine);
+            _ = await engineService.CreateAsync(engine2);
 
-//            Engine engine2 = new()
-//            {
-//                Name = "1.3 HDI",
-//                Details = new EngineDetails()
-//                {
-//                    HasTurbo = true,
-//                    PowerHorse = 90,
-//                    Characteristics =
-//                    [
-//                        new () { Name = "Energy", Value = "Diesel"}
-//                    ]
+            IList<Engine> getResult = (await engineService.QueryAsync(new BaseEngineQuery() { MinimalHorspower = 120, NameSuffix = suffix })).Results;
 
-//                }
-//            };
+            getResult.Should().HaveCount(1);
+            getResult[0].Name.Should().StartWith("16v 1.2 Puretech");
 
-//            _ = await engineService.CreateAsync(engine2);
+            getResult = (await engineService.QueryAsync(new BaseEngineQuery() { Characteristic = new Tuple<string, string>("Energy", "Diesel") })).Results;
 
-//            IList<Engine> getResult = (await engineService.QueryAsync(new BaseEngineQuery() { MinimalHorspower = 120 })).Results;
-
-//            getResult.Should().HaveCount(1);
-//            getResult[0].Name.Should().Be("16v 1.2 Puretech");
-
-//            getResult = (await engineService.QueryAsync(new BaseEngineQuery() { Characteristic = new Tuple<string, string>("Energy", "Diesel") })).Results;
-
-//            getResult.Should().NotBeEmpty();
-//            getResult[0].Name.Should().Be("1.3 HDI");
-//        }
-//    }
-//}
+            getResult.Should().NotBeEmpty();
+            getResult[0].Name.Should().StartWith("1.3 HDI");
+        }
+    }
+}

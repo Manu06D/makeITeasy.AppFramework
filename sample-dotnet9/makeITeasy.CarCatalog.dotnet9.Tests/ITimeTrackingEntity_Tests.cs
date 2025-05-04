@@ -1,195 +1,145 @@
-﻿//using System;
-//using System.Linq;
-//using System.Threading.Tasks;
+﻿using FluentAssertions;
 
-//using FluentAssertions;
+using makeITeasy.AppFramework.Core.Commands;
+using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
+using makeITeasy.CarCatalog.dotnet9.Models;
 
-//using makeITeasy.AppFramework.Core.Commands;
-//using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
-//using makeITeasy.CarCatalog.dotnet9.Tests.Catalogs;
-//using makeITeasy.CarCatalog.dotnet9.Infrastructure.Data;
-//using makeITeasy.CarCatalog.dotnet9.Models;
+using Xunit;
+using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries;
+using makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup;
+using makeITeasy.CarCatalog.dotnet9.Tests.Catalogs;
 
-//using Xunit;
-//using System.Collections.Generic;
-//using Microsoft.Azure.Cosmos.Serialization.HybridRow;
-//using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries;
-//using makeITeasy.CarCatalog.dotnet9.Tests.TestConfig;
+namespace makeITeasy.CarCatalog.dotnet9.Tests
+{
+    public class ITimeTrackingEntity_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
+    {
+        [Fact]
+        public async Task CreationDate_BasicTest()
+        {
+            DateTime creationDateTime = DateTime.Now;
 
-//namespace makeITeasy.CarCatalog.dotnet9.Tests
-//{
-//    public class ITimeTrackingEntity_Tests : UnitTestAutofacService<ServiceRegistrationAutofacModule>
-//    {
-//        private ICarService carService;
-//        private ICountryService countryService;
+            (ICarService carService, IBrandService brandService, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
-//        public ITimeTrackingEntity_Tests()
-//        {
-//            var t = Resolve<CarCatalogContext>();
+            IList<Car> cars = (await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix, IncludeBrandAndCountry = true })).Results;
 
-//            t.Database.EnsureCreated();
-//            carService = Resolve<ICarService>();
-//            countryService = Resolve<ICountryService>();
-//        }
+            cars.Select(x => x.CreationDate).Should().AllSatisfy(x => x.Should().BeAfter(creationDateTime));
+            cars.Select(x => x.Brand).Should().AllSatisfy(x => x.CreationDate.Should().BeAfter(creationDateTime)).And.AllSatisfy(x => x.Country.CreationDate.Should().BeAfter(creationDateTime));
 
-//        ~ITimeTrackingEntity_Tests()
-//        {
-//            carService = null;
-//            countryService = null;
-//        }
+            DateTime modificationDate = DateTime.Now;
 
-//        [Fact]
-//        public async Task CreationDate_BasicTest()
-//        {
-//            Car newCar = new Car()
-//            {
-//                Name = "C3",
-//                ReleaseYear = 2011,
-//                Brand = new Brand()
-//                {
-//                    Name = "Citroen",
-//                    Country = new Country()
-//                    {
-//                        Name = "France",
-//                        CountryCode = "FR"
-//                    }
-//                }
-//            };
+            cars[0].Name += "Update";
+            CommandResult<Car> modificationResult = await carService.UpdateAsync(cars.First());
 
-//            DateTime creationDateTime = DateTime.Now;
+            Car modifiedCar = await carService.GetFirstByQueryAsync(new BasicCarQuery() { NameSuffix = suffix + "Update", IncludeBrandAndCountry = true });
+            modificationResult.Entity.Name.Should().EndWith(suffix + "Update");
 
-//            CommandResult<Car> creationResult = await carService.CreateAsync(newCar);
+            modifiedCar.LastModificationDate.Should().NotBeNull().And.Be(modificationResult.Entity.LastModificationDate).And.BeAfter(modificationDate);
 
-//            newCar.CreationDate.Should().NotBeNull().And.BeAfter(creationDateTime);
+            modifiedCar.Brand.Country.LastModificationDate.Should().NotBeNull().And.Be(creationDateTime).And.BeBefore(modificationDate);
+        }
 
-//            creationResult.Entity.CreationDate.Should().NotBeNull().And.BeAfter(creationDateTime);
-//            creationResult.Entity.Brand.Country.CreationDate.Should().NotBeNull().And.BeAfter(creationDateTime);
+        [Fact]
+        public async Task CreationRangeDate_BasicTest()
+        {
+            ICarService carService = Resolve<ICarService>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
 
-//            DateTime modificationDate = DateTime.Now;
+            var dbCreation = await carService.CreateRangeAsync(new List<Car>() { CarsCatalog.CitroenC4(suffix), CarsCatalog.CitroenC5(suffix) });
 
-//            newCar.Name = "C4";
+            dbCreation.Should().Match(x => x.All(y => y.Entity.CreationDate.HasValue));
+        }
 
-//            CommandResult<Car> modificationResult = await carService.UpdateAsync(newCar);
+        [Fact]
+        public async Task UpdateNofields_Test()
+        {
+            ICarService carService = Resolve<ICarService>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
 
-//            newCar.Name.Should().Be("C4");
-//            modificationResult.Entity.Name.Should().Be("C4");
+            DateTime dateTimeBeforeSave = DateTime.Now;
+            var dbCreation = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
+            DateTime dateTimeAfterSave = DateTime.Now;
 
-//            newCar.LastModificationDate.Should().NotBeNull().And.Be(modificationResult.Entity.LastModificationDate).And.BeAfter(modificationDate);
+            DateTime? creationDateTime = dbCreation.Entity.CreationDate;
+            DateTime? lastModificationDate = dbCreation.Entity.LastModificationDate;
 
-//            newCar.Brand.Country.LastModificationDate.Should().NotBeNull().And.Be(modificationResult.Entity.Brand.Country.CreationDate);
+            creationDateTime.Should().NotBeNull();
+            creationDateTime.Value.Should().Be(lastModificationDate.Value).And.BeAfter(dateTimeBeforeSave).And.BeBefore(dateTimeAfterSave);
 
-//            Car latestCar = await carService.GetByIdAsync(newCar.Id);
+            var carQuery = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = dbCreation.Entity.Id });
 
-//            latestCar.LastModificationDate.Should().NotBeNull().And.BeAfter(modificationDate);
-//        }
+            await carService.UpdateAsync(carQuery);
 
-//        [Fact]
-//        public async Task CreationRangeDate_BasicTest()
-//        {
-//            var carList = TestCarsCatalog.GetCars();
+            carQuery = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = dbCreation.Entity.Id });
 
-//            var dbCreation = await carService.CreateRangeAsync(carList);
+            carQuery.CreationDate.Should().Be(dbCreation.Entity.CreationDate);
 
-//            dbCreation.Should().Match(x => x.All(y => y.Entity.CreationDate.HasValue));
-//        }
+            carQuery.LastModificationDate.Should().Be(dbCreation.Entity.LastModificationDate);
+        }
 
-//        [Fact]
-//        public async Task UpdateNofields_Test()
-//        {
-//            var carList = TestCarsCatalog.GetCars();
+        [Fact]
+        public async Task UpdateWithfields_Test()
+        {
+            ICarService carService = Resolve<ICarService>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
 
-//            DateTime dateTimeBeforeSave = DateTime.Now;
-//            var dbCreation = await carService.CreateAsync(carList.First());
-//            DateTime dateTimeAfterSave = DateTime.Now;
+            DateTime dateTimeBeforeSave = DateTime.Now;
+            var dbCreation = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
+            DateTime dateTimeAfterSave = DateTime.Now;
 
-//            DateTime? creationDateTime = dbCreation.Entity.CreationDate;
-//            DateTime? lastModificationDate = dbCreation.Entity.LastModificationDate;
+            DateTime? creationDateTime = dbCreation.Entity.CreationDate;
+            DateTime? lastModificationDate = dbCreation.Entity.LastModificationDate;
 
-//            creationDateTime.Should().NotBeNull();
-//            creationDateTime.Value.Should().Be(lastModificationDate.Value).And.BeAfter(dateTimeBeforeSave).And.BeBefore(dateTimeAfterSave);
+            creationDateTime.Should().NotBeNull();
+            creationDateTime.Value.Should().Be(lastModificationDate.Value).And.BeAfter(dateTimeBeforeSave).And.BeBefore(dateTimeAfterSave);
 
-//            var carQuery = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = dbCreation.Entity.Id });
+            var carQuery = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = dbCreation.Entity.Id });
 
-//            await carService.UpdateAsync(carQuery);
+            carQuery.Name = "XXXx";
 
-//            carQuery = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = dbCreation.Entity.Id });
+            DateTime dateBeforeUpdate = DateTime.Now;
+            await carService.UpdateAsync(carQuery);
+            DateTime dateAfterUpdate = DateTime.Now;
 
-//            carQuery.CreationDate.Should().Be(dbCreation.Entity.CreationDate);
+            carQuery.CreationDate.Should().Be(dbCreation.Entity.CreationDate);
 
-//            carQuery.LastModificationDate.Should().Be(dbCreation.Entity.LastModificationDate);
-//        }
+            carQuery.LastModificationDate.Should().BeAfter(dateBeforeUpdate).And.BeBefore(dateAfterUpdate);
+        }
 
-//        [Fact]
-//        public async Task UpdateWithfields_Test()
-//        {
-//            var carList = TestCarsCatalog.GetCars();
+        [Fact]
+        public async Task UpdateProperties_LastModificationDateChanged()
+        {
+            ICarService carService = Resolve<ICarService>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
 
-//            DateTime dateTimeBeforeSave = DateTime.Now;
-//            var dbCreation = await carService.CreateAsync(carList.First());
-//            DateTime dateTimeAfterSave = DateTime.Now;
+            Car newCar = CarsCatalog.CitroenC4(suffix);
+            DateTime creationDateTime = DateTime.Now;
 
-//            DateTime? creationDateTime = dbCreation.Entity.CreationDate;
-//            DateTime? lastModificationDate = dbCreation.Entity.LastModificationDate;
+            CommandResult<Car> creationResult = await carService.CreateAsync(newCar);
 
-//            creationDateTime.Should().NotBeNull();
-//            creationDateTime.Value.Should().Be(lastModificationDate.Value).And.BeAfter(dateTimeBeforeSave).And.BeBefore(dateTimeAfterSave);
+            newCar.Name += "X";
 
-//            var carQuery = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = dbCreation.Entity.Id });
+            await carService.UpdatePropertiesAsync(newCar, ["Name"]);
 
-//            carQuery.Name = "XXXx";
+            var tt = await carService.GetByIdAsync(newCar.Id);
 
-//            DateTime dateBeforeUpdate = DateTime.Now;
-//            await carService.UpdateAsync(carQuery);
-//            DateTime dateAfterUpdate = DateTime.Now;
+            tt.LastModificationDate.GetValueOrDefault().Should().BeAfter(creationDateTime);
+        }
 
-//            carQuery.CreationDate.Should().Be(dbCreation.Entity.CreationDate);
+        [Fact]
+        public async Task CreationRangeDate_RecursiveTest()
+        {
+            ICountryService countryService = Resolve<ICountryService>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
 
-//            carQuery.LastModificationDate.Should().BeAfter(dateBeforeUpdate).And.BeBefore(dateAfterUpdate);
-//        }
+            DateTime dateTimeOfTest = DateTime.Now;
 
-//        [Fact]
-//        public async Task UpdateProperties_LastModificationDateChanged()
-//        {
-//            Car newCar = new Car()
-//            {
-//                Name = "C3",
-//                ReleaseYear = 2011,
-//                Brand = new Brand()
-//                {
-//                    Name = "Citroen",
-//                    Country = new Country()
-//                    {
-//                        Name = "France",
-//                        CountryCode = "FR"
-//                    }
-//                }
-//            };
+            Country country = new() { Name = "MyCountry", CountryCode = "MC", Brands = new List<Brand>() };
 
-//            DateTime creationDateTime = DateTime.Now;
+            country.Brands.Add(new Brand() { Name = "MyBrand", Cars = new List<Car>() { new Car() { Name = "MyCar" } } });
 
-//            CommandResult<Car> creationResult = await carService.CreateAsync(newCar);
+            var dbCreation = await countryService.CreateAsync(country);
 
-//            newCar.Name += "X";
-
-//            await carService.UpdatePropertiesAsync(newCar, new string[] { "Name" });
-
-//            var tt = await carService.GetByIdAsync(newCar.Id);
-
-//            tt.LastModificationDate.GetValueOrDefault().Should().BeAfter(creationDateTime);
-//        }
-
-//        [Fact]
-//        public async Task CreationRangeDate_RecursiveTest()
-//        {
-//            DateTime dateTimeOfTest = DateTime.Now;
-
-//            Country country = new() { Name = "MyCountry", CountryCode = "MC", Brands = new List<Brand>() };
-
-//            country.Brands.Add(new Brand() { Name = "MyBrand", Cars = new List<Car>() { new Car() { Name = "MyCar" } } });
-
-//            var dbCreation = await countryService.CreateAsync(country);
-
-//            dbCreation.Entity.Brands.Should().Match(x => x.All(y => y.CreationDate.HasValue && y.CreationDate > dateTimeOfTest));
-//        }
-//    }
-//}
+            dbCreation.Entity.Brands.Should().Match(x => x.All(y => y.CreationDate.HasValue && y.CreationDate > dateTimeOfTest));
+        }
+    }
+}

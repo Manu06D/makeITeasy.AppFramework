@@ -21,18 +21,6 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 {
     public class CarService_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
     {
-        private async Task<List<Car>> CreateCarCatalogAsync(ICarService carService)
-        {
-            if(DatabaseEngineFixture.CurentDatabaseType != DatabaseType.MsSql)
-            {
-                return await CarsCatalog.SaveCarsInDBAsync(carService);
-            }
-            else
-            {
-                return CarsCatalog.GetCars();
-            }
-        }
-
         [Fact]
         public void IsValid_InValidObjectTest()
         {
@@ -119,7 +107,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task CreateAndGet_ListTest()
         {
-            (ICarService carService, _, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+            (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
             var getResult = await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix }, includeCount: true);
 
@@ -141,7 +129,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task CreateAndGet_ListWithIncludeStringTest()
         {
-            (ICarService carService, _, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+            (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
             var getResult = await carService.QueryAsync(new BasicCarQuery() { IncludeStrings = ["Brand.Country"], NameSuffix = suffix }, includeCount: true);
 
@@ -163,7 +151,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task CreateAndGet_ListWithIncludeTest()
         {
-            (ICarService carService, _, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+                (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
             var getResult = await carService.QueryAsync
                 (new BasicCarQuery() { Includes = [x => x.Brand.Country], NameSuffix = suffix }, includeCount: true);
@@ -192,7 +180,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task CreateAndGet_ListWithMappingTest()
         {
-            (ICarService carService, _, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+            (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
             var getResult = await carService.QueryWithProjectionAsync<SmallCarInfo>(new BasicCarQuery() { NameSuffix = suffix }, includeCount: true);
 
@@ -212,7 +200,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task CreateAndGet_SelectWithFunctionTest()
         {
-            (ICarService carService, _, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+            (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
             var dbCreationResult = await carService.CreateAsync(new Car() { Name = "2CV" + suffix, ReleaseYear = 1965, BrandId = citroenBrand.Id });
             dbCreationResult.Result.Should().Be(CommandState.Success);
@@ -226,7 +214,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task CreateAndGet_ListWithFunctionTest()
         {
-            (ICarService carService, _, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+            (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
             var dbCreationResult = await carService.CreateAsync(new Car() { Name = "2CV" + suffix, ReleaseYear = 1965, BrandId = citroenBrand.Id });
             dbCreationResult.Result.Should().Be(CommandState.Success);
@@ -248,7 +236,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task CreateAndGet_ListWithMapping2LevelTest()
         {
-            (ICarService carService, _, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+            (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
             var getResult = await carService.QueryWithProjectionAsync<SmallCarInfoWithBrand>(new BasicCarQuery() { NameSuffix = suffix }, includeCount: true);
 
@@ -266,7 +254,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task CreateAndGet_ListWithPagingTest()
         {
-            (ICarService carService, _, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+                (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
             const int pageSize = 1;
             var getResult = await carService.QueryAsync(new BasicCarQuery() { Skip = 1, Take = pageSize, NameSuffix = suffix }, includeCount: true);
@@ -274,7 +262,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             getResult.TotalItems.Should().Be(2);
             getResult.Results.Count.Should().Be(1);
 
-            var getResultFluent = 
+            var getResultFluent =
                 await carService.QueryAsync(QueryBuilder.Create<BasicCarQuery, Car>().Where(x => x.Name.EndsWith(suffix)).OrderBy(x => x.Id)
                 .Take(pageSize).Skip(1).Build(), includeCount: true);
 
@@ -285,7 +273,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task OrderString_Tests()
         {
-            (ICarService carService, _, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+            (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
             var getResult = await carService.QueryAsync(new BasicCarQuery()
             {
@@ -310,7 +298,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task OrderWith2LevelString_Test()
         {
-            (ICarService carService, _, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+            (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
             var getResult = await carService.QueryAsync(new BasicCarQuery()
             {
@@ -336,7 +324,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task OrderFunction_Tests()
         {
-            (ICarService carService, _, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+            (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
             var getResult = await carService.QueryAsync(new BasicCarQuery()
             {
@@ -364,7 +352,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task OrderFunction2Level_Tests()
         {
-            (ICarService carService, _, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+            (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
             Car newCar = new()
             {
@@ -435,7 +423,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task BrandGroupByCarCount_BasicTest()
         {
-            (ICarService carService, _, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+            (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
             var getResult = await carService.GetBrandWithCountAsync();
 
@@ -447,7 +435,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task QueryBuilder_BasicTest()
         {
-            (ICarService carService, _, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+            (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
             var getResult = await carService.QueryAsync(
                 QueryBuilder.Create(new BasicCarQuery()).Where(x => x.ReleaseYear >= 2010).OrderBy("ReleaseYear", true).Build()
@@ -459,7 +447,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task StringSelector_BasicTest()
         {
-            (ICarService carService, _, _, string suffix) = await CreateCarsAsync();
+            (ICarService carService, _, _, string suffix, _) = await CreateCarsAsync();
 
             QueryResult<Car> getResult = await carService.QueryAsync(new BasicCarQuery() { StringCriteria = "(Name == null ? \"\" : Name).Contains(\"" + suffix + "\")" });
 
@@ -470,7 +458,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task UpdatePropertiesAsync_Test()
         {
-            (ICarService carService, _, _, string suffix) = await CreateCarsAsync();
+            (ICarService carService, _, _, string suffix, _) = await CreateCarsAsync();
 
             Car? firstCar = (await carService.GetFirstByQueryAsync(new BasicCarQuery() { NameSuffix = suffix}));
 
@@ -493,7 +481,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task RowVersion_Test()
         {
-            (ICarService carService, _, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+            (ICarService carService, _, _, string suffix, _) = await CreateCarsAsync();
 
             //This will not work on sql server but work here on sql lite cause lack of support of rowversion
             if (DatabaseEngineFixture.CurentDatabaseType == DatabaseType.MsSql)
@@ -518,13 +506,14 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
                 updateResultProperty.Result.Should().Be(CommandState.Success);
 
                 var carAfterUpdate = (await carService.GetFirstByQueryAsync(new BasicCarQuery() { NameSuffix = suffix }));
+                carAfterUpdate.Name.Should().Be(firstCar.Name);
             }
         }
 
         [Fact]
         public async Task GetFirstByQueryAsync_BasicTest()
         {
-            (ICarService carService, _, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+            (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
             Car result =
                 await carService.GetFirstByQueryAsync(
@@ -555,7 +544,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task GetFirstByQueryWithProjectionAsync_BasicTest()
         {
-            (ICarService carService, _, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+            (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
             SmallCarInfo result =
                 await carService.GetFirstByQueryWithProjectionAsync<SmallCarInfo>(
@@ -586,7 +575,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         //[Fact]
         public async Task EntitiesWithDifferentState_Test()
         {
-            (ICarService carService, _, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+            (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
             Car newCar = new()
             {

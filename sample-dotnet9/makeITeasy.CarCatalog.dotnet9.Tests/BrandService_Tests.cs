@@ -32,7 +32,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task CreateAndGet_ListWithFunctionTest()
         {
-            (_, IBrandService brandService, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+            (_, IBrandService brandService, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
             var getResult = await brandService.QueryWithProjectionAsync<BrandInfo>(new BasicBrandQuery());
 
@@ -56,7 +56,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task CreateAndGet_ListWith2LevelMappingTest()
         {
-            (_, IBrandService brandService, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+            (_, IBrandService brandService, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
             var getResult = await brandService.QueryWithProjectionAsync<SmallBrandInfo>(new BasicBrandQuery());
 
@@ -136,8 +136,8 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task EFCoreIncludeWithFunction_Test()
         {
-            (_, IBrandService brandService, Brand citroenBrand, string suffix) = await CreateCarsAsync();
-            (_, _, Brand citroenBrand2, string suffix2) = await CreateCarsAsync();
+            (_, IBrandService brandService, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
+            (_, _, Brand citroenBrand2, string suffix2, _) = await CreateCarsAsync();
 
             var getResult = await brandService.QueryAsync(
                 new BasicBrandQuery()
@@ -161,7 +161,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task EFCoreIncludeWithFunctionAndProjection_Test()
         {
-            (_, IBrandService brandService, Brand citroenBrand, string suffix) = await CreateCarsAsync();
+            (_, IBrandService brandService, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
 
             var getResult = await brandService.QueryWithProjectionAsync<CustomBrand>(
                 new BasicBrandQuery()

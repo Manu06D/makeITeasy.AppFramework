@@ -1,72 +1,54 @@
-﻿//using FluentAssertions;
+﻿using FluentAssertions;
 
-//using makeITeasy.AppFramework.Core.Commands;
-//using makeITeasy.AppFramework.Core.Queries;
-//using makeITeasy.AppFramework.Models;
-//using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
-//using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries;
-//using makeITeasy.CarCatalog.dotnet9.Tests.Catalogs;
-//using makeITeasy.CarCatalog.dotnet9.Infrastructure.Data;
-//using makeITeasy.CarCatalog.dotnet9.Models;
+using makeITeasy.AppFramework.Core.Commands;
+using makeITeasy.AppFramework.Core.Queries;
+using makeITeasy.AppFramework.Models;
+using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
+using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries;
+using makeITeasy.CarCatalog.dotnet9.Tests.Catalogs;
+using makeITeasy.CarCatalog.dotnet9.Models;
 
-//using MediatR;
+using MediatR;
 
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
+using Xunit;
+using makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup;
 
-//using Xunit;
-//using makeITeasy.CarCatalog.dotnet9.Tests.TestConfig;
+namespace makeITeasy.CarCatalog.dotnet9.Tests
+{
+    public class QueryWithValidation_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
+    {
+        public class BaseCarQueryWithValidation : BasicCarQuery, IIsValidSpecification
+        {
+            public bool IsValid()
+            {
+                return ID >= 0 || Name?.Length > 0;
+            }
+        }
 
-//namespace makeITeasy.CarCatalog.dotnet9.Tests
-//{
-//    public class QueryWithValidation_Tests : UnitTestAutofacService<ServiceRegistrationAutofacModule>
-//    {
-//        private IMediator _mediator;
-//        public QueryWithValidation_Tests()
-//        {
-//            _mediator = Resolve<IMediator>();
-//            var dataContext = Resolve<CarCatalogContext>();
+        [Fact]
+        public async Task GenericQueryCommand_BasicTest()
+        {
+            ICarService carService = Resolve<ICarService>();
+            IMediator mediator= Resolve<IMediator>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
+            Car newCar = CarsCatalog.CitroenC4(suffix);
 
-//            dataContext.Database.EnsureCreated();
-//        }
+            CommandResult<Car> newCarResult = await carService.CreateAsync(newCar);
 
-//        ~QueryWithValidation_Tests()
-//        {
-//            _mediator = null;
-//        }
+            QueryResult<Car> result = await mediator.Send(new GenericQueryCommand<Car>(new BaseCarQueryWithValidation() { ID = newCarResult.Entity.Id }), TestContext.Current.CancellationToken);
 
-//        public class BaseCarQueryWithValidation : BasicCarQuery, IIsValidSpecification
-//        {
-//            public bool IsValid()
-//            {
-//                return ID >= 0 || Name?.Length > 0;
-//            }
-//        }
+            result.Results.Count.Should().Be(1);
 
-//        [Fact]
-//        public async Task GenericQueryCommand_BasicTest()
-//        {
-//            var carService = Resolve<ICarService>();
-//            CommandResult<Car> newCarResult = await carService.CreateAsync(TestCarsCatalog.GetCars().First());
+            Func<Task> act = () => mediator.Send(new GenericQueryCommand<Car>(new BaseCarQueryWithValidation() { ID = -1 }));
 
-//            QueryResult<Car> result = await _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQueryWithValidation() { ID = newCarResult.Entity.Id }));
+            await act.Should().ThrowAsync<InvalidQueryException>();
 
-//            result.Results.Count.Should().Be(1);
+            act = () => mediator.Send(new GenericQueryCommand<Car>(new BaseCarQueryWithValidation()));
 
-//            Func<Task> act = () => _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQueryWithValidation() { ID = -1 }));
+            await act.Should().ThrowAsync<InvalidQueryException>();
 
-//            await act.Should().ThrowAsync<InvalidQueryException>();
-
-//            act = () => _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQueryWithValidation() { }));
-
-//            await act.Should().ThrowAsync<InvalidQueryException>();
-
-//            act = () => _mediator.Send(new GenericQueryCommand<Car>(new BaseCarQueryWithValidation() { Name = newCarResult.Entity.Name }));
-
-//            result.Results.Count.Should().Be(1);
-//        }
-//    }
-//}
+            act = () => mediator.Send(new GenericQueryCommand<Car>(new BaseCarQueryWithValidation() { Name = newCarResult.Entity.Name }));
+            result.Results.Count.Should().Be(1);
+        }
+    }
+}
