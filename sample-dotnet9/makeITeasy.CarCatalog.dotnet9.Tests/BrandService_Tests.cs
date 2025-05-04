@@ -1,184 +1,199 @@
 ﻿using AutoMapper;
 using makeITeasy.AppFramework.Core.Interfaces;
-using makeITeasy.CarCatalog.dotnet9.Infrastructure.Data;
 using makeITeasy.CarCatalog.dotnet9.Models;
 using Xunit;
 using makeITeasy.CarCatalog.dotnet9.Models.Collections;
-using System.Threading.Tasks;
 using FluentAssertions;
-using System.Collections.Generic;
-using System.Linq;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.BrandQueries;
 using makeITeasy.AppFramework.Core.Models.Exceptions;
 using System.Transactions;
-using System;
 using makeITeasy.CarCatalog.dotnet9.Tests.Catalogs;
 using makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup;
 
 namespace makeITeasy.CarCatalog.dotnet9.Tests
 {
-    public class BrandService_Tests : UnitTestAutofacService
+    public class BrandService_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
     {
-        public BrandService_Tests(DatabaseEngineFixture databaseEngineFixture) : base(databaseEngineFixture)
-        {
-        }
-
         public class BrandInfo : IMapFrom<Brand>
         {
-            public string Name { get; set; }
+            public string? Name { get; set; }
             public int FirstRelease { get; set; }
-            public int NbCars { get; set; }
+            public int CarsCount { get; set; }
 
             public void Mapping(Profile profile)
             {
-                if (profile != null)
-                {
-                    profile.CreateMap<Brand, BrandInfo>()
-                        .ForMember(dest => dest.NbCars, src => src.MapFrom(x => x.Cars.Count))
+                profile?.CreateMap<Brand, BrandInfo>()
+                        .ForMember(dest => dest.CarsCount, src => src.MapFrom(x => x.Cars.Count))
                         .ForMember(dest => dest.FirstRelease, src => src.MapFrom(x => x.Cars.MinimalReleaseYear()));
-                }
             }
+        }
+
+        private async Task<(IBrandService brandService, Brand citroenBrand, string suffix)> CreateCars()
+        {
+            ICarService carService = Resolve<ICarService>();
+            IBrandService brandService = Resolve<IBrandService>();
+            ICountryService countryService = Resolve<ICountryService>();
+
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
+
+            Country country = CarsCatalog.France;
+            await countryService.CreateAsync(country);
+
+            Brand citroenBrand = CarsCatalog.Citroen(suffix, countryId: country.Id);
+            await brandService.CreateAsync(citroenBrand);
+
+            await carService.CreateAsync(CarsCatalog.CitroenC4(suffix, brandId: citroenBrand.Id));
+            await carService.CreateAsync(CarsCatalog.CitroenC5(suffix, brandId: citroenBrand.Id));
+            return (brandService, citroenBrand, suffix);
         }
 
         [Fact]
         public async Task CreateAndGet_ListWithFunctionTest()
         {
-            ICarService carService = Resolve<ICarService>();
-            IBrandService brandService = Resolve<IBrandService>();
-
-            //var newCars = TestCarsCatalog.SaveCarsInDB(carService);
+            (IBrandService brandService, Brand citroenBrand, string suffix) = await CreateCars();
 
             var getResult = await brandService.QueryWithProjectionAsync<BrandInfo>(new BasicBrandQuery());
 
-            //getResult.Results.Should().NotBeEmpty();//.OnlyContain(x => x.FirstRelease > 0 && x.NbCars > 0);
+            getResult.Results.Where(x => x.Name == citroenBrand.Name).Should().HaveCount(1);
+            getResult.Results.First(x => x.Name == citroenBrand.Name).CarsCount.Should().Be(2);
+            getResult.Results.First(x => x.Name == citroenBrand.Name).FirstRelease.Should()
+                .Be(new List<Car>() { CarsCatalog.CitroenC4(), CarsCatalog.CitroenC5() }.Min(x => x.ReleaseYear));
         }
 
-        //public class SmallBrandInfo : IMapFrom<Brand>
-        //{
-        //    public string Name { get; set; }
-        //    public List<SmallCarInfo> Cars { get; set; }
-        //}
+        public class SmallBrandInfo : IMapFrom<Brand>
+        {
+            public string? Name { get; set; }
+            public List<SmallCarInfo>? Cars { get; set; }
+        }
 
-        //public class SmallCarInfo : IMapFrom<Car>
-        //{
-        //    public string Name { get; set; }
-        //}
+        public class SmallCarInfo : IMapFrom<Car>
+        {
+            public string? Name { get; set; }
+        }
 
-        //[Fact]
-        //public async Task CreateAndGet_ListWith2LevelMappingTest()
-        //{
-        //    var newCars = TestCarsCatalog.GetCars();
+        [Fact]
+        public async Task CreateAndGet_ListWith2LevelMappingTest()
+        {
+            (IBrandService brandService, Brand citroenBrand, string suffix) = await CreateCars();
 
-        //    newCars.ForEach(async x => await carService.CreateAsync(x));
+            var getResult = await brandService.QueryWithProjectionAsync<SmallBrandInfo>(new BasicBrandQuery());
 
-        //    var getResult = await brandService.QueryWithProjectionAsync<SmallBrandInfo>(new BasicBrandQuery());
+            getResult.Results.Where(x => x.Name == citroenBrand.Name).Should().HaveCount(1);
+            getResult.Results.First(x => x.Name == citroenBrand.Name).Name.Should().EndWith(suffix);
+            getResult.Results.First(x => x.Name == citroenBrand.Name).Cars.Should().HaveCount(2);
+            getResult.Results.First(x => x.Name == citroenBrand.Name).Cars.Should().OnlyContain(x => x.Name != null);
+        }
 
-        //    getResult.Results.Should().OnlyContain(x => x.Name != null && x.Cars != null && x.Cars.Select(x => x.Name).Count() >= 1);
+        [Fact]
+        public void MissingValidator_Test()
+        {
+            IBrandService brandService = Resolve<IBrandService>();
 
-        //}
+            var newBrand = new Brand
+            {
+                Name = "x"
+            };
 
-        //[Fact]
-        //public void MissingValidator_Test()
-        //{
-        //    var newBrand = new Brand
-        //    {
-        //        Name = "x"
-        //    };
+            brandService.Invoking(y => y.Validate(newBrand)).Should().Throw<ValidatorNotFoundException>();
+        }
 
-        //    brandService.Invoking(y => y.Validate(newBrand)).Should().Throw<ValidatorNotFoundException>();
-        //}
+        [Fact]
+        public async Task TransactionWithError_Tests()
+        {
+            //Dont' work in unit test due to leak of support of transaction of sqllite
+            if (DatabaseEngineFixture.CurentDatabaseType == DatabaseType.MsSql)
+            {
+                IBrandService brandService = Resolve<IBrandService>();
+                string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
 
+                var newBrand = new Brand
+                {
+                    Name = "x" + suffix,
+                    Country = new Country()
+                    {
+                        Name = "France",
+                        CountryCode = "FR"
+                    }
+                };
 
-        //[Fact]
-        //public async Task Transaction_Tests()
-        //{
-        //    var newBrand = new Brand
-        //    {
-        //        Name = "x",
-        //        Country = new Country()
-        //        {
-        //            Name = "France",
-        //            CountryCode = "FR"
-        //        }
-        //    };
+                var newBrand2 = new Brand
+                {
+                    Name = "xx" + suffix,
+                };
 
-        //    var newBrand2 = new Brand
-        //    {
-        //        Name = "xx",
-        //    };
+                using (TransactionScope scope = new(
+                    TransactionScopeOption.Required,
+                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted },
+                    TransactionScopeAsyncFlowOption.Enabled))
+                {
+                    try
+                    {
+                        _ = await brandService.CreateAsync(newBrand);
 
-        //    //Dont' work in unit test due to leak of support of transaction of sqllite
-        //    using (var scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadUncommitted }))
-        //    {
-        //        try
-        //        {
-        //            _ = await brandService.CreateAsync(newBrand);
+                        var localSearch = await brandService.QueryAsync(new BasicBrandQuery() { NameSuffix = suffix });
+                        localSearch.Results.Where(x => x.Name.EndsWith(suffix)).Should().HaveCount(1);
 
-        //            var localSearch = await brandService.QueryAsync(new BasicBrandQuery() { });
-        //            localSearch.Results.Should().HaveCount(1);
+                        var dbCreationResult = await brandService.CreateAsync(newBrand2);
 
-        //            _ = await brandService.CreateAsync(newBrand2);
+                        scope.Complete();
 
-        //            scope.Complete();
+                        newBrand.Id.Should().BePositive();
+                        newBrand2.Id.Should().BePositive();
+                    }
+                    catch (Exception)
+                    {
+                        scope.Dispose();
+                    }
+                }
 
-        //            newBrand.Id.Should().BePositive();
-        //            newBrand2.Id.Should().BePositive();
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            scope.Dispose();
-        //        }
-        //    }
+                var search = await brandService.QueryAsync(new BasicBrandQuery() { NameSuffix = suffix });
+                search.Results.Should().HaveCount(0);
+            }
+        }
 
-        //    var search = await brandService.QueryAsync(new BasicBrandQuery() { });
-        //    //this should be 0 count
-        //    search.Results.Should().HaveCount(1);
-        //}
+        [Fact]
+        public async Task EFCoreIncludeWithFunction_Test()
+        {
+            (IBrandService brandService, Brand citroenBrand, string suffix) = await CreateCars();
+            (_, Brand citroenBrand2, string suffix2) = await CreateCars();
 
-        //[Fact]
-        //public async Task EF5IncludeWithFunction_Test()
-        //{
-        //    TestCarsCatalog.SaveCarsInDB(carService);
+            var getResult = await brandService.QueryAsync(
+                new BasicBrandQuery()
+                {
+                    Includes = [x => x.Cars.Where(x => x.Name.EndsWith(suffix))],
+                }
+                , includeCount: true);
 
-        //    var getResult = await brandService.QueryAsync(
-        //        new BasicBrandQuery()
-        //        {
-        //            Includes = new List<System.Linq.Expressions.Expression<Func<Brand, object>>>() { x => x.Cars.Where(x => x.Name.StartsWith("A3")) },
-        //        }
-        //        , includeCount: true);
+            getResult.Results.Where(x => x.Name.EndsWith(suffix)).Should().HaveCount(1);
+            getResult.Results.Where(x => x.Name.EndsWith(suffix2)).Should().HaveCount(1);
+            getResult.Results.SelectMany(x => x.Cars).Should().HaveCount(2);
+            getResult.Results.SelectMany(x => x.Cars).Should().AllSatisfy(x => x.Name.Should().EndWith(suffix));
+        }
 
-        //    getResult.Results.Where(x => x.Cars.Count >= 1).Should().HaveCount(1);
-        //    getResult.Results.First(x => x.Cars.Count >= 1).Cars.FirstOrDefault().Name.Should().Be("A3");
-        //}
+        public class CustomBrand : IMapFrom<Brand>
+        {
+            public int Id { get; set; }
+            public string? Name { get; set; }
+        }
 
-        //public class CustomBrand : IMapFrom<Brand>
-        //{
-        //    public int Id { get; set; }
-        //    public string Name { get; set; }
+        [Fact]
+        public async Task EFCoreIncludeWithFunctionAndProjection_Test()
+        {
+            (IBrandService brandService, Brand citroenBrand, string suffix) = await CreateCars();
 
-        //}
+            var getResult = await brandService.QueryWithProjectionAsync<CustomBrand>(
+                new BasicBrandQuery()
+                {
+                    Includes =
+                        [
+                            x => x.Cars.Where(x => x.Name.EndsWith(suffix)),
+                            x => x.Cars
+                        ],
+                }
+                , includeCount: true);
 
-
-        //[Fact]
-        //public async Task EF5IncludeWithFunctionAndProjection_Test()
-        //{
-        //    TestCarsCatalog.SaveCarsInDB(carService);
-
-        //    var getResult = await brandService.QueryWithProjectionAsync<CustomBrand>(
-        //        new BasicBrandQuery()
-        //        {
-        //            Includes =
-        //                new List<System.Linq.Expressions.Expression<Func<Brand, object>>>() {
-        //                    x => x.Cars.Where(x => x.Name.StartsWith("A3")),
-        //                    x => x.Cars
-        //                },
-
-        //        }
-        //        , includeCount: true);
-
-        //    //getResult.Results.Where(x => x.Cars.Count >= 1).Should().HaveCount(1);
-        //    //getResult.Results.First(x => x.Cars.Count >= 1).Cars.FirstOrDefault().Name.Should().Be("A3");
-        //}
+            getResult.Results.Where(x => x.Name?.EndsWith(suffix) == true).Should().HaveCount(1);
+        }
     }
 }

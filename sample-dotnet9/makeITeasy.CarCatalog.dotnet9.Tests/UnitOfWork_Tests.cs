@@ -1,170 +1,156 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
+﻿using FluentAssertions;
 
-//using FluentAssertions;
+using makeITeasy.AppFramework.Core.Commands;
+using makeITeasy.AppFramework.Core.Interfaces;
+using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
+using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.BrandQueries;
+using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries;
+using makeITeasy.CarCatalog.dotnet9.Models;
+using makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup;
 
-//using makeITeasy.AppFramework.Core.Commands;
-//using makeITeasy.AppFramework.Core.Interfaces;
-//using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
-//using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.BrandQueries;
-//using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries;
-//using makeITeasy.CarCatalog.dotnet9.Infrastructure.Data;
-//using makeITeasy.CarCatalog.dotnet9.Models;
-//using makeITeasy.CarCatalog.dotnet9.Tests.TestConfig;
+using Microsoft.EntityFrameworkCore;
 
-//using Microsoft.EntityFrameworkCore;
+using Xunit;
 
-//using Xunit;
+namespace makeITeasy.CarCatalog.dotnet9.Tests
+{
+    public class UnitOfWork_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
+    {
+        [Fact]
+        public async Task CreationUniqueName_ErrorTest()
+        {
+            ICarService carService = Resolve<ICarService>();
+            IBrandService brandService = Resolve<IBrandService>();
 
-//namespace makeITeasy.CarCatalog.dotnet9.Tests
-//{
-//    public class UnitOfWork_Tests : UnitTestAutofacService<ServiceRegistrationAutofacModule>
-//    {
-//        private ICarService carService;
-//        private IBrandService brandService;
+            Brand brand = new()
+            {
+                Name = "Citroen",
+                Country = new Country()
+                {
+                    Name = "France",
+                    CountryCode = "FR"
+                }
+            };
 
-//        public UnitOfWork_Tests()
-//        {
-//            var t = Resolve<CarCatalogContext>();
+            var brandCreationResult = await brandService.CreateAsync(brand);
+            brandCreationResult.Result.Should().Be(CommandState.Success);
+            brand.Id.Should().BePositive();
 
-//            t.Database.EnsureCreated();
-//            carService = Resolve<ICarService>();
-//            brandService = Resolve<IBrandService>();
-//        }
+            Car car = new()
+            {
+                Name = "C4",
+                BrandId = brand.Id
+            };
 
-//        ~UnitOfWork_Tests()
-//        {
-//            carService = null;
-//        }
+            var carCreationResult = await carService.CreateAsync(car);
+            carCreationResult.Result.Should().Be(CommandState.Success);
 
-//        [Fact]
-//        public async Task CreationUniqueName_ErrorTest()
-//        {
-//            Brand brand = new Brand()
-//            {
-//                Name = "Citroen",
-//                Country = new Country()
-//                {
-//                    Name = "France",
-//                    CountryCode = "FR"
-//                }
-//            };
+            Car car2 = new()
+            {
+                Name = "C4",
+                BrandId = brand.Id
+            };
 
-//            var brandCreationResult = await brandService.CreateAsync(brand);
-//            brandCreationResult.Result.Should().Be(CommandState.Success);
-//            brand.Id.Should().BePositive();
+            Func<Task> act = async () => await carService.CreateAsync(car2);
 
-//            Car car = new Car()
-//            {
-//                Name = "C4",
-//                BrandId = brand.Id
-//            };
+            await act.Should().ThrowAsync<DbUpdateException>();
+        }
 
-//            var carCreationResult = await carService.CreateAsync(car);
-//            carCreationResult.Result.Should().Be(CommandState.Success);
+        [Fact]
+        public async Task CreationUnitOfWork_WorkingTest()
+        {
+            ICarService carService = Resolve<ICarService>();
+            IBrandService brandService = Resolve<IBrandService>();
 
-//            Car car2 = new Car()
-//            {
-//                Name = "C4",
-//                BrandId = brand.Id
-//            };
+            Brand brand = new()
+            {
+                Name = "Citroen",
+                Country = new Country()
+                {
+                    Name = "France",
+                    CountryCode = "FR"
+                }
+            };
 
-//            Func<Task> act = async () => await carService.CreateAsync(car2);
+            IUnitOfWork uo = Resolve<IUnitOfWork>();
 
-//            act.Should().ThrowAsync<DbUpdateException>();
-//        }
+            var brandRepository = uo.GetRepository<Brand>();
+            var carRepository = uo.GetRepository<Car>();
 
-//        [Fact]
-//        public async Task CreationUnitOfWork_WorkingTest()
-//        {
-//            Brand brand = new Brand()
-//            {
-//                Name = "Citroen",
-//                Country = new Country()
-//                {
-//                    Name = "France",
-//                    CountryCode = "FR"
-//                }
-//            };
+            _ = await brandRepository.AddAsync(brand, false);
 
-//            IUnitOfWork uo = Resolve<IUnitOfWork>();
+            Car car = new()
+            {
+                Name = "C4",
+                Brand = brand
+            };
 
-//            var brandRepository = uo.GetRepository<Brand>();
-//            var carRepository = uo.GetRepository<Car>();
+            _ = await carRepository.AddAsync(car, false);
 
-//            _ = await brandRepository.AddAsync(brand, false);
+            car.Id.Should().Be(0);
+            brand.Id.Should().Be(0);
 
-//            Car car = new Car()
-//            {
-//                Name = "C4",
-//                Brand = brand
-//            };
+            int saveResult = await uo.CommitAsync();
 
-//            _ = await carRepository.AddAsync(car, false);
+            saveResult.Should().Be(3);
 
-//            car.Id.Should().Be(0);
-//            brand.Id.Should().Be(0);
+            car.Id.Should().BePositive();
+            brand.Id.Should().BePositive();
 
-//            int saveResult = await uo.CommitAsync();
+            var brandSearch = await brandService.QueryAsync(new BasicBrandQuery());
+            brandSearch.Results.Should().HaveCount(1);
 
-//            saveResult.Should().Be(3);
+            var query = new BasicCarQuery();
+            query.AddInclude(x => x.Brand);
 
-//            car.Id.Should().BePositive();
-//            brand.Id.Should().BePositive();
+            var carSearch = await carService.QueryAsync(query);
+            carSearch.Results.Should().HaveCount(1);
+            carSearch.Results[0].Name.Should().Be("C4");
+            carSearch.Results[0].Brand.Name.Should().Be("Citroen");
+        }
 
-//            var brandSearch = await brandService.QueryAsync(new BasicBrandQuery());
-//            brandSearch.Results.Should().HaveCount(1);
+        [Fact]
+        public async Task CreationUnitOfWork_ErrorTest()
+        {
+            IBrandService brandService = Resolve<IBrandService>();
 
-//            var query = new BasicCarQuery();
-//            query.AddInclude(x => x.Brand);
+            Brand brand = new()
+            {
+                Name = "Citroen",
+                Country = new Country()
+                {
+                    Name = "France",
+                    CountryCode = "FR"
+                }
+            };
 
-//            var carSearch = await carService.QueryAsync(query);
-//            carSearch.Results.Should().HaveCount(1);
-//            carSearch.Results.First().Name.Should().Be("C4");
-//            carSearch.Results.First().Brand.Name.Should().Be("Citroen");
-//        }
+            IUnitOfWork uo = Resolve<IUnitOfWork>();
 
-//        [Fact]
-//        public async Task CreationUnitOfWork_ErrorTest()
-//        {
-//            Brand brand = new Brand()
-//            {
-//                Name = "Citroen",
-//                Country = new Country()
-//                {
-//                    Name = "France",
-//                    CountryCode = "FR"
-//                }
-//            };
+            var brandRepository = uo.GetRepository<Brand>();
+            var carRepository = uo.GetRepository<Car>();
 
-//            IUnitOfWork uo = Resolve<IUnitOfWork>();
+            await brandRepository.AddAsync(brand, false);
 
-//            var brandRepository = uo.GetRepository<Brand>();
-//            var carRepository = uo.GetRepository<Car>();
+            Car car = new()
+            {
+                Name = "C4",
+                Brand = brand
+            };
 
-//            var a = await brandRepository.AddAsync(brand, false);
+            Car car2 = new()
+            {
+                Name = "C4",
+                Brand = brand
+            };
 
-//            Car car = new Car()
-//            {
-//                Name = "C4",
-//                Brand = brand
-//            };
+            await carRepository.AddAsync(car, false);
+            await carRepository.AddAsync(car2, false);
 
-//            Car car2 = new Car()
-//            {
-//                Name = "C4",
-//                Brand = brand
-//            };
+            await uo.CommitAsync();
 
-//            var b = await carRepository.AddAsync(car, false);
-//            var c = await carRepository.AddAsync(car2, false);
+            var brandSearch = await brandService.QueryAsync(new BasicBrandQuery());
 
-//            int i = await uo.CommitAsync();
-
-//            var brandSearch = await brandService.QueryAsync(new BasicBrandQuery());
-//        }
-//    }
-//}
+            //todo Add Assert
+        }
+    }
+}

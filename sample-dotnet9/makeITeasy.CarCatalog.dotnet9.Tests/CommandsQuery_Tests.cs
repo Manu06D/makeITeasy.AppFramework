@@ -1,120 +1,110 @@
-﻿//using System;
-//using System.Linq;
-//using System.Threading.Tasks;
+﻿using FluentAssertions;
 
-//using FluentAssertions;
+using makeITeasy.AppFramework.Core.Commands;
+using makeITeasy.AppFramework.Core.Queries;
+using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
+using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries;
+using makeITeasy.CarCatalog.dotnet9.Tests.Catalogs;
+using makeITeasy.CarCatalog.dotnet9.Models;
 
-//using makeITeasy.AppFramework.Core.Commands;
-//using makeITeasy.AppFramework.Core.Queries;
-//using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
-//using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries;
-//using makeITeasy.CarCatalog.dotnet9.Tests.Catalogs;
-//using makeITeasy.CarCatalog.dotnet9.Infrastructure.Data;
-//using makeITeasy.CarCatalog.dotnet9.Models;
+using MediatR;
 
-//using MediatR;
+using Xunit;
+using makeITeasy.AppFramework.Core.Interfaces;
+using makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup;
 
-//using Xunit;
-//using makeITeasy.AppFramework.Core.Interfaces;
-//using makeITeasy.CarCatalog.dotnet9.Tests.TestConfig;
+namespace makeITeasy.CarCatalog.dotnet9.Tests
+{
+    public class CommandsQuery_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
+    {
+        [Fact]
+        public async Task GenericQueryCommand_BasicTest()
+        {
+            IMediator _mediator = Resolve<IMediator>();
 
-//namespace makeITeasy.CarCatalog.dotnet9.Tests
-//{
-//    public class CommandsQuery_Tests : UnitTestAutofacService<ServiceRegistrationAutofacModule>
-//    {
-//        private IMediator _mediator;
+            var carService = Resolve<ICarService>();
+            CommandResult<Car> newCarResult = await carService.CreateAsync(CarsCatalog.GetCars().First());
 
-//        public CommandsQuery_Tests()
-//        {
-//            _mediator = Resolve<IMediator>();
-//            var dataContext = Resolve<CarCatalogContext>();
+            newCarResult.Result.Should().Be(CommandState.Success);
 
-//            dataContext.Database.EnsureCreated();
-//        }
+            QueryResult<Car> result = await _mediator.Send(new GenericQueryCommand<Car>(new BasicCarQuery() { ID = newCarResult.Entity.Id }));
 
-//        ~CommandsQuery_Tests()
-//        {
-//            _mediator = null;
-//        }
+            result.Results.Count.Should().Be(1);
+        }
 
-//        [Fact]
-//        public async Task GenericQueryCommand_BasicTest()
-//        {
-//            var carService = Resolve<ICarService>();
-//            CommandResult<Car> newCarResult = await carService.CreateAsync(TestCarsCatalog.GetCars().First());
+        [Fact]
+        public async Task GenericCreateCommand_BasicTest()
+        {
+            IMediator _mediator = Resolve<IMediator>();
 
-//            newCarResult.Result.Should().Be(CommandState.Success);
+            Car car = CarsCatalog.GetCars().First();
 
-//            QueryResult<Car> result = await _mediator.Send(new GenericQueryCommand<Car>(new BasicCarQuery() { ID = newCarResult.Entity.Id }));
+            CommandResult<Car> createResult = await _mediator.Send(new CreateEntityCommand<Car>(car));
 
-//            result.Results.Count.Should().Be(1);
-//        }
+            createResult.Result.Should().Be(CommandState.Success);
+            createResult.Entity.Id.Should().BePositive();
 
-//        [Fact]
-//        public async Task GenericCreateCommand_BasicTest()
-//        {
-//            Car car = TestCarsCatalog.GetCars().First();
+            QueryResult<Car> searchResult = await _mediator.Send(new GenericQueryCommand<Car>(new BasicCarQuery() { ID = createResult.Entity.Id }));
+            searchResult.Results.Should().HaveCount(1);
+            searchResult.Results[0].Name.Should().Be(car.Name);
+        }
 
-//            CommandResult<Car> createResult = await _mediator.Send(new CreateEntityCommand<Car>(car));
+        [Fact]
+        public async Task GenericUpdateCommand_BasicTest()
+        {
+            IMediator _mediator = Resolve<IMediator>();
 
-//            createResult.Result.Should().Be(CommandState.Success);
-//            createResult.Entity.Id.Should().BePositive();
+            var carService = Resolve<ICarService>();
+            CommandResult<Car> newCarResult = await carService.CreateAsync(CarsCatalog.GetCars().First());
 
-//            QueryResult<Car> searchResult = await _mediator.Send(new GenericQueryCommand<Car>(new BasicCarQuery() { ID = createResult.Entity.Id }));
-//            searchResult.Results.Should().HaveCount(1);
-//            searchResult.Results[0].Name.Should().Be(car.Name);
-//        }
+            newCarResult.Result.Should().Be(CommandState.Success);
 
-//        [Fact]
-//        public async Task GenericUpdateCommand_BasicTest()
-//        {
-//            var carService = Resolve<ICarService>();
-//            CommandResult<Car> newCarResult = await carService.CreateAsync(TestCarsCatalog.GetCars().First());
+            Car car = newCarResult.Entity;
+            car.Name = $"car.Name{DateTime.Now.Ticks}";
 
-//            newCarResult.Result.Should().Be(CommandState.Success);
+            CommandResult<Car> updateResult = await _mediator.Send(new UpdateEntityCommand<Car>(car));
+            updateResult.Result.Should().Be(CommandState.Success);
 
-//            Car car = newCarResult.Entity;
-//            car.Name = $"car.Name{DateTime.Now.Ticks}";
+            QueryResult<Car> searchResult = await _mediator.Send(new GenericQueryCommand<Car>(new BasicCarQuery() { ID = car.Id }));
+            searchResult.Results.Should().HaveCount(1);
+            searchResult.Results[0].Name.Should().Be(car.Name);
+        }
 
-//            CommandResult<Car> updateResult = await _mediator.Send(new UpdateEntityCommand<Car>(car));
-//            updateResult.Result.Should().Be(CommandState.Success);
+        [Fact]
+        public async Task GenericFindUniqueCommand_BasicTest()
+        {
+            IMediator _mediator = Resolve<IMediator>();
 
-//            QueryResult<Car> searchResult = await _mediator.Send(new GenericQueryCommand<Car>(new BasicCarQuery() { ID = car.Id }));
-//            searchResult.Results.Should().HaveCount(1);
-//            searchResult.Results[0].Name.Should().Be(car.Name);
-//        }
+            var carService = Resolve<ICarService>();
+            CommandResult<Car> newCarResult = await carService.CreateAsync(CarsCatalog.GetCars().First(x => x.Name == "A3"));
 
-//        [Fact]
-//        public async Task GenericFindUniqueCommand_BasicTest()
-//        {
-//            var carService = Resolve<ICarService>();
-//            CommandResult<Car> newCarResult = await carService.CreateAsync(TestCarsCatalog.GetCars().First(x => x.Name == "A3"));
+            Car searchResult = await _mediator.Send(new GenericFindUniqueCommand<Car>(new BasicCarQuery() { Name = "A3" }));
+            searchResult.Should().NotBeNull();
+            searchResult.Name.Should().Be("A3");
 
-//            Car searchResult = await _mediator.Send(new GenericFindUniqueCommand<Car>(new BasicCarQuery() { Name = "A3" }));
-//            searchResult.Should().NotBeNull();
-//            searchResult.Name.Should().Be("A3");
+            searchResult = await _mediator.Send(new GenericFindUniqueCommand<Car>(new BasicCarQuery() { Name = "XX" }));
+            searchResult.Should().BeNull();
+        }
 
-//            searchResult = await _mediator.Send(new GenericFindUniqueCommand<Car>(new BasicCarQuery() { Name = "XX" }));
-//            searchResult.Should().BeNull();
-//        }
+        public class SmallCarInfo : IMapFrom<Car>
+        {
+            public string Name { get; set; }
+        }
 
-//        public class SmallCarInfo : IMapFrom<Car>
-//        {
-//            public string Name { get; set; }
-//        }
+        [Fact]
+        public async Task GenericFindUniqueCommandWithProject_BasicTest()
+        {
+            IMediator _mediator = Resolve<IMediator>();
 
-//        [Fact]
-//        public async Task GenericFindUniqueCommandWithProject_BasicTest()
-//        {
-//            var carService = Resolve<ICarService>();
-//            CommandResult<Car> newCarResult = await carService.CreateAsync(TestCarsCatalog.GetCars().First(x => x.Name == "A3"));
+            var carService = Resolve<ICarService>();
+            CommandResult<Car> newCarResult = await carService.CreateAsync(CarsCatalog.GetCars().First(x => x.Name == "A3"));
 
-//            SmallCarInfo searchResult = await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, SmallCarInfo>(new BasicCarQuery() { Name = "A3" }));
-//            searchResult.Should().NotBeNull();
-//            searchResult.Name.Should().Be("A3");
+            SmallCarInfo searchResult = await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, SmallCarInfo>(new BasicCarQuery() { Name = "A3" }));
+            searchResult.Should().NotBeNull();
+            searchResult.Name.Should().Be("A3");
 
-//            searchResult = await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, SmallCarInfo>(new BasicCarQuery() { Name = "XX" }));
-//            searchResult.Should().BeNull();
-//        }
-//    }
-//}
+            searchResult = await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, SmallCarInfo>(new BasicCarQuery() { Name = "XX" }));
+            searchResult.Should().BeNull();
+        }
+    }
+}

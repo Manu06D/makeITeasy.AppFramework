@@ -39,15 +39,18 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup
         {
             //var network = new NetworkBuilder().Build();
 
-            //var msSqlContainer =
-            //    new MsSqlBuilder().WithNetwork(network)
-            //     .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
-            //     //.WithPassword("sa")
-            //    //.WithReuse(true)
-            //    .Build();
-            //await msSqlContainer.StartAsync();
+            var msSqlContainer =
+                new MsSqlBuilder()
+                 //.WithNetwork(network)
+                 .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+                //.WithPassword("sa")
+                .WithReuse(true)
+                //todo change label
+                .WithLabel("reuse-id", "aaaa")
+                .Build();
+            await msSqlContainer.StartAsync();
 
-            //connectionString = msSqlContainer.GetConnectionString();
+            connectionString = msSqlContainer.GetConnectionString();
 
             var builder = new Autofac.ContainerBuilder();
             builder.RegisterModule(new ServiceRegistrationAutofacModule() { DatabaseConnectionString = connectionString });
@@ -59,9 +62,9 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup
             t.Database.EnsureCreated();
         }
 
-        public ValueTask DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
-            return ValueTask.CompletedTask;
+            await container.DisposeAsync();
         }
 
         protected TEntity Resolve<TEntity>()
