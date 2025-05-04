@@ -82,7 +82,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup
             connectionString = msSqlContainer.GetConnectionString();
 
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new ServiceRegistrationAutofacModule() { DatabaseConnectionString = connectionString });
+            builder.RegisterModule(new ServiceRegistrationAutofacModule() { DatabaseConnectionString = connectionString, DatabaseType = DatabaseEngineFixture.CurentDatabaseType });
             if(modules?.Count > 0)
             {
                 foreach (var module in modules)

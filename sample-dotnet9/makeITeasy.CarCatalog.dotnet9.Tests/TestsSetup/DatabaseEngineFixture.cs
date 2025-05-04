@@ -10,7 +10,8 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup
     {
         Unknown,
         MsSql,
-        SqlLite
+        SqlLite,
+        CosmosDb
     }
 
     public class DatabaseEngineFixture : IDisposable
@@ -19,7 +20,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup
 
         public DatabaseEngineFixture()
         {
-            CurentDatabaseType = DatabaseType.MsSql;
+            CurentDatabaseType = DatabaseType.SqlLite;
         }
 
         public void Dispose()
