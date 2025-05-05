@@ -150,7 +150,7 @@ namespace makeITeasy.AppFramework.Core.Services
             {
                 var validationResult = _validator.Validate(entity);
 
-                if (!validationResult.IsValid)
+                if (validationResult?.IsValid == false)
                 {
                     string validationErrorMessage = string.Join(",", validationResult.Errors.Select(x => x.ErrorMessage).ToArray());
 

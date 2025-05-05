@@ -3,10 +3,13 @@ using Autofac.Extras.Moq;
 
 using FluentAssertions;
 
+using FluentValidation;
+
 using makeITeasy.CarCatalog.dotnet9.Core.Ports;
 using makeITeasy.CarCatalog.dotnet9.Core.Services;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet9.Infrastructure.Data;
+using makeITeasy.CarCatalog.dotnet9.Models;
 using makeITeasy.CarCatalog.dotnet9.Models.Custom;
 
 using Microsoft.Extensions.Logging;
@@ -39,8 +42,8 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             {
                 CarCatalogContext dbContext = autoMock.Create<CarCatalogContext>();
                 dbContext.Database.EnsureCreated();
-                ICarService carService = autoMock.Create<ICarService>();
 
+                ICarService carService = autoMock.Create<ICarService>();
                 List<BrandGroupByCarCount> brands = await carService.GetBrandWithCountAsync();
 
                 loggerMock.Verify(
