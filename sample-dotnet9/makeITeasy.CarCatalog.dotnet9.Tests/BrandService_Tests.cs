@@ -69,9 +69,9 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public void MissingValidator_Test()
         {
-            IBrandService brandService = Resolve<IBrandService>();
+            ICountryService countryService = Resolve<ICountryService>();
 
-            var newBrand = new Brand
+            var newCountry = new Country
             {
                 Name = "x"
             };

@@ -15,44 +15,36 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 {
     public class RowVersion_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
     {
-        //        private ICarService carService;
-
-        //        public RowVersion_Tests()
-        //        {
-        //            carService = Resolve<ICarService>();
-        //            var t = Resolve<CarCatalogContext>();
-
-        //            t.Database.EnsureCreated();
-
-        //            t.Database.ExecuteSqlRaw(@"CREATE TRIGGER CreateCarVersion  AFTER INSERT ON Car  BEGIN  UPDATE Car SET Version = 1 WHERE rowid = NEW.rowid;  END");
-        //            t.Database.ExecuteSqlRaw("CREATE TRIGGER UpdateCarVersion AFTER UPDATE ON Car BEGIN UPDATE Car SET Version = Version + 1 WHERE rowid = NEW.rowid; END;");
-        //        }
-
         [Fact]
         public async Task CreateAndGet_BasicRowVersionTest()
         {
-            ICarService carService = Resolve<ICarService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
+            if (DatabaseEngineFixture.CurentDatabaseType == DatabaseType.MsSql)
+            {
+                ICarService carService = Resolve<ICarService>();
+                string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
 
-            var result = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
+                var result = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
 
-            result.Result.Should().Be(CommandState.Success);
+                result.Result.Should().Be(CommandState.Success);
 
-            await Task.Delay(25);
+                await Task.Delay(25, TestContext.Current.CancellationToken);
 
-            var afterFirstUpdateQueryResult = await carService.QueryAsync(new BasicCarQuery() { ID = result.Entity.Id }, includeCount: true);
+                Car carAfterFirstUpdate = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = result.Entity!.Id });
 
-            //afterFirstUpdateQueryResult.Results.First().Version.Should().BeGreaterThan(0);
+                //afterFirstUpdateQueryResult.Results.First().Version.Should().BeGreaterThan(0);
 
-            afterFirstUpdateQueryResult.Results.First().Name += "XX";
-            result = await carService.UpdateAsync(afterFirstUpdateQueryResult.Results.First());
+                string rowVersionOfCarAfterFirstUpdate = BitConverter.ToString(carAfterFirstUpdate.RowVersion);
 
-            await Task.Delay(25);
+                carAfterFirstUpdate.Name += "XX";
+                result = await carService.UpdateAsync(carAfterFirstUpdate);
 
-            var afterSecondUpdateQueryResult = await carService.QueryAsync(new BasicCarQuery() { ID = result.Entity.Id }, includeCount: true);
+                await Task.Delay(25, TestContext.Current.CancellationToken);
 
-            BitConverter.ToString(afterFirstUpdateQueryResult.Results.First().RowVersion).Should().NotBe(BitConverter.ToString(afterFirstUpdateQueryResult.Results.First().RowVersion));
-            //afterFirstUpdateQueryResult.Results.First().Version.Should().NotBe(afterSecondUpdateQueryResult.Results.First().Version);
+                Car afterSecondUpdateQueryResult = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = result.Entity.Id });
+                string rowVersionOfCarAfterSecondUpdate = BitConverter.ToString(afterSecondUpdateQueryResult.RowVersion);
+
+                rowVersionOfCarAfterSecondUpdate.Should().NotBe(rowVersionOfCarAfterFirstUpdate);
+            }
         }
 
         [Fact]
@@ -65,7 +57,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             result.Result.Should().Be(CommandState.Success);
 
-            //await Task.Delay(25);
+            await Task.Delay(25);
 
             ////var afterFirstUpdateQueryResult = await carService.QueryAsync(new BasicCarQuery() { ID = result.Entity.Id }, includeCount: true);
 

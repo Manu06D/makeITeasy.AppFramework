@@ -29,9 +29,10 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             cars[0].Name += "Update";
             CommandResult<Car> modificationResult = await carService.UpdateAsync(cars.First());
+            modificationResult.Result.Should().Be(CommandState.Success);
+            modificationResult.Entity!.Name.Should().EndWith(suffix + "Update");
 
             Car modifiedCar = await carService.GetFirstByQueryAsync(new BasicCarQuery() { NameSuffix = suffix + "Update", IncludeBrandAndCountry = true });
-            modificationResult.Entity.Name.Should().EndWith(suffix + "Update");
 
             modifiedCar.LastModificationDate.Should().NotBeNull().And.Be(modificationResult.Entity.LastModificationDate).And.BeAfter(modificationDate);
 
@@ -86,10 +87,13 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             var dbCreation = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
             DateTime dateTimeAfterSave = DateTime.Now;
 
+            dbCreation.Entity.Should().NotBeNull();
+
             DateTime? creationDateTime = dbCreation.Entity.CreationDate;
             DateTime? lastModificationDate = dbCreation.Entity.LastModificationDate;
 
             creationDateTime.Should().NotBeNull();
+            lastModificationDate.Should().NotBeNull();
             creationDateTime.Value.Should().Be(lastModificationDate.Value).And.BeAfter(dateTimeBeforeSave).And.BeBefore(dateTimeAfterSave);
 
             var carQuery = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = dbCreation.Entity.Id });
@@ -115,14 +119,16 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             DateTime creationDateTime = DateTime.Now;
 
             CommandResult<Car> creationResult = await carService.CreateAsync(newCar);
+            creationResult.Result.Should().Be(CommandState.Success);
 
             newCar.Name += "X";
 
             await carService.UpdatePropertiesAsync(newCar, ["Name"]);
 
-            var tt = await carService.GetByIdAsync(newCar.Id);
+            Car? carAfterUpdate = await carService.GetByIdAsync(newCar.Id);
 
-            tt.LastModificationDate.GetValueOrDefault().Should().BeAfter(creationDateTime);
+            carAfterUpdate.Should().NotBeNull();
+            carAfterUpdate.LastModificationDate.GetValueOrDefault().Should().BeAfter(creationDateTime);
         }
 
         [Fact]
@@ -133,12 +139,13 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             DateTime dateTimeOfTest = DateTime.Now;
 
-            Country country = new() { Name = "MyCountry", CountryCode = "MC", Brands = new List<Brand>() };
+            Country country = new() { Name = "MyCountry", CountryCode = "MC", Brands = [] };
 
-            country.Brands.Add(new Brand() { Name = "MyBrand", Cars = new List<Car>() { new Car() { Name = "MyCar" } } });
+            country.Brands.Add(new Brand() { Name = "MyBrand", Cars = [new Car() { Name = "MyCar" + suffix }] });
 
             var dbCreation = await countryService.CreateAsync(country);
 
+            dbCreation.Entity.Should().NotBeNull();
             dbCreation.Entity.Brands.Should().Match(x => x.All(y => y.CreationDate.HasValue && y.CreationDate > dateTimeOfTest));
         }
     }
