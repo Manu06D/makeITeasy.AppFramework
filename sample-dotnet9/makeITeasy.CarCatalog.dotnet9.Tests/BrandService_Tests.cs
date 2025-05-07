@@ -76,7 +76,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
                 Name = "x"
             };
 
-            brandService.Invoking(y => y.Validate(newBrand)).Should().Throw<ValidatorNotFoundException>();
+            countryService.Invoking(y => y.Validate(newCountry)).Should().Throw<ValidatorNotFoundException>();
         }
 
         [Fact]
