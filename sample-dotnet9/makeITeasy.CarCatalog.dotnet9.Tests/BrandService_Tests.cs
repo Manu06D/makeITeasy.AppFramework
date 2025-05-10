@@ -10,6 +10,7 @@ using makeITeasy.AppFramework.Core.Models.Exceptions;
 using System.Transactions;
 using makeITeasy.CarCatalog.dotnet9.Tests.Catalogs;
 using makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup;
+using makeITeasy.AppFramework.Core.Commands;
 
 namespace makeITeasy.CarCatalog.dotnet9.Tests
 {
@@ -116,6 +117,11 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
                         localSearch.Results.Where(x => x.Name.EndsWith(suffix)).Should().HaveCount(1);
 
                         var dbCreationResult = await brandService.CreateAsync(newBrand2);
+
+                        if (dbCreationResult.Result == CommandState.Error)
+                        {
+                            throw new Exception($"Error {dbCreationResult.Message}");
+                        }
 
                         scope.Complete();
 

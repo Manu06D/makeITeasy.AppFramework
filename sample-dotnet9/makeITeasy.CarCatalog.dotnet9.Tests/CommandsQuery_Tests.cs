@@ -81,13 +81,14 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             ICarService carService = Resolve<ICarService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
 
-            _ = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
+            CommandResult<Car> dbCreationResult = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
+            dbCreationResult.Result.Should().Be(CommandState.Success);
 
             Car searchResult = await _mediator.Send(new GenericFindUniqueCommand<Car>(new BasicCarQuery() { NameSuffix = suffix }), TestContext.Current.CancellationToken);
             searchResult.Should().NotBeNull();
             searchResult.Name.Should().StartWith("C4");
 
-            searchResult = await _mediator.Send(new GenericFindUniqueCommand<Car>(new BasicCarQuery() { Name = "XX" }), TestContext.Current.CancellationToken);
+            searchResult = await _mediator.Send(new GenericFindUniqueCommand<Car>(new BasicCarQuery() { Name = "XX" + suffix}), TestContext.Current.CancellationToken);
             searchResult.Should().BeNull();
         }
 
@@ -108,7 +109,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             searchResult.Should().NotBeNull();
             searchResult.Name.Should().Be("C4" + suffix);
 
-            searchResult = await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, SmallCarInfo>(new BasicCarQuery() { Name = "XX" }), TestContext.Current.CancellationToken);
+            searchResult = await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, SmallCarInfo>(new BasicCarQuery() { Name = "XX" + suffix }), TestContext.Current.CancellationToken);
             searchResult.Should().BeNull();
         }
     }

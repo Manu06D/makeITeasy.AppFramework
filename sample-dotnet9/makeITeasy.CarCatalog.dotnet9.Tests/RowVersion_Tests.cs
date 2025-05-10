@@ -1,6 +1,4 @@
-﻿//using FluentAssertions;
-
-using FluentAssertions;
+﻿using FluentAssertions;
 
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
@@ -48,39 +46,40 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         }
 
         [Fact]
-        public async Task SameObjectUpdate_RowVersionTest()
+        public async Task RowVersion_Test()
         {
-            ICarService carService = Resolve<ICarService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
+            (ICarService carService, _, _, string suffix, _) = await CreateCarsAsync();
 
-            var result = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
+            //This will not work on sql server but work here on sql lite cause lack of support of rowversion
+            if (DatabaseEngineFixture.CurentDatabaseType == DatabaseType.MsSql)
+            {
+                Car firstCar = await carService.GetFirstByQueryAsync(new BasicCarQuery() { NameSuffix = suffix });
+                Car secondCar = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = firstCar.Id });
 
-            result.Result.Should().Be(CommandState.Success);
+                firstCar.Should().NotBeNull();
+                secondCar.Should().NotBeNull();
 
-            await Task.Delay(25);
+                string firstCarRowVersion = BitConverter.ToString(firstCar.RowVersion);
+                firstCarRowVersion.Should().Be(BitConverter.ToString(secondCar.RowVersion));
+                firstCar.RowVersion.Should().BeEquivalentTo(secondCar.RowVersion);
 
-            ////var afterFirstUpdateQueryResult = await carService.QueryAsync(new BasicCarQuery() { ID = result.Entity.Id }, includeCount: true);
+                firstCar!.Name += "Test";
+                await carService.UpdateAsync(firstCar);
 
-            ////afterFirstUpdateQueryResult.Results.First().Version.Should().BeGreaterThan(0);
+                //todo firstcar should been updated with new row
+                //firstCarRowVersion.Should().NotBeEquivalentTo(BitConverter.ToString(firstCar.RowVersion));
 
-            //result = await carService.UpdateAsync(afterFirstUpdateQueryResult.Results.First());
+                Car firstCarAterUpdate = await carService.GetFirstByQueryAsync(new BasicCarQuery() { NameSuffix = suffix + "Test" });
+                firstCarAterUpdate.Name.Should().EndWith("Test");
+                firstCarRowVersion.Should().NotBeEquivalentTo(BitConverter.ToString(firstCarAterUpdate.RowVersion));
 
-            //result.Result.Should().Be(CommandState.Success);
+                secondCar!.Name += " 2";
+                var updateResultProperty = await carService.UpdateAsync(secondCar);
+                updateResultProperty.Result.Should().Be(CommandState.Error);
 
-            //await Task.Delay(25);
-
-            //var afterSecondUpdateQueryResult = await carService.QueryAsync(new BasicCarQuery() { ID = result.Entity.Id }, includeCount: true);
-
-            //afterFirstUpdateQueryResult.Results.First().Version.Should().Be(afterSecondUpdateQueryResult.Results.First().Version);
-
-            //afterSecondUpdateQueryResult.Results.First().Name = "C4";
-
-            //result = await carService.UpdateAsync(afterSecondUpdateQueryResult.Results.First());
-
-            //var afterThirdUpdateQueryResult = await carService.QueryAsync(new BasicCarQuery() { ID = result.Entity.Id }, includeCount: true);
-
-            //afterThirdUpdateQueryResult.Results.First().Version.Should().BeGreaterThan(afterSecondUpdateQueryResult.Results.First().Version);
-
+                var carAfterUpdate = (await carService.GetFirstByQueryAsync(new BasicCarQuery() { NameSuffix = suffix += "Test" }));
+                carAfterUpdate.RowVersion.Should().BeEquivalentTo(firstCarAterUpdate.RowVersion);
+            }
         }
     }
 }

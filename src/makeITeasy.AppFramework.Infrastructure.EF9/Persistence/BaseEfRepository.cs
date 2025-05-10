@@ -407,12 +407,24 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
         /// <returns></returns>
         public async Task<CommandResult<T>> UpdateAsync(T entity, bool saveChanges = true)
         {
-            var dbContext = GetDbContext();
+            U dbContext = GetDbContext();
+            EntityEntry<T> entityEntry = dbContext.Entry(entity);
 
-            if (dbContext.Entry(entity).State == EntityState.Detached)
+            if (entityEntry.State == EntityState.Detached)
             {
                 //This can be an issue if input entity is not fully filled with database value. Data can be lost !!
                 T? databaseEntity = await dbContext.FindAsync<T>(entity.DatabaseID);
+
+                foreach (var rawVersionProperty in entityEntry?.Metadata?.GetProperties()?.Where(p => p.IsConcurrencyToken && p.ClrType == typeof(byte[])))
+                {
+                    var newValue = entityEntry!.Property(rawVersionProperty.Name).CurrentValue as byte[];
+                    var dbValue = typeof(T)?.GetProperty(rawVersionProperty.Name)?.GetValue(databaseEntity) as byte[];
+
+                    if (newValue?.SequenceEqual(dbValue) == false)
+                    {
+                        return new CommandResult<T>(CommandState.Error, "The entity has been modified by another user. Please reload the entity and try again.");
+                    }
+                }
 
                 if (databaseEntity != null)
                 {

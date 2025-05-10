@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Xunit;
 using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup;
+using Microsoft.Azure.Cosmos.Linq;
 
 namespace makeITeasy.CarCatalog.dotnet9.Tests
 {
@@ -476,38 +477,6 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             carAfterUpdate.Should().NotBeNull();
             carAfterUpdate!.Name.Should().EndWith(nameSuffix);
-        }
-
-        [Fact]
-        public async Task RowVersion_Test()
-        {
-            (ICarService carService, _, _, string suffix, _) = await CreateCarsAsync();
-
-            //This will not work on sql server but work here on sql lite cause lack of support of rowversion
-            if (DatabaseEngineFixture.CurentDatabaseType == DatabaseType.MsSql)
-            {
-                Car firstCar = await carService.GetFirstByQueryAsync(new BasicCarQuery() { NameSuffix = suffix });
-                Car secondCar = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = firstCar.Id });
-
-                firstCar.Should().NotBeNull();
-                secondCar.Should().NotBeNull();
-                BitConverter.ToString(firstCar.RowVersion).Should().Be(BitConverter.ToString(secondCar.RowVersion));
-                firstCar.RowVersion.Should().BeEquivalentTo(secondCar.RowVersion);
-
-                firstCar!.Name += "Test";
-                await carService.UpdateAsync(firstCar);
-
-                Car firstCarAterUpdate = await carService.GetFirstByQueryAsync(new BasicCarQuery() { NameSuffix = suffix });
-                firstCarAterUpdate.Name.Should().EndWith("Test");
-
-                secondCar!.Name += " 2";
-                var updateResultProperty = await carService.UpdateAsync(secondCar);
-
-                updateResultProperty.Result.Should().Be(CommandState.Success);
-
-                var carAfterUpdate = (await carService.GetFirstByQueryAsync(new BasicCarQuery() { NameSuffix = suffix }));
-                carAfterUpdate.Name.Should().Be(firstCar.Name);
-            }
         }
 
         [Fact]
