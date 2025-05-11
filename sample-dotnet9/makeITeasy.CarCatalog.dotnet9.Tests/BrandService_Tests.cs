@@ -87,7 +87,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             if (DatabaseEngineFixture.CurentDatabaseType == DatabaseType.MsSql)
             {
                 IBrandService brandService = Resolve<IBrandService>();
-                string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
+                string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
                 var newBrand = new Brand
                 {
@@ -175,8 +175,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
                     Includes =
                         [
                             x => x.Cars.Where(x => x.Name.EndsWith(suffix)),
-                            x => x.Cars
-                        ],
+                        ]
                 }
                 , includeCount: true);
 

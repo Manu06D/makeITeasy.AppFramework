@@ -19,7 +19,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             if (DatabaseEngineFixture.CurentDatabaseType == DatabaseType.MsSql)
             {
                 ICarService carService = Resolve<ICarService>();
-                string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
+                string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
                 var result = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
 

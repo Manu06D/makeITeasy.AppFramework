@@ -22,7 +22,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         {
             ICarService carService = Resolve<ICarService>();
             IBrandService brandService = Resolve<IBrandService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             Brand brand = new()
             {
@@ -63,7 +63,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         {
             ICarService carService = Resolve<ICarService>();
             IBrandService brandService = Resolve<IBrandService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             Brand brand = new()
             {
@@ -116,7 +116,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         public async Task CreationUnitOfWork_ErrorTest()
         {
             IBrandService brandService = Resolve<IBrandService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             Brand brand = new()
             {

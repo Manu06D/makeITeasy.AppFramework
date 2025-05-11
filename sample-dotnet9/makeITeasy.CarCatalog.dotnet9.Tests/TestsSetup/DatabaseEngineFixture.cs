@@ -20,7 +20,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup
 
         public DatabaseEngineFixture()
         {
-            CurentDatabaseType = DatabaseType.MsSql;
+            CurentDatabaseType = DatabaseType.SqlLite;
         }
 
         public void Dispose()

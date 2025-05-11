@@ -46,7 +46,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         public async Task CustomerDateTimeProviderWithGenericService_DateTime()
         {
             ICountryService countryService = Resolve<ICountryService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             var car = await countryService.CreateAsync(new Country() { Name = "FR" + suffix, CountryCode = "FR" });
 

@@ -8,6 +8,7 @@ using Xunit;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries;
 using makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup;
 using makeITeasy.CarCatalog.dotnet9.Tests.Catalogs;
+using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.BrandQueries;
 
 namespace makeITeasy.CarCatalog.dotnet9.Tests
 {
@@ -36,14 +37,14 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             modifiedCar.LastModificationDate.Should().NotBeNull().And.Be(modificationResult.Entity.LastModificationDate).And.BeAfter(modificationDate);
 
-            modifiedCar.Brand.Country.LastModificationDate.Should().NotBeNull().And.Be(creationDateTime).And.BeBefore(modificationDate);
+            modifiedCar.Brand.Country.LastModificationDate.Should().NotBeNull().And.BeAfter(creationDateTime).And.BeBefore(modificationDate);
         }
 
         [Fact]
         public async Task CreationRangeDate_BasicTest()
         {
             ICarService carService = Resolve<ICarService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             var dbCreation = await carService.CreateRangeAsync(new List<Car>() { CarsCatalog.CitroenC4(suffix), CarsCatalog.CitroenC5(suffix) });
 
@@ -51,13 +52,43 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         }
 
         [Fact]
-        public async Task UpdateNofields_Test()
+        public async Task EntityWithRowVersion_UpdateNofields_Test()
         {
-            ICarService carService = Resolve<ICarService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
+            if (DatabaseEngineFixture.CurentDatabaseType == DatabaseType.MsSql)
+            {
+                ICarService carService = Resolve<ICarService>();
+                string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+
+                DateTime dateTimeBeforeSave = DateTime.Now;
+                var dbCreation = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
+                DateTime dateTimeAfterSave = DateTime.Now;
+
+                DateTime? creationDateTime = dbCreation.Entity.CreationDate;
+                DateTime? lastModificationDate = dbCreation.Entity.LastModificationDate;
+
+                creationDateTime.Should().NotBeNull();
+                creationDateTime.Value.Should().Be(lastModificationDate.Value).And.BeAfter(dateTimeBeforeSave).And.BeBefore(dateTimeAfterSave);
+
+                var carQuery = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = dbCreation.Entity.Id });
+
+                await carService.UpdateAsync(carQuery);
+
+                carQuery = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = dbCreation.Entity.Id });
+
+                carQuery.CreationDate.Should().Be(dbCreation.Entity.CreationDate);
+
+                carQuery.LastModificationDate.Value.Should().BeAfter(dbCreation.Entity.LastModificationDate.Value);
+            }
+        }
+
+        [Fact]
+        public async Task Entity_UpdateNofields_Test()
+        {
+            IBrandService brandService = Resolve<IBrandService>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             DateTime dateTimeBeforeSave = DateTime.Now;
-            var dbCreation = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
+            var dbCreation = await brandService.CreateAsync(CarsCatalog.Citroen(suffix));
             DateTime dateTimeAfterSave = DateTime.Now;
 
             DateTime? creationDateTime = dbCreation.Entity.CreationDate;
@@ -66,11 +97,11 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             creationDateTime.Should().NotBeNull();
             creationDateTime.Value.Should().Be(lastModificationDate.Value).And.BeAfter(dateTimeBeforeSave).And.BeBefore(dateTimeAfterSave);
 
-            var carQuery = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = dbCreation.Entity.Id });
+            var carQuery = await brandService.GetFirstByQueryAsync(new BasicBrandQuery() { ID = dbCreation.Entity.Id });
 
-            await carService.UpdateAsync(carQuery);
+            await brandService.UpdateAsync(carQuery);
 
-            carQuery = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = dbCreation.Entity.Id });
+            carQuery = await brandService.GetFirstByQueryAsync(new BasicBrandQuery() { ID = dbCreation.Entity.Id });
 
             carQuery.CreationDate.Should().Be(dbCreation.Entity.CreationDate);
 
@@ -81,7 +112,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         public async Task UpdateWithfields_Test()
         {
             ICarService carService = Resolve<ICarService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             DateTime dateTimeBeforeSave = DateTime.Now;
             var dbCreation = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
@@ -98,7 +129,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             var carQuery = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = dbCreation.Entity.Id });
 
-            carQuery.Name = "XXXx";
+            carQuery.Name += "XXXx";
 
             DateTime dateBeforeUpdate = DateTime.Now;
             await carService.UpdateAsync(carQuery);
@@ -113,7 +144,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         public async Task UpdateProperties_LastModificationDateChanged()
         {
             ICarService carService = Resolve<ICarService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             Car newCar = CarsCatalog.CitroenC4(suffix);
             DateTime creationDateTime = DateTime.Now;
@@ -135,7 +166,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         public async Task CreationRangeDate_RecursiveTest()
         {
             ICountryService countryService = Resolve<ICountryService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             DateTime dateTimeOfTest = DateTime.Now;
 

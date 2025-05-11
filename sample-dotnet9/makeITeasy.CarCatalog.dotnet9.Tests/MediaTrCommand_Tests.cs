@@ -19,7 +19,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         public async Task CreateAndUpdateCommand_BasicTest()
         {
             IMediator mediator = Resolve<IMediator>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
             Car newCar = CarsCatalog.CitroenC4(suffix);
 
             var resultCreate = await mediator.Send(new CreateEntityCommand<Car>(newCar), TestContext.Current.CancellationToken);
@@ -43,7 +43,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         public async Task CreateAndDeleteCommand_BasicTest()
         {
             IMediator mediator = Resolve<IMediator>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
             Car car = CarsCatalog.CitroenC4(suffix);
 
             var resultCreate = await mediator.Send(new CreateEntityCommand<Car>(car), TestContext.Current.CancellationToken);

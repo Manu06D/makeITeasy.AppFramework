@@ -16,7 +16,6 @@ using Microsoft.EntityFrameworkCore;
 using Xunit;
 using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup;
-using Microsoft.Azure.Cosmos.Linq;
 
 namespace makeITeasy.CarCatalog.dotnet9.Tests
 {
@@ -83,7 +82,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         public async Task CreateAndGet_BasicTest()
         {
             ICarService carService = Resolve<ICarService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssffff");
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             Car entity = CarsCatalog.CitroenC4(suffix);
             var result = await carService.CreateAsync(entity);
@@ -353,11 +352,17 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task OrderFunction2Level_Tests()
         {
-            (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+
+            ICarService carService = Resolve<ICarService>();
+            IBrandService brandService = Resolve<IBrandService>();
+
+            Brand citroenBrand = CarsCatalog.Citroen(suffix);
+            await brandService.CreateAsync(citroenBrand);
 
             Car newCar = new()
             {
-                Name = "C6" + suffix,
+                Name = "C7" + suffix,
                 ReleaseYear = 2011,
                 BrandId = citroenBrand.Id
             };
@@ -366,7 +371,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             Car newCar2 = new()
             {
-                Name = "C7" + suffix,
+                Name = "C6" + suffix,
                 ReleaseYear = 2011,
                 BrandId = citroenBrand.Id
             };
@@ -384,6 +389,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             var getResult = await carService.QueryAsync(new BasicCarQuery()
             {
+                NameSuffix = suffix,
                 OrderBy = [
                     new(x => x.ReleaseYear),
                     new(x => x.Name)
@@ -391,26 +397,32 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             });
 
             getResult.Results.Select(x => x.ReleaseYear).Should().BeInAscendingOrder();
-            getResult.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear).Select(x => x.Name).Should().BeInAscendingOrder();
+            getResult.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear).Select(x => x.ReleaseYear).Should().BeInAscendingOrder();
+            getResult.Results.Where(x => x.ReleaseYear == 2011).Select(x => x.Name).Should().BeEquivalentTo(["C6" + suffix, "C7" + suffix, "C8" + suffix]);
 
-            var getResultFluent = await carService.QueryAsync(QueryBuilder.Create<BasicCarQuery, Car>().OrderBy(x => x.ReleaseYear).ThenOrderBy(x => x.Name).Build());
+            var getResultFluent = await carService.QueryAsync(QueryBuilder.Create<BasicCarQuery, Car>().Where(x => x.Name.EndsWith(suffix)).OrderBy(x => x.ReleaseYear).ThenOrderBy(x => x.Name).Build());
             getResultFluent.Results.Select(x => x.ReleaseYear).Should().BeInAscendingOrder();
-            getResultFluent.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear).Select(x => x.Name).Should().BeInAscendingOrder();
+            getResultFluent.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear).Select(x => x.ReleaseYear).Should().BeInAscendingOrder();
+            getResultFluent.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear && x.ReleaseYear == 2011).Select(x => x.Name).Should().BeInAscendingOrder();
 
-            BasicCarQuery specification = new() { };
+            BasicCarQuery specification = new() { NameSuffix = suffix };
             specification.AddOrder(new OrderBySpecification<Expression<Func<Car, object>>>(x => x.ReleaseYear, false));
             specification.AddOrder(new OrderBySpecification<Expression<Func<Car, object>>>(x => x.Name, true));
             getResult = await carService.QueryAsync(specification);
 
             getResult.Results.Select(x => x.ReleaseYear).Should().BeInAscendingOrder();
-            getResult.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear).Select(x => x.Name).Should().BeInDescendingOrder();
+            getResult.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear).Select(x => x.ReleaseYear).Should().BeInDescendingOrder();
+            getResult.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear && x.ReleaseYear == 2011).Select(x => x.Name).Should().BeInDescendingOrder();
 
-            getResultFluent = await carService.QueryAsync(QueryBuilder.Create<BasicCarQuery, Car>().OrderBy(x => x.ReleaseYear).ThenOrderBy(x => x.Name, true).Build());
+            getResultFluent = await carService.QueryAsync(QueryBuilder.Create<BasicCarQuery, Car>().Where(x => x.Name.EndsWith(suffix))
+                .OrderBy(x => x.ReleaseYear).ThenOrderBy(x => x.Name, true).Build());
             getResultFluent.Results.Select(x => x.ReleaseYear).Should().BeInAscendingOrder();
-            getResultFluent.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear).Select(x => x.Name).Should().BeInDescendingOrder();
+            getResultFluent.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear).Select(x => x.ReleaseYear).Should().BeInDescendingOrder();
+            getResultFluent.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear && x.ReleaseYear == 2011).Select(x => x.Name).Should().BeInDescendingOrder();
 
             getResult = await carService.QueryAsync(new BasicCarQuery()
             {
+                NameSuffix = suffix,
                 OrderBy = [
                     new OrderBySpecification<Expression<Func<Car, object>>>(x => x.ReleaseYear) ,
                     new OrderBySpecification<Expression<Func<Car, object>>>(x => x.Name , true)
@@ -418,7 +430,8 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             });
 
             getResult.Results.Select(x => x.ReleaseYear).Should().BeInAscendingOrder();
-            getResult.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear).Select(x => x.Name).Should().BeInDescendingOrder();
+            getResult.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear).Select(x => x.ReleaseYear).Should().BeInDescendingOrder();
+            getResult.Results.Where(x => x.ReleaseYear == newCar.ReleaseYear && x.ReleaseYear == 2011).Select(x => x.Name).Should().BeInDescendingOrder();
         }
 
         [Fact]
