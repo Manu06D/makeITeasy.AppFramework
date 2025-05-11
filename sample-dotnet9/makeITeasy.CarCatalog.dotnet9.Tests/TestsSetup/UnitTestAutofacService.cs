@@ -72,10 +72,9 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup
                 new MsSqlBuilder()
                  //.WithNetwork(network)
                  .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
-                //.WithPassword("sa")
                 .WithReuse(true)
                 //todo change label
-                .WithLabel("reuse-id", "aaaa")
+                .WithLabel("reuse-id", "makeiteasyUnitTests")
                 .Build();
             await msSqlContainer.StartAsync();
 
