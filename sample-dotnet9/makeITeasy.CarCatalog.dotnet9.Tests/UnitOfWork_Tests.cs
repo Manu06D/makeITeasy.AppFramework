@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using FluentAssertions;
+﻿using FluentAssertions;
 
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Interfaces;
+using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.BrandQueries;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries;
-using makeITeasy.CarCatalog.dotnet9.Infrastructure.Data;
 using makeITeasy.CarCatalog.dotnet9.Models;
+using makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -20,31 +15,18 @@ using Xunit;
 
 namespace makeITeasy.CarCatalog.dotnet9.Tests
 {
-    public class UnitOfWork_Tests : UnitTestAutofacService<ServiceRegistrationAutofacModule>
+    public class UnitOfWork_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
     {
-        private ICarService carService;
-        private IBrandService brandService;
-
-        public UnitOfWork_Tests()
-        {
-            var t = Resolve<CarCatalogContext>();
-
-            t.Database.EnsureCreated();
-            carService = Resolve<ICarService>();
-            brandService = Resolve<IBrandService>();
-        }
-
-        ~UnitOfWork_Tests()
-        {
-            carService = null;
-        }
-
         [Fact]
         public async Task CreationUniqueName_ErrorTest()
         {
-            Brand brand = new Brand()
+            ICarService carService = Resolve<ICarService>();
+            IBrandService brandService = Resolve<IBrandService>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+
+            Brand brand = new()
             {
-                Name = "Citroen",
+                Name = "Citroen" + suffix,
                 Country = new Country()
                 {
                     Name = "France",
@@ -56,32 +38,36 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             brandCreationResult.Result.Should().Be(CommandState.Success);
             brand.Id.Should().BePositive();
 
-            Car car = new Car()
+            Car car = new()
             {
-                Name = "C4",
+                Name = "C4" + suffix,
                 BrandId = brand.Id
             };
 
             var carCreationResult = await carService.CreateAsync(car);
             carCreationResult.Result.Should().Be(CommandState.Success);
 
-            Car car2 = new Car()
+            Car car2 = new()
             {
-                Name = "C4",
+                Name = "C4" + suffix,
                 BrandId = brand.Id
             };
 
             Func<Task> act = async () => await carService.CreateAsync(car2);
 
-            act.Should().ThrowAsync<DbUpdateException>();
+            await act.Should().ThrowAsync<DbUpdateException>();
         }
 
         [Fact]
         public async Task CreationUnitOfWork_WorkingTest()
         {
-            Brand brand = new Brand()
+            ICarService carService = Resolve<ICarService>();
+            IBrandService brandService = Resolve<IBrandService>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+
+            Brand brand = new()
             {
-                Name = "Citroen",
+                Name = "Citroen" + suffix,
                 Country = new Country()
                 {
                     Name = "France",
@@ -96,9 +82,9 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             _ = await brandRepository.AddAsync(brand, false);
 
-            Car car = new Car()
+            Car car = new()
             {
-                Name = "C4",
+                Name = "C4" + suffix,
                 Brand = brand
             };
 
@@ -114,24 +100,27 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             car.Id.Should().BePositive();
             brand.Id.Should().BePositive();
 
-            var brandSearch = await brandService.QueryAsync(new BasicBrandQuery());
+            var brandSearch = await brandService.QueryAsync(new BasicBrandQuery() { NameSuffix = suffix});
             brandSearch.Results.Should().HaveCount(1);
 
-            var query = new BasicCarQuery();
+            var query = new BasicCarQuery() { NameSuffix = suffix};
             query.AddInclude(x => x.Brand);
 
             var carSearch = await carService.QueryAsync(query);
             carSearch.Results.Should().HaveCount(1);
-            carSearch.Results.First().Name.Should().Be("C4");
-            carSearch.Results.First().Brand.Name.Should().Be("Citroen");
+            carSearch.Results[0].Name.Should().Be("C4" + suffix);
+            carSearch.Results[0].Brand.Name.Should().Be("Citroen" + suffix);
         }
 
         [Fact]
         public async Task CreationUnitOfWork_ErrorTest()
         {
-            Brand brand = new Brand()
+            IBrandService brandService = Resolve<IBrandService>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+
+            Brand brand = new()
             {
-                Name = "Citroen",
+                Name = "Citroen" + suffix,
                 Country = new Country()
                 {
                     Name = "France",
@@ -144,26 +133,28 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             var brandRepository = uo.GetRepository<Brand>();
             var carRepository = uo.GetRepository<Car>();
 
-            var a = await brandRepository.AddAsync(brand, false);
+            await brandRepository.AddAsync(brand, false);
 
-            Car car = new Car()
+            Car car = new()
             {
-                Name = "C4",
+                Name = "C4" + suffix,
                 Brand = brand
             };
 
-            Car car2 = new Car()
+            Car car2 = new()
             {
-                Name = "C4",
+                Name = "C4" + suffix,
                 Brand = brand
             };
 
-            var b = await carRepository.AddAsync(car, false);
-            var c = await carRepository.AddAsync(car2, false);
+            await carRepository.AddAsync(car, false);
+            await carRepository.AddAsync(car2, false);
 
-            int i = await uo.CommitAsync();
+            int dbResult = await uo.CommitAsync();
 
-            var brandSearch = await brandService.QueryAsync(new BasicBrandQuery());
+            dbResult.Should().BeLessThanOrEqualTo(0);
+            QueryResult<Brand> brandSearch = await brandService.QueryAsync(new BasicBrandQuery() { NameSuffix = suffix});
+            brandSearch.Results.Should().HaveCount(0);
         }
     }
 }

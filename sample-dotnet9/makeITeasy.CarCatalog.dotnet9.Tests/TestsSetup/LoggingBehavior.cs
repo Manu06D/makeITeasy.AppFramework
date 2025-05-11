@@ -1,14 +1,10 @@
-﻿using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
-using makeITeasy.AppFramework.Core.Commands;
+﻿using makeITeasy.AppFramework.Core.Commands;
 
 using MediatR;
 
 using Microsoft.Extensions.Logging;
 
-namespace makeITeasy.CarCatalog.dotnet9.Tests
+namespace makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup
 {
     public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
     {

@@ -30,10 +30,13 @@ using Microsoft.Extensions.Logging;
 
 using Module = Autofac.Module;
 
-namespace makeITeasy.CarCatalog.dotnet9.Tests
+namespace makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup
 {
     public class ServiceRegistrationAutofacModule : Module
     {
+        public string? DatabaseConnectionString { get; set; }
+        public DatabaseType DatabaseType { get; set; }
+
         protected override void Load(ContainerBuilder builder)
         {
             var services = new ServiceCollection();
@@ -53,28 +56,34 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
                     typeof(Car).Assembly
             };
 
-            var sqlLiteMemoryConnection = new SqliteConnection("DataSource=:memory:");
-            sqlLiteMemoryConnection.Open();
 
             //services.AddDbContext<CarCatalogContext>(options =>
             _ = services.AddDbContextFactory<CarCatalogContext>(options =>
                         {
-                            options.UseSqlite(sqlLiteMemoryConnection);
                             options.AddInterceptors(new DatabaseInterceptor());
-                            //options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CarCatalog3;Trusted_Connection=True;MultipleActiveResultSets=true");
+
+                            if (DatabaseType == DatabaseType.MsSql)
+                            {
+                                options.UseSqlServer(DatabaseConnectionString);
+                            }
+                            else if (DatabaseType == DatabaseType.SqlLite)
+                            {
+                                var sqlLiteMemoryConnection = new SqliteConnection("DataSource=:memory:");
+                                sqlLiteMemoryConnection.Open();
+                                options.UseSqlite(sqlLiteMemoryConnection);
+                            }
+                            else if (DatabaseType == DatabaseType.CosmosDb)
+                            {
+                                options.UseCosmos(
+                                    "https://localhost:8081",
+                                    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+                                    databaseName: "OrdersDB");
+                            }
+
                             options.EnableSensitiveDataLogging(true);
+                            options.EnableDetailedErrors();
                             options.ConfigureWarnings(x => x.Ignore(RelationalEventId.AmbientTransactionWarning));
                         });
-
-            //_ = services.AddDbContextFactory<CarCatalogContext>(options =>
-            //{
-            //    options.UseCosmos(
-            //        "https://localhost:8081",
-            //        "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-            //        databaseName: "OrdersDB");
-            //    options.EnableSensitiveDataLogging(true);
-            //    options.EnableDetailedErrors();
-            //});
 
             services.AddValidatorsFromAssemblies(assembliesToScan);
             builder.Populate(services);

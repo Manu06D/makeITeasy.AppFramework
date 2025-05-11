@@ -1,8 +1,5 @@
 ﻿using FluentAssertions;
 
-using System;
-using System.Linq;
-
 using Xunit;
 
 namespace makeITeasy.CarCatalog.dotnet9.Tests

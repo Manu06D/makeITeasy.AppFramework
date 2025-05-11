@@ -2,63 +2,48 @@
 
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries;
-using makeITeasy.CarCatalog.dotnet9.Tests.Catalogs;
-using makeITeasy.CarCatalog.dotnet9.Infrastructure.Data;
 using makeITeasy.CarCatalog.dotnet9.Models;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using makeITeasy.CarCatalog.dotnet9.Tests.Catalogs;
+using makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup;
 
 using Xunit;
 
 namespace makeITeasy.CarCatalog.dotnet9.Tests
 {
-    public class RangeOperation_Tests : UnitTestAutofacService<ServiceRegistrationAutofacModule>
+    public class RangeOperation_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
     {
-        private ICarService carService;
-        private readonly List<Car> carList;
-
-        public RangeOperation_Tests()
-        {
-            carService = Resolve<ICarService>();
-            var t = Resolve<CarCatalogContext>();
-
-            t.Database.EnsureCreated();
-
-            carList = TestCarsCatalog.GetCars();
-        }
-
-        ~RangeOperation_Tests()
-        {
-            carService = null;
-        }
-
         [Fact]
         public async Task BasicRangeCreation_Test()
         {
-            (await carService.QueryAsync(new BasicCarQuery())).Results.Should().BeEmpty();
+            ICarService carService = Resolve<ICarService>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
-            var createResult = await carService.CreateRangeAsync(carList);
+            (await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix })).Results.Should().BeEmpty();
+
+            var createResult = await carService.CreateRangeAsync([CarsCatalog.CitroenC4(suffix), CarsCatalog.CitroenC5(suffix)]);
 
             createResult.Should().Match(x => x.All(y => y.Result == AppFramework.Core.Commands.CommandState.Success));
 
-            (await carService.QueryAsync(new BasicCarQuery())).Results.Should().HaveCount(carList.Count);
+            (await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix})).Results.Should().HaveCount(2);
         }
 
         [Fact]
         public async Task BasicRangeCreationWithOneError_Test()
         {
-            (await carService.QueryAsync(new BasicCarQuery())).Results.Should().BeEmpty();
+            ICarService carService = Resolve<ICarService>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
-            carList[^1].Name = carList[0].Name;
+            (await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix })).Results.Should().BeEmpty();
 
-            Func<Task> action = async () => await carService.CreateRangeAsync(carList);
+            Car citroenC4 = CarsCatalog.CitroenC4(suffix);
+            Car citroenC5 = CarsCatalog.CitroenC5(suffix);
+            citroenC4.Name = citroenC5.Name;
+
+            Func<Task> action = async () => await carService.CreateRangeAsync([citroenC4, citroenC5]);
 
             action.Should().ThrowAsync<Exception>();
 
-            IList<Car> dbQueryResult = (await carService.QueryAsync(new BasicCarQuery() { Includes = new List<System.Linq.Expressions.Expression<Func<Car, object>>>() { x => x.Brand } })).Results;
+            IList<Car> dbQueryResult = (await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix, Includes = [x => x.Brand] })).Results;
 
             dbQueryResult.Should().BeEmpty();
         }
@@ -66,31 +51,37 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task RangeCreationWithInvalidObject_Test()
         {
-            (await carService.QueryAsync(new BasicCarQuery())).Results.Should().BeEmpty();
+            ICarService carService = Resolve<ICarService>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
-            carList[0].Name = "A";
+            (await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix })).Results.Should().BeEmpty();
 
-            var createResult = await carService.CreateRangeAsync(carList);
+            Car citroenC4 = CarsCatalog.CitroenC4(suffix);
+            Car citroenC5 = CarsCatalog.CitroenC5(suffix);
+            citroenC4.Name = "C";
 
-            createResult.Should().Match(x => x.Count(y => y.Result == AppFramework.Core.Commands.CommandState.Success) == carList.Count - 1)
+            var createResult = await carService.CreateRangeAsync([citroenC4, citroenC5]);
+
+            createResult.Should().Match(x => x.Count(y => y.Result == AppFramework.Core.Commands.CommandState.Success) == 1)
                 .And.Match(x => x.Count(y => y.Result == AppFramework.Core.Commands.CommandState.Error) == 1)
                 ;
 
-            var queryResult = await carService.QueryAsync(new BasicCarQuery());
+            var queryResult = await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix});
 
-            queryResult.Results.Should().HaveCount(carList.Count - 1);
+            queryResult.Results.Should().HaveCount(1);
         }
 
         [Fact]
         public async Task UpdateRange_BasicTest()
         {
-            var carList = TestCarsCatalog.GetCars();
+            ICarService carService = Resolve<ICarService>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
-            var dbCreation = await carService.CreateRangeAsync(carList);
+            var dbCreation = await carService.CreateRangeAsync([CarsCatalog.CitroenC4(suffix), CarsCatalog.CitroenC5(suffix)]);
 
             var udbUpdate = await carService.UpdateRangeAsync(x => x.Id > 0, x => new Car { Name = x.Name + "XX" });
 
-            var queryResult = await carService.QueryAsync(new BasicCarQuery());
+            var queryResult = await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix + "XX"});
 
             queryResult.Results.Should().Match(x => x.All(y => y.Name.EndsWith("XX")));
         }

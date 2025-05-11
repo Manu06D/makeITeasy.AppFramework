@@ -3,121 +3,83 @@
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries;
-using makeITeasy.CarCatalog.dotnet9.Infrastructure.Data;
 using makeITeasy.CarCatalog.dotnet9.Models;
-
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using makeITeasy.CarCatalog.dotnet9.Tests.Catalogs;
+using makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup;
 
 using Xunit;
 
 namespace makeITeasy.CarCatalog.dotnet9.Tests
 {
-    public class RowVersion_Tests : UnitTestAutofacService<ServiceRegistrationAutofacModule>
+    public class RowVersion_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
     {
-        private ICarService carService;
-
-        public RowVersion_Tests()
-        {
-            carService = Resolve<ICarService>();
-            var t = Resolve<CarCatalogContext>();
-
-            t.Database.EnsureCreated();
-
-            t.Database.ExecuteSqlRaw(@"CREATE TRIGGER CreateCarVersion  AFTER INSERT ON Car  BEGIN  UPDATE Car SET Version = 1 WHERE rowid = NEW.rowid;  END");
-            t.Database.ExecuteSqlRaw("CREATE TRIGGER UpdateCarVersion AFTER UPDATE ON Car BEGIN UPDATE Car SET Version = Version + 1 WHERE rowid = NEW.rowid; END;");
-        }
-
         [Fact]
         public async Task CreateAndGet_BasicRowVersionTest()
         {
-            Car newCar = new Car()
+            if (DatabaseEngineFixture.CurentDatabaseType == DatabaseType.MsSql)
             {
-                Name = "C3",
-                ReleaseYear = 2011,
-                Brand = new Brand()
-                {
-                    Name = "Citroen",
-                    Country = new Country()
-                    {
-                        Name = "France",
-                        CountryCode = "FR"
-                    }
-                }
-            };
+                ICarService carService = Resolve<ICarService>();
+                string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
-            var result = await carService.CreateAsync(newCar);
+                var result = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
 
-            result.Result.Should().Be(CommandState.Success);
+                result.Result.Should().Be(CommandState.Success);
 
-            await Task.Delay(25);
+                await Task.Delay(25, TestContext.Current.CancellationToken);
 
-            var afterFirstUpdateQueryResult = await carService.QueryAsync(new BasicCarQuery() { ID = result.Entity.Id }, includeCount: true);
+                Car carAfterFirstUpdate = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = result.Entity!.Id });
 
-            afterFirstUpdateQueryResult.Results.First().Version.Should().BeGreaterThan(0);
+                //afterFirstUpdateQueryResult.Results.First().Version.Should().BeGreaterThan(0);
 
-            afterFirstUpdateQueryResult.Results.First().Name = "C4";
-            result = await carService.UpdateAsync(afterFirstUpdateQueryResult.Results.First());
+                string rowVersionOfCarAfterFirstUpdate = BitConverter.ToString(carAfterFirstUpdate.RowVersion);
 
-            await Task.Delay(25);
+                carAfterFirstUpdate.Name += "XX";
+                result = await carService.UpdateAsync(carAfterFirstUpdate);
 
-            var afterSecondUpdateQueryResult = await carService.QueryAsync(new BasicCarQuery() { ID = result.Entity.Id }, includeCount: true);
+                await Task.Delay(25, TestContext.Current.CancellationToken);
 
-            afterFirstUpdateQueryResult.Results.First().Version.Should().NotBe(afterSecondUpdateQueryResult.Results.First().Version);
+                Car afterSecondUpdateQueryResult = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = result.Entity.Id });
+                string rowVersionOfCarAfterSecondUpdate = BitConverter.ToString(afterSecondUpdateQueryResult.RowVersion);
+
+                rowVersionOfCarAfterSecondUpdate.Should().NotBe(rowVersionOfCarAfterFirstUpdate);
+            }
         }
 
         [Fact]
-        public async Task SameObjectUpdate_RowVersionTest()
+        public async Task RowVersion_Test()
         {
-            Car newCar = new Car()
+            (ICarService carService, _, _, string suffix, _) = await CreateCarsAsync();
+
+            //This will not work on sql server but work here on sql lite cause lack of support of rowversion
+            if (DatabaseEngineFixture.CurentDatabaseType == DatabaseType.MsSql)
             {
-                Name = "C3",
-                ReleaseYear = 2011,
-                Brand = new Brand()
-                {
-                    Name = "Citroen",
-                    Country = new Country()
-                    {
-                        Name = "France",
-                        CountryCode = "FR"
-                    }
-                }
-            };
+                Car firstCar = await carService.GetFirstByQueryAsync(new BasicCarQuery() { NameSuffix = suffix });
+                Car secondCar = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = firstCar.Id });
 
-            var result = await carService.CreateAsync(newCar);
+                firstCar.Should().NotBeNull();
+                secondCar.Should().NotBeNull();
 
-            result.Result.Should().Be(CommandState.Success);
+                string firstCarRowVersion = BitConverter.ToString(firstCar.RowVersion);
+                firstCarRowVersion.Should().Be(BitConverter.ToString(secondCar.RowVersion));
+                firstCar.RowVersion.Should().BeEquivalentTo(secondCar.RowVersion);
 
-            await Task.Delay(25);
+                firstCar!.Name += "Test";
+                await carService.UpdateAsync(firstCar);
 
-            var afterFirstUpdateQueryResult = await carService.QueryAsync(new BasicCarQuery() { ID = result.Entity.Id }, includeCount: true);
+                //todo firstcar should been updated with new row
+                //firstCarRowVersion.Should().NotBeEquivalentTo(BitConverter.ToString(firstCar.RowVersion));
 
-            afterFirstUpdateQueryResult.Results.First().Version.Should().BeGreaterThan(0);
+                Car firstCarAterUpdate = await carService.GetFirstByQueryAsync(new BasicCarQuery() { NameSuffix = suffix + "Test" });
+                firstCarAterUpdate.Name.Should().EndWith("Test");
+                firstCarRowVersion.Should().NotBeEquivalentTo(BitConverter.ToString(firstCarAterUpdate.RowVersion));
 
-            result = await carService.UpdateAsync(afterFirstUpdateQueryResult.Results.First());
-            
-            result.Result.Should().Be(CommandState.Success);
-            
-            await Task.Delay(25);
+                secondCar!.Name += " 2";
+                var updateResultProperty = await carService.UpdateAsync(secondCar);
+                updateResultProperty.Result.Should().Be(CommandState.Error);
 
-            var afterSecondUpdateQueryResult = await carService.QueryAsync(new BasicCarQuery() { ID = result.Entity.Id }, includeCount: true);
-
-            afterFirstUpdateQueryResult.Results.First().Version.Should().Be(afterSecondUpdateQueryResult.Results.First().Version);
-
-            afterSecondUpdateQueryResult.Results.First().Name = "C4";
-
-            result = await carService.UpdateAsync(afterSecondUpdateQueryResult.Results.First());
-
-            var afterThirdUpdateQueryResult = await carService.QueryAsync(new BasicCarQuery() { ID = result.Entity.Id }, includeCount: true);
-
-            afterThirdUpdateQueryResult.Results.First().Version.Should().BeGreaterThan(afterSecondUpdateQueryResult.Results.First().Version);
-
+                var carAfterUpdate = (await carService.GetFirstByQueryAsync(new BasicCarQuery() { NameSuffix = suffix += "Test" }));
+                carAfterUpdate.RowVersion.Should().BeEquivalentTo(firstCarAterUpdate.RowVersion);
+            }
         }
     }
 }

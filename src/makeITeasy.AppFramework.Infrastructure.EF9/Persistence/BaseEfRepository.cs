@@ -48,7 +48,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
                 return _dbContext;
             }
 
-            if(_dbFactory == null)
+            if (_dbFactory == null)
             {
                 throw new Exception("DBFactory has not been registered.");
             }
@@ -63,7 +63,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
                 //not so elegant, need to investigate on more suitable solution
                 Array a = (Array)id;
 
-                if(a == null)
+                if (a == null)
                 {
                     throw new Exception("An error has occured while casting the primary key");
                 }
@@ -123,7 +123,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
 
             (result.TotalItems, IQueryable<T>? filteredSet) = await CreateQueryableFromSpec(spec, GetDbContext(), includeCount);
 
-            if(filteredSet != null)
+            if (filteredSet != null)
             {
                 result.Results = await filteredSet.AsNoTracking().ToListAsync();
             }
@@ -269,13 +269,14 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
 
                 if (hasAnyChangeOnEntry)
                 {
-                    DateTime now = DateProvider?.Now ?? DateTime.Now;
+                    DateTime? modifiedDate = (DateTime) (entry?.Property(nameof(ITimeTrackingEntity.LastModificationDate))?.CurrentValue ?? DateProvider?.Now ?? DateTime.Now);
+                    modifiedDate ??= DateProvider?.Now ?? DateTime.Now;
 
-                    ((ITimeTrackingEntity)entry.Entity).LastModificationDate = now;
+                    ((ITimeTrackingEntity)entry.Entity).LastModificationDate = modifiedDate;
 
                     if (entry.State == EntityState.Added)
                     {
-                        ((ITimeTrackingEntity)entry.Entity).CreationDate = now;
+                        ((ITimeTrackingEntity)entry.Entity).CreationDate = modifiedDate;
                     }
                 }
             }
@@ -407,15 +408,21 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
         /// <returns></returns>
         public async Task<CommandResult<T>> UpdateAsync(T entity, bool saveChanges = true)
         {
-            var dbContext = GetDbContext();
+            U dbContext = GetDbContext();
+            EntityEntry<T> entityEntry = dbContext.Entry(entity);
 
-            if (dbContext.Entry(entity).State == EntityState.Detached)
+            if (entityEntry.State == EntityState.Detached)
             {
                 //This can be an issue if input entity is not fully filled with database value. Data can be lost !!
                 T? databaseEntity = await dbContext.FindAsync<T>(entity.DatabaseID);
 
                 if (databaseEntity != null)
                 {
+                    if (!ValidateConcurrencyUpdate(entityEntry, databaseEntity))
+                    {
+                        return new CommandResult<T>(CommandState.Error, "The entity has been modified by another user. Please reload the entity and try again.");
+                    }
+
                     PrepareEntityForDbOperation(entity, EntityState.Modified);
 
                     EntityEntry<T> ee = dbContext.Entry(databaseEntity);
@@ -429,6 +436,22 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
             return dbResult;
         }
 
+        private static bool ValidateConcurrencyUpdate(EntityEntry<T> entityEntry, T databaseEntity)
+        {
+            foreach (var rawVersionProperty in entityEntry?.Metadata?.GetProperties()?.Where(p => p.IsConcurrencyToken && p.ClrType == typeof(byte[])))
+            {
+                var newValue = entityEntry!.Property(rawVersionProperty.Name).CurrentValue as byte[];
+                var dbValue = typeof(T)?.GetProperty(rawVersionProperty.Name)?.GetValue(databaseEntity) as byte[];
+
+                if (newValue?.SequenceEqual(dbValue) == false)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         public async Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, Expression<Func<T, T>> updateExpression)
         {
 
@@ -437,7 +460,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
 
         public async Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] propertyNames, bool saveChanges = true)
         {
-            if (propertyNames == null || propertyNames.Length  == 0)
+            if (propertyNames == null || propertyNames.Length == 0)
             {
                 throw new ArgumentNullException(nameof(propertyNames));
             }

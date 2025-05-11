@@ -7,9 +7,10 @@ namespace makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.EngineQueries
     {
         public long? ID { get; set; }
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public int? MinimalHorspower { get; set; }
         public Tuple<string,  string>? Characteristic { get; set; }
+        public string? NameSuffix { get; set; }
 
         public override void BuildQuery()
         {
@@ -31,6 +32,11 @@ namespace makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.EngineQueries
             if (Characteristic is not null)
             {
                 AddFunctionToCriteria(x => x.Details.Characteristics.Any(x => x.Name == Characteristic.Item1 && x.Value == Characteristic.Item2));
+            }
+
+            if (!string.IsNullOrWhiteSpace(NameSuffix))
+            {
+                AddFunctionToCriteria(x => x.Name.EndsWith(NameSuffix));
             }
         }
     }

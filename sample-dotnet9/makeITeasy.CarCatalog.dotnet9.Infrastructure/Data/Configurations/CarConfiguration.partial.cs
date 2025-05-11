@@ -9,9 +9,9 @@ namespace makeITeasy.CarCatalog.dotnet9.Infrastructure.Data.Configurations
     {
         partial void OnConfigurePartial(EntityTypeBuilder<Car> entity)
         {
-            entity.Property(c => c.Version)
-            .HasDefaultValue(0)
-            .IsRowVersion();
+            //entity.Property(c => c.Version)
+            //.HasDefaultValue(0)
+            //.IsRowVersion();
         }
     }
 }
