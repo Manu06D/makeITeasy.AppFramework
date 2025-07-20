@@ -3,15 +3,12 @@ using Autofac.Extensions.DependencyInjection;
 
 using makeITeasy.AppFramework.Models;
 using makeITeasy.CarCatalog.dotnet9.WebApp.Components;
-using makeITeasy.CarCatalog.dotnet9.WebApp.Modules.Models;
 using makeITeasy.CarCatalog.dotnet9.WebApp.Modules.StartupModules;
 
 using Microsoft.AspNetCore.HttpLogging;
-using Microsoft.OpenApi.Models;
 
 using Radzen;
 
-using Scalar.AspNetCore;
 
 using System.Reflection;
 
@@ -54,14 +51,15 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+ 
 app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
+//uncomment to log all http
+//app.UseHttpLogging();
 app.EnableApiSupport();
-app.UseHttpLogging();
 
 app.Run();
