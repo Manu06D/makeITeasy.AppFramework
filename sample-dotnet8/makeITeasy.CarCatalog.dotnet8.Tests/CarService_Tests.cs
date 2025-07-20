@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-using FluentAssertions;
+using AwesomeAssertions;
 
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Interfaces;

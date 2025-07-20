@@ -11,13 +11,16 @@
 		<PackageReference Include="AutoMapper.Contrib.Autofac.DependencyInjection" Version="9.0.0" />
 		<PackageReference Include="EFCore.BulkExtensions.SqlServer" Version="9.0.1" />
 		<PackageReference Include="MediatR.Extensions.Autofac.DependencyInjection" Version="12.3.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="9.0.4" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.4" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.4" />
-		<PackageReference Include="Radzen.Blazor" Version="7.0.2" />
-		<PackageReference Include="Scalar.AspNetCore" Version="2.2.7" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="9.0.7" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.7" />
+		<PackageReference Include="Radzen.Blazor" Version="7.1.5" />
+		<PackageReference Include="Scalar.AspNetCore" Version="2.6.3" />
+		<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+		<PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>

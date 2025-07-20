@@ -1,4 +1,6 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using makeITeasy.CarCatalog.dotnet9.WebApp.Modules.Models;
+
+using Microsoft.OpenApi.Models;
 
 using Scalar.AspNetCore;
 

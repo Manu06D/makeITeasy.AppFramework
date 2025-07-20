@@ -6,6 +6,8 @@ using makeITeasy.CarCatalog.dotnet9.Infrastructure.Data;
 using makeITeasy.CarCatalog.dotnet9.Models;
 using makeITeasy.CarCatalog.dotnet9.Tests.Catalogs;
 
+using Microsoft.Data.Sqlite;
+
 using Testcontainers.MsSql;
 
 using Xunit;
@@ -57,7 +59,6 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup
 
         public DatabaseFixture(DatabaseEngineFixture databaseEngineFixture, List<Type> modules = null)
         {
-            string s = "";
             DatabaseEngineFixture = databaseEngineFixture;
             this.modules = modules;
         }
@@ -68,28 +69,41 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup
         {
             //var network = new NetworkBuilder().Build();
 
-            var msSqlContainer =
-                new MsSqlBuilder()
-                 //.WithNetwork(network)
-                 .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
-                .WithReuse(true)
-                //todo change label
-                .WithLabel("reuse-id", "makeiteasyUnitTests")
-                .Build();
-            await msSqlContainer.StartAsync();
+            if (DatabaseEngineFixture.CurentDatabaseType == DatabaseType.MsSql)
+            {
+                var msSqlContainer =
+                    new MsSqlBuilder()
+                     //.WithNetwork(network)
+                     .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+                    .WithReuse(true)
+                    //todo change label
+                    .WithLabel("reuse-id", "makeiteasyUnitTests")
+                    .Build();
+                await msSqlContainer.StartAsync();
 
-            connectionString = msSqlContainer.GetConnectionString();
+                connectionString = msSqlContainer.GetConnectionString();
+            }
+            else if (DatabaseEngineFixture.CurentDatabaseType == DatabaseType.SqlLite)
+            {
+                var sqlLiteMemoryConnection = new SqliteConnection("DataSource=:memory:");
+                sqlLiteMemoryConnection.Open();
+
+                connectionString = sqlLiteMemoryConnection.ConnectionString;
+            }
+            else
+            {
+                throw new NotSupportedException("Unsupported database type");
+            }
 
             var builder = new ContainerBuilder();
             builder.RegisterModule(new ServiceRegistrationAutofacModule() { DatabaseConnectionString = connectionString, DatabaseType = DatabaseEngineFixture.CurentDatabaseType });
-            if(modules?.Count > 0)
+            if (modules?.Count > 0)
             {
                 foreach (var module in modules)
                 {
                     builder.RegisterModule(Activator.CreateInstance(module) as Module);
                 }
             }
-
             container = builder.Build();
 
             var t = Resolve<CarCatalogContext>();

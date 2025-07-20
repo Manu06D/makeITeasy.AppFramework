@@ -71,6 +71,8 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup
                                 var sqlLiteMemoryConnection = new SqliteConnection("DataSource=:memory:");
                                 sqlLiteMemoryConnection.Open();
                                 options.UseSqlite(sqlLiteMemoryConnection);
+                                //TODO : use strategy for database
+                                //options.UseSqlite(DatabaseConnectionString);
                             }
                             else if (DatabaseType == DatabaseType.CosmosDb)
                             {

@@ -1,6 +1,6 @@
 ﻿using Autofac;
 
-using FluentAssertions;
+using AwesomeAssertions;
 
 using makeITeasy.AppFramework.Models;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;

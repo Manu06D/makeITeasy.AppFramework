@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using AwesomeAssertions;
 
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries;
