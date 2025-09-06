@@ -1,0 +1,20 @@
+﻿@page "/apiCall"
+<h3>ApiCall</h3>
+
+<button onclick="OnClick">Call API</button>
+
+@code {
+
+    [Inject]
+    public required ILogger<ApiCall> logger { get; set; }
+
+    [Inject]
+    public required IHttpClientFactory httpClientFactory { get; set; }
+
+    protected override void OnInitialized() => logger.LogInformation("inside ApiCall.OnInitialized");
+
+    public async Task Onclick()
+    {
+        string s = "";
+    }
+}

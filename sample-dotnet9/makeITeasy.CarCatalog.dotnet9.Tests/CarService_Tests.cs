@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-using FluentAssertions;
+using AwesomeAssertions;
 
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Interfaces;

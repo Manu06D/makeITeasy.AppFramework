@@ -3,7 +3,7 @@ using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.CarCatalog.dotnet9.Models;
 using Xunit;
 using makeITeasy.CarCatalog.dotnet9.Models.Collections;
-using FluentAssertions;
+using AwesomeAssertions;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.BrandQueries;
 using makeITeasy.AppFramework.Core.Models.Exceptions;

@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using Autofac.Extras.Moq;
 
-using FluentAssertions;
+using AwesomeAssertions;
 
 using makeITeasy.CarCatalog.dotnet8.Core.Ports;
 using makeITeasy.CarCatalog.dotnet8.Core.Services;
