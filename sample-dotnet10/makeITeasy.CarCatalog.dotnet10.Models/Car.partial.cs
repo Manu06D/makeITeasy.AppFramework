@@ -33,6 +33,6 @@ namespace makeITeasy.CarCatalog.dotnet10.Models
         [JsonIgnore]
         public bool CurrentCentury => ReleaseYear >= 2000;
 
-        public CarType CarType { get; set; }
+        public CarType? CarType { get; set; }
     }
 }
