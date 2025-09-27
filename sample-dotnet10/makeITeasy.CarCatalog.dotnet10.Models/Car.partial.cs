@@ -5,6 +5,12 @@ using Newtonsoft.Json;
 
 namespace makeITeasy.CarCatalog.dotnet10.Models
 {
+    public enum CarType
+    {
+        Hatchback,
+        Break
+    }
+
     public partial class Car : ITimeTrackingEntity
     {
         public object DatabaseID => Id;
@@ -27,5 +33,6 @@ namespace makeITeasy.CarCatalog.dotnet10.Models
         [JsonIgnore]
         public bool CurrentCentury => ReleaseYear >= 2000;
 
+        public CarType CarType { get; set; }
     }
 }

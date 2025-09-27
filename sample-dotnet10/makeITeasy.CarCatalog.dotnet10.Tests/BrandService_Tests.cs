@@ -54,7 +54,6 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
             public string? Name { get; set; }
         }
 
-        [Fact]
         public async Task CreateAndGet_ListWith2LevelMappingTest()
         {
             (_, IBrandService brandService, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();

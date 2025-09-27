@@ -3,12 +3,11 @@ using AutoMapper.QueryableExtensions;
 
 using DelegateDecompiler.EntityFrameworkCore;
 
-using EFCore.BulkExtensions;
-using System.Linq.Dynamic.Core;
-
 using makeITeasy.AppFramework.Core.Commands;
+using makeITeasy.AppFramework.Core.Helpers;
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Core.Queries;
+using makeITeasy.AppFramework.Infrastructure.EF10.Persistence.Helpers;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.AppFramework.Models.Exceptions;
 
@@ -158,7 +157,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
             {
                 try
                 {
-                    filteredSet = filteredSet?.Where(spec.StringCriteria);
+                    filteredSet = filteredSet?.Where(ExpressionParser.ParsePredicate<T>(spec.StringCriteria, TypeFinder.FindType));
                 }
                 catch (Exception ex)
                 {
@@ -432,7 +431,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
         public async Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, Expression<Func<T, T>> updateExpression)
         {
 
-            return await GetDbContext().Set<T>().Where(entityPredicate).BatchUpdateAsync(updateExpression);
+            throw new NotImplementedException(nameof(UpdateRangeAsync));
         }
 
         public async Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] propertyNames, bool saveChanges = true)

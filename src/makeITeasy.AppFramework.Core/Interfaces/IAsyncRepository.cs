@@ -21,6 +21,7 @@ namespace makeITeasy.AppFramework.Core.Interfaces
         Task<CommandResult> DeleteAsync(T entity, bool saveChanges = true);
         Task<int> CountAsync(ISpecification<T> spec);
         Task<ICollection<T>> AddRangeAsync(ICollection<T> entities, bool saveChanges = true);
+        [Obsolete("This method was relying on a package that is not maintained anymore. Please perform update in your own repository.")]
         Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, Expression<Func<T, T>> updateExpression);
     }
 }

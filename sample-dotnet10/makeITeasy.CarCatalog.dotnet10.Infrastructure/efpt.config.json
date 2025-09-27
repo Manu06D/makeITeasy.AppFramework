@@ -1,10 +1,10 @@
 ﻿{
-   "CodeGenerationMode": 5,
+   "CodeGenerationMode": 6,
    "ContextClassName": "CarCatalogContext",
    "ContextNamespace": null,
    "FilterSchemas": false,
    "IncludeConnectionString": false,
-   "MinimumProductVersion": "2.6.1091",
+   "MinimumProductVersion": "2.6.1130",
    "ModelNamespace": "",
    "OutputContextPath": null,
    "OutputPath": "Data",

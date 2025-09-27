@@ -468,6 +468,22 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
 
             getResult.Results.Should().NotBeEmpty();
             getResult.Results.Count.Should().Be(2);
+
+            getResult = await carService.QueryAsync(new BasicCarQuery() { StringCriteria = "(Name == null ? \"\" : Name).Contains(\"" + suffix + "\")" });
+
+            getResult.Results.Should().NotBeEmpty();
+            getResult.Results.Count.Should().Be(2);
+        }
+
+        [Fact]
+        public async Task StringSelectorWithEnum_BasicTest()
+        {
+            (ICarService carService, _, _, string suffix, _) = await CreateCarsAsync();//
+
+            QueryResult<Car> getResult = await carService.QueryAsync(new BasicCarQuery() { StringCriteria = "x => (x.CarType == (makeITeasy.CarCatalog.dotnet10.Models.CarType)0)" });
+
+            getResult.Results.Should().NotBeEmpty();
+            getResult.Results.Count.Should().Be(1);
         }
 
         [Fact]

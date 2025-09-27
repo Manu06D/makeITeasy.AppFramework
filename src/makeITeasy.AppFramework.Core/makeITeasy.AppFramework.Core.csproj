@@ -10,6 +10,7 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
 		<PackageTags>framework ef</PackageTags>
+		<LangVersion>latest</LangVersion>
 		<Version>2.0.1</Version>
 		<PackageReleaseNotes>
 			2.0.1 : Update to .NET 8 and update dependencies
@@ -32,7 +33,6 @@
 		<DebugType>embedded</DebugType>
 		<EmbedAllSources>true</EmbedAllSources>
 		<Nullable>enable</Nullable>
-		<LangVersion>9.0</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -40,7 +40,7 @@
 		<PackageReference Include="AutoMapper" Version="14.0.0" />
 		<PackageReference Include="FluentValidation" Version="12.0.0" />
 		<PackageReference Include="MediatR" Version="12.5.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" />
 	</ItemGroup>
 
 	<ItemGroup>

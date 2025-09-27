@@ -10,7 +10,8 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests.Catalogs
             Name = "C4" + suffix,
             ReleaseYear = 2011,
             Brand = brand ?? (brandId.HasValue ? null : Citroen(suffix)),
-            BrandId = brandId ?? 0
+            BrandId = brandId ?? 0,
+            CarType = CarType.Hatchback
         };
 
         public static Car CitroenC5(string? suffix = "", Brand? brand = null, int? brandId = null) => new()
@@ -18,7 +19,8 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests.Catalogs
             Name = "C5" + suffix,
             ReleaseYear = 2013,
             Brand = brand ?? (brandId.HasValue ? null : Citroen(suffix)),
-            BrandId = brandId ?? 0
+            BrandId = brandId ?? 0,
+            CarType = CarType.Break
         };
 
         public static Country France => new()
