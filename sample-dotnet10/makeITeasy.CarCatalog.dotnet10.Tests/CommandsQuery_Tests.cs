@@ -15,7 +15,7 @@ using makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
-    public class c(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
+    public class CommandsQuery_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
     {
         [Fact]
         public async Task GenericQueryCommand_BasicTest()
