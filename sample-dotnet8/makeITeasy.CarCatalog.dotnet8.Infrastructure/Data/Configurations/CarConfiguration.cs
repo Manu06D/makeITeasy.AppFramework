@@ -14,22 +14,24 @@ namespace makeITeasy.CarCatalog.dotnet8.Infrastructure.Data.Configurations
         {
             entity.ToTable("Car");
 
-            entity.HasIndex(e => e.Name, "UniqueName")
-                .IsUnique();
+                entity.HasIndex(e => e.Name, "UniqueCarName")
+                    .IsUnique();
 
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(50);
+                entity.Property(e => e.Id).HasColumnName("ID");
 
-            entity.Property(e => e.RowVersion)
-                .IsRowVersion()
-                .IsConcurrencyToken();
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50);
 
-            entity.HasOne(d => d.Brand)
-                .WithMany(p => p.Cars)
-                .HasForeignKey(d => d.BrandId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Car_ToBrand");
+                entity.Property(e => e.RowVersion)
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
+
+                entity.HasOne(d => d.Brand)
+                    .WithMany(p => p.Cars)
+                    .HasForeignKey(d => d.BrandId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Car_ToBrand");
 
             OnConfigurePartial(entity);
         }

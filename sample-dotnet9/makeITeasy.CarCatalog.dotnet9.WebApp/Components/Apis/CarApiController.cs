@@ -1,4 +1,5 @@
 ﻿using makeITeasy.AppFramework.Core.Interfaces;
+using makeITeasy.AppFramework.Core.Models;
 using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries;
@@ -27,7 +28,7 @@ namespace makeITeasy.CarCatalog.dotnet9.WebApp.Components.Apis
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<int> UpdateAllCar(int id)
         {
-            return await carService.UpdateRangeAsync(x => x.Id > 0, x => new Car { LastModificationDate = DateTime.Now });
+            return await carService.UpdateRangeAsync(x => x.Id > 0, new UpdateDefinition<Car>().Set(x => x.LastModificationDate, DateTime.Now));
         }
 
         public class CarResponse : IMapFrom<Car>

@@ -12,11 +12,15 @@ namespace makeITeasy.CarCatalog.dotnet8.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<CarDetail> entity)
         {
-            entity.HasOne(d => d.Car)
-                .WithMany(p => p.CarDetails)
-                .HasForeignKey(d => d.CarId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CarDetails_ToCar");
+            entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CarId).HasColumnName("CarID");
+
+                entity.HasOne(d => d.Car)
+                    .WithMany(p => p.CarDetails)
+                    .HasForeignKey(d => d.CarId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CarDetails_ToCar");
 
             OnConfigurePartial(entity);
         }

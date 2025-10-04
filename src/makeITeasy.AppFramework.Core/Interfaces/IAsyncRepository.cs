@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.AppFramework.Core.Commands;
+using makeITeasy.AppFramework.Core.Models;
 
 namespace makeITeasy.AppFramework.Core.Interfaces
 {
@@ -23,5 +24,7 @@ namespace makeITeasy.AppFramework.Core.Interfaces
         Task<ICollection<T>> AddRangeAsync(ICollection<T> entities, bool saveChanges = true);
         [Obsolete("This method was relying on a package that is not maintained anymore. Please perform update in your own repository.")]
         Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, Expression<Func<T, T>> updateExpression);
+
+        Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, UpdateDefinition<T> updates);
     }
 }

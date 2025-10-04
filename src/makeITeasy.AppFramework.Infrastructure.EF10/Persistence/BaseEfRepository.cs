@@ -6,6 +6,7 @@ using DelegateDecompiler.EntityFrameworkCore;
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Helpers;
 using makeITeasy.AppFramework.Core.Interfaces;
+using makeITeasy.AppFramework.Core.Models;
 using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.AppFramework.Infrastructure.EF10.Persistence.Helpers;
 using makeITeasy.AppFramework.Models;
@@ -14,9 +15,13 @@ using makeITeasy.AppFramework.Models.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Query;
 
+using System;
 using System.Linq.Expressions;
 using System.Reflection;
+
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
 {
@@ -428,12 +433,6 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
             return dbResult;
         }
 
-        public async Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, Expression<Func<T, T>> updateExpression)
-        {
-
-            throw new NotImplementedException(nameof(UpdateRangeAsync));
-        }
-
         public async Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] propertyNames, bool saveChanges = true)
         {
             if (propertyNames == null || propertyNames.Length  == 0)
@@ -541,6 +540,29 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
             if (disposing)
             {
             }
+        }
+
+        public async Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, UpdateDefinition<T> updates)
+        {
+            var dbContext = GetDbContext();
+            var query = GetDbContext().Set<T>().AsQueryable().Where(entityPredicate);
+
+            return await query.ExecuteUpdateAsync(setters =>
+            {
+                UpdateSettersBuilder<T> s = setters;
+                foreach (var (propertyLambda, valueLambda) in updates.GetUpdates())
+                {
+                    dynamic ds = s;
+                    ds = ds.SetProperty((dynamic)propertyLambda, (dynamic)valueLambda);
+                    s = ds;
+                }
+            });
+        }
+
+        public async Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, Expression<Func<T, T>> updateExpression)
+        {
+
+            throw new NotImplementedException(nameof(UpdateRangeAsync));
         }
     }
 }

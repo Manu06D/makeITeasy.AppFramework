@@ -1,5 +1,7 @@
 ﻿using AwesomeAssertions;
 
+using makeITeasy.AppFramework.Core.Interfaces;
+using makeITeasy.AppFramework.Core.Models;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries;
 using makeITeasy.CarCatalog.dotnet9.Models;
@@ -79,11 +81,11 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
 
             var dbCreation = await carService.CreateRangeAsync([CarsCatalog.CitroenC4(suffix), CarsCatalog.CitroenC5(suffix)]);
 
-            var udbUpdate = await carService.UpdateRangeAsync(x => x.Id > 0, x => new Car { Name = x.Name + "XX" });
+            await carService.UpdateRangeAsync(x => x.Id > 0, new UpdateDefinition<Car>().Set(x => x.CarType, CarType.Hatchback).Set(x => x.ReleaseYear, x => x.ReleaseYear + 1000));
 
-            var queryResult = await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix + "XX"});
+            var queryResult = await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix });
 
-            queryResult.Results.Should().Match(x => x.All(y => y.Name.EndsWith("XX")));
+            queryResult.Results.Should().Match(x => x.All(y => y.CarType == CarType.Hatchback)).And.Match(x => x.All(y => y.ReleaseYear > 3100));
         }
     }
 }
