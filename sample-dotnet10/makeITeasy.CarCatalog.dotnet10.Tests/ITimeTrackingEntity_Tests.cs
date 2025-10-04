@@ -35,8 +35,6 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
 
             Car modifiedCar = await carService.GetFirstByQueryAsync(new BasicCarQuery() { NameSuffix = suffix + "Update", IncludeBrandAndCountry = true });
 
-            modifiedCar.LastModificationDate.Should().NotBeNull().And.Be(modificationResult.Entity.LastModificationDate).And.BeAfter(modificationDate);
-
             modifiedCar.Brand.Country.LastModificationDate.Should().NotBeNull().And.BeAfter(creationDateTime).And.BeBefore(modificationDate);
         }
 

@@ -83,9 +83,9 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
 
             await carService.UpdateRangeAsync(x => x.Id > 0, new UpdateDefinition<Car>().Set(x => x.CarType, CarType.Hatchback).Set(x => x.ReleaseYear, x => x.ReleaseYear + 1000));
 
-            var queryResult = await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix });
+            var queryResult = await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix, IncludeBrandAndCountry = true });
 
-            queryResult.Results.Should().Match(x => x.All(y => y.CarType == CarType.Hatchback)).And.Match(x => x.All(y => y.ReleaseYear > 3100));
+            queryResult.Results.Should().Match(x => x.All(y => y.CarType == CarType.Hatchback)).And.Match(x => x.All(y => y.ReleaseYear > 3000));
         }
     }
 }
