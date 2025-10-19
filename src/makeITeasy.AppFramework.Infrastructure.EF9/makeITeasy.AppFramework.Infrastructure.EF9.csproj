@@ -21,10 +21,10 @@
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="14.0.0" />
-		<PackageReference Include="EFCore.BulkExtensions.Core" Version="9.0.1" />
-		<PackageReference Include="EFCore.BulkExtensions.SqlServer" Version="9.0.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
-		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.8" />
+		<PackageReference Include="EFCore.BulkExtensions.Core" Version="9.0.2" />
+		<PackageReference Include="EFCore.BulkExtensions.SqlServer" Version="9.0.2" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.10" />
+		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.9" />
 	</ItemGroup>
 
 	<ItemGroup>

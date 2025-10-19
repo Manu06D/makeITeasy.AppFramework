@@ -1,6 +1,4 @@
 ﻿
-using Microsoft.EntityFrameworkCore;
-
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace makeITeasy.CarCatalog.dotnet10.Models

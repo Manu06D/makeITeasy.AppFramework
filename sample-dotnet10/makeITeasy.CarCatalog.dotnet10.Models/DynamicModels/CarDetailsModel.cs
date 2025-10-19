@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace makeITeasy.CarCatalog.dotnet10.Models.DynamicModels
+﻿namespace makeITeasy.CarCatalog.dotnet10.Models.DynamicModels
 {
     public class CarDetailsModel
     {
