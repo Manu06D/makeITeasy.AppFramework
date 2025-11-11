@@ -7,4 +7,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="DynamicCarDetails" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="45083262-723d-4905-a8aa-dc8ac7b96027" ChangeDateTime="09/27/2025 09:41:02">
+    <Property Name="ElementName" Value="[dbo].[Car].[CarTyê]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Car]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="CarType" />
+  </Operation>
 </Operations>

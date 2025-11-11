@@ -11,8 +11,9 @@
 	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
 	  <RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
 	  <PackageTags>framework ef</PackageTags>
-	  <Version>8.1.24</Version>
+	  <Version>8.1.25</Version>
 	  <PackageReleaseNotes>
+		  8.1.25 : Dependencies update.
 		  8.1.24 : Dependencies update.
 		  8.1.23 : Dependencies update.
 		  8.1.22 : Dependencies update. Add StringSelector to ISpecification
@@ -22,9 +23,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="EFCore.BulkExtensions" Version="8.1.3" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.19" />
-		<PackageReference Include="System.Text.Json" Version="9.0.8" />
-		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.22" />
+		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.10" />
 	</ItemGroup>
 
 	<ItemGroup>

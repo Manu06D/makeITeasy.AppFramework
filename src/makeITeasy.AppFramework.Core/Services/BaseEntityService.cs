@@ -10,7 +10,7 @@ using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Models.Exceptions;
 using Microsoft.Extensions.Logging;
-using System.ComponentModel.DataAnnotations;
+using makeITeasy.AppFramework.Core.Models;
 
 namespace makeITeasy.AppFramework.Core.Services
 {
@@ -132,13 +132,6 @@ namespace makeITeasy.AppFramework.Core.Services
             return await ValidateAndProcess(entities, async (x) => await InnerAddRangeAsync(x));
         }
 
-        public virtual async Task<int> UpdateRangeAsync(Expression<Func<TEntity, bool>> entityPredicate, Expression<Func<TEntity, TEntity>> updateExpression)
-        {
-            EnsureThatRepositoryExists();
-
-            return await EntityRepository!.UpdateRangeAsync(entityPredicate, updateExpression);
-        }
-
         public virtual async Task<CommandResult<TEntity>> UpdateAsync(TEntity entity)
         {
             return await ValidateAndProcess(entity, async (x) => await InnerUpdateAsync(x));
@@ -234,6 +227,20 @@ namespace makeITeasy.AppFramework.Core.Services
             EnsureThatRepositoryExists();
 
             return await EntityRepository!.UpdatePropertiesAsync(entity, properties);
+        }
+
+        public virtual async Task<int> UpdateRangeAsync(Expression<Func<TEntity, bool>> entityPredicate, UpdateDefinition<TEntity> updates)
+        {
+            EnsureThatRepositoryExists();
+
+            return await EntityRepository!.UpdateRangeAsync(entityPredicate, updates);
+        }
+
+        public virtual async Task<int> UpdateRangeAsync(Expression<Func<TEntity, bool>> entityPredicate, Expression<Func<TEntity, TEntity>> updateExpression)
+        {
+            EnsureThatRepositoryExists();
+
+            return await EntityRepository!.UpdateRangeAsync(entityPredicate, updateExpression);
         }
 
         public virtual async Task<CommandResult> DeleteAsync(TEntity entity, bool saveChanges = true)

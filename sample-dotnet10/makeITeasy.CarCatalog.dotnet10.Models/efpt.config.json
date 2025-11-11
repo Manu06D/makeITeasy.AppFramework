@@ -1,0 +1,75 @@
+﻿{
+   "CodeGenerationMode": 6,
+   "ContextClassName": "CarCatalogContext",
+   "ContextNamespace": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "MinimumProductVersion": "2.6.1130",
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": "",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "makeITeasy.CarCatalog.dotnet10.Models",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 0,
+   "SelectedToBeGenerated": 2,
+   "T4TemplatePath": null,
+   "Tables": [
+      {
+         "Name": "[dbo].[Brand]",
+         "ObjectType": 0
+      },
+      {
+         "ExcludedColumns": [
+            "CarType"
+         ],
+         "Name": "[dbo].[Car]",
+         "ObjectType": 0
+      },
+      {
+         "ExcludedColumns": [
+            "DynamicCarDetails"
+         ],
+         "Name": "[dbo].[CarDetails]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Country]",
+         "ObjectType": 0
+      },
+      {
+         "ExcludedColumns": [
+            "Details"
+         ],
+         "Name": "[dbo].[Engine]",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": null,
+   "UncountableWords": null,
+   "UseAsyncStoredProcedureCalls": true,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDatabaseNamesForRoutines": true,
+   "UseDateOnlyTimeOnly": false,
+   "UseDbContextSplitting": false,
+   "UseDecimalDataAnnotationForSprocResult": true,
+   "UseFluentApiOnly": true,
+   "UseHandleBars": true,
+   "UseHierarchyId": false,
+   "UseInflector": true,
+   "UseInternalAccessModifiersForSprocsAndFunctions": false,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": true,
+   "UsePrefixNavigationNaming": false,
+   "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
+   "UseSpatial": false,
+   "UseT4": false,
+   "UseT4Split": false
+}

@@ -14,9 +14,11 @@ namespace makeITeasy.CarCatalog.dotnet8.Infrastructure.Data.Configurations
         {
             entity.ToTable("Engine");
 
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(100);
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
 
             OnConfigurePartial(entity);
         }

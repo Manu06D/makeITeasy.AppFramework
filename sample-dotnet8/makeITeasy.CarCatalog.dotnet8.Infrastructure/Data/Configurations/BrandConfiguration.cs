@@ -14,17 +14,21 @@ namespace makeITeasy.CarCatalog.dotnet8.Infrastructure.Data.Configurations
         {
             entity.ToTable("Brand");
 
-            entity.Property(e => e.Logo).HasMaxLength(250);
+                entity.Property(e => e.Id).HasColumnName("ID");
 
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(100);
+                entity.Property(e => e.CountryId).HasColumnName("CountryID");
 
-            entity.HasOne(d => d.Country)
-                .WithMany(p => p.Brands)
-                .HasForeignKey(d => d.CountryId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Brand_ToCountry");
+                entity.Property(e => e.Logo).HasMaxLength(250);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.HasOne(d => d.Country)
+                    .WithMany(p => p.Brands)
+                    .HasForeignKey(d => d.CountryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Brand_ToCountry");
 
             OnConfigurePartial(entity);
         }

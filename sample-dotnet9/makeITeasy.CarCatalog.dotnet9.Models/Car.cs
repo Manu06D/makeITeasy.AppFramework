@@ -18,7 +18,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Models
         public DateTime? CreationDate { get; set; }
         public DateTime? LastModificationDate { get; set; }
         public byte[]? RowVersion { get; set; }
-        //public int Version { get; set; }
+        public int Version { get; set; }
 
         public virtual Brand Brand { get; set; } = null!;
         public virtual ICollection<CarDetail> CarDetails { get; set; }

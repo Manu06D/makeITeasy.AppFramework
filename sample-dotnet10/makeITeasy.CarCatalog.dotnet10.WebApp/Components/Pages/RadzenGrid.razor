@@ -1,0 +1,96 @@
+﻿@page "/radzenGrid"
+@rendermode InteractiveServer
+@using MediatR
+@using makeITeasy.AppFramework.Core.Queries
+@using makeITeasy.CarCatalog.dotnet10.Core.Services.Queries.BrandQueries
+@using makeITeasy.CarCatalog.dotnet10.Core.Services.Queries.CarQueries
+@using makeITeasy.CarCatalog.dotnet10.Models
+@using makeITeasy.CarCatalog.dotnet10.WebApp.Components.Layout
+<h3>RadzenGrid</h3>
+
+
+<Grid TEntity="Car" TEntityQuery="CarWithBrandQuery" LoadOnDisplay=true ShowReloadButton="true" AllowInlineEdit="true"
+      OnObjectCreatedEventCallBack="OnNewCarCreation">
+    <RadzenDataGridColumn TItem=Car Property="@nameof(Car.Id)" Filterable="false" Title="ID" />
+    <RadzenDataGridColumn TItem=Car Property="@nameof(Car.Name)" Filterable="true" Title="Name" FilterValue="@nameFilterValue">
+        <FilterTemplate>
+            <RadzenTextBox @bind-Value=nameFilterValue Style="width:100%;" />
+        </FilterTemplate>
+        <EditTemplate Context="car">
+            <RadzenTextBox @bind-Value="car.Name" Style="width:200px; display: block" Name="ShipName" aria-label="Enter car name" />
+        </EditTemplate>
+    </RadzenDataGridColumn>
+    <RadzenDataGridColumn TItem=Car Property="@nameof(Car.ReleaseYear)" Filterable="true" Title="ReleaseYear">
+        <EditTemplate Context="car">
+            <RadzenNumeric @bind-Value="car.ReleaseYear" Style="width:100%" InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "Select year of release" }})" />
+        </EditTemplate>            
+        <Template Context="car">
+            @String.Format("{0:d}", car.ReleaseYear)
+        </Template>
+    </RadzenDataGridColumn>
+    <RadzenDataGridColumn TItem=Car Property="Brand.Name" Filterable="true" Title="Brand">
+        <EditTemplate Context="car">
+            <RadzenDropDown Data=@brands TValue="Brand" @bind-Value=@selectedBrand TextProperty="@nameof(Brand.Name)" LoadData=@LoadBrandData
+                AllowClear="true" AllowFiltering="true" Style="width: 100%; max-width: 400px;" Name="DropDownCustomObjects"
+                Change="@(args => car.BrandId = ((Brand)args).Id )"
+            >
+            </RadzenDropDown>
+        </EditTemplate>
+    </RadzenDataGridColumn>
+    <RadzenDataGridColumn TItem=Car Property="@nameof(Car.CarType)" Filterable="true" Title="Type" FilterValue="selectedCarType">
+        <FilterTemplate>
+            <RadzenDropDown @bind-Value="@selectedCarType"
+                            Style="width:100%;"
+                            TextProperty="Text" ValueProperty="Value"
+                            AllowClear="true"
+                            Change="@(async args => { context.FilterValue = args; OnSelectedCarTypeFilterChange(args); })"
+                            Data="@(Enum.GetValues(typeof(CarType)).Cast<CarType?>()
+                                                                    .Select(t => new { Text = $"{t}", Value = t }))" />
+
+        </FilterTemplate>
+        <EditTemplate Context="entity">
+            <RadzenDropDown Data="@(Enum.GetValues(typeof(CarType)).Cast<Enum>())"
+                            @bind-Value=@entity.CarType
+                            AllowClear="true" AllowFiltering="true"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            Style="width: 100%; max-width: 400px;" Name="DropDownEnums">
+            </RadzenDropDown>
+        </EditTemplate>
+        <Template Context="car">
+            <span>
+                @(car.CarType.ToString())
+            </span>
+        </Template>
+    </RadzenDataGridColumn>
+</Grid>
+
+@code {
+    [Inject]
+    public IMediator mediator { get; set; }
+
+    public string nameFilterValue { get; set; }
+    public Brand selectedBrand { get; set; }
+    public CarType? selectedCarType { get; set; }
+    public IList<Brand> brands;
+
+    async Task LoadBrandData(LoadDataArgs args)
+    {
+        if(brands == null){
+            brands = (await mediator.Send(new GenericQueryCommand<Brand>(new BasicBrandQuery()))).Results;
+        }
+    }
+
+    private async Task OnNewCarCreation(Car newCar)
+    {
+        newCar.BrandId = selectedBrand?.Id ?? -1;
+    }
+
+    void OnSelectedCarTypeFilterChange(object value)
+    {
+        if (value == null)
+        {
+            selectedCarType = null;
+        }
+    }
+
+}

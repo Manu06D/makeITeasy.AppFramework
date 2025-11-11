@@ -11,8 +11,9 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
 		<PackageTags>framework ef</PackageTags>
-		<Version>9.1.24</Version>
+		<Version>9.1.25</Version>
 		<PackageReleaseNotes>
+			9.1.25 : Dependencies update.
 			9.1.24 : Dependencies update.
 			9.1.23 : Dependencies update.
 			9.1.22 : Initial Release
@@ -21,10 +22,10 @@
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="14.0.0" />
-		<PackageReference Include="EFCore.BulkExtensions.Core" Version="9.0.1" />
-		<PackageReference Include="EFCore.BulkExtensions.SqlServer" Version="9.0.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
-		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.7" />
+		<PackageReference Include="EFCore.BulkExtensions.Core" Version="9.0.2" />
+		<PackageReference Include="EFCore.BulkExtensions.SqlServer" Version="9.0.2" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.11" />
+		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.10" />
 	</ItemGroup>
 
 	<ItemGroup>

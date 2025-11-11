@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using makeITeasy.AppFramework.Models;
-using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.AppFramework.Core.Commands;
+using makeITeasy.AppFramework.Core.Models;
 
 namespace makeITeasy.AppFramework.Core.Interfaces
 {
@@ -16,6 +16,7 @@ namespace makeITeasy.AppFramework.Core.Interfaces
         Task<CommandResult> DeleteAsync(TEntity entity, bool saveChanges = true);
         Task<ICollection<CommandResult<TEntity>>> CreateRangeAsync(ICollection<TEntity> entities, bool saveChanges = true);
         Task<int> UpdateRangeAsync(Expression<Func<TEntity, bool>> entityPredicate, Expression<Func<TEntity, TEntity>> updateExpression);
+        Task<int> UpdateRangeAsync(Expression<Func<TEntity, bool>> entityPredicate, UpdateDefinition<TEntity> updates);
         bool Validate(TEntity entity);
     }
 }

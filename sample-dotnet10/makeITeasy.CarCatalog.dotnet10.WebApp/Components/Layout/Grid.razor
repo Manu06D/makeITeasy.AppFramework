@@ -1,0 +1,66 @@
+﻿@using makeITeasy.AppFramework.Models
+@using makeITeasy.CarCatalog.dotnet10.Models
+@typeparam TEntity where TEntity : class, IBaseEntity, new()
+@typeparam TEntityQuery where TEntityQuery : ISpecification<TEntity>, new()
+
+<RadzenDataGrid TItem="TEntity" @ref="grid"
+                AllowSorting="true"
+                AllowFiltering="true" FilterMode="FilterMode.Simple"
+                AllowPaging="true"
+                PagerHorizontalAlign="HorizontalAlign.Center"
+                GotoFirstPageOnSort="true"
+                
+                IsLoading=@isLoading
+                Count="@totalCount"
+                Data="@gridEntities"
+                LoadData="@LoadData"
+                RowDoubleClick="@OnRowDoubleClickEvent"
+                PageSize="@PageSize"
+                Render="@OnRender"
+                RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow" EditMode="DataGridEditMode.Single"
+                >
+    <HeaderTemplate>
+        @if (ShowReloadButton)
+        {
+            <RadzenButton Text="Reload" Click=@ResetAsync />
+        }
+        @if (AllowInlineEdit)
+        {
+            <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle"
+                          Text="New" Click="@InsertRow"
+                          Disabled="@(entityToInsert != null)" />
+        }
+    </HeaderTemplate>
+    <GroupHeaderTemplate>
+        <b>@(context.Data.Key ?? "") (@context.Data.Count)</b>
+    </GroupHeaderTemplate>
+    <Columns>
+        @ChildContent
+        @if (AllowInlineEdit)
+        {
+            <RadzenDataGridColumn TItem="TEntity" Context="entity" Filterable="false" Sortable="false"
+                                  Title=""
+                                  TextAlign="TextAlign.Center" Frozen="true"
+                                  FrozenPosition="FrozenColumnPosition.Right"
+                                  Width="100px"
+                                  Groupable="false">
+                <Template Context="entity">
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium"
+                                  Click="@(args => EditRow(entity))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                    <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Variant="Variant.Flat" Shade="Shade.Lighter" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1"
+                                  Click="@(args => DeleteRow(entity))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                </Template>
+                <EditTemplate Context="entity">
+                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium"
+                                  Click="@((args) => SaveRow(entity))" aria-label="Save">
+                    </RadzenButton>
+                    <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1"
+                                  Click="@((args) => CancelEdit(entity))" aria-label="Cancel">
+                    </RadzenButton>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+        }
+    </Columns>
+</RadzenDataGrid>

@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+  </ItemGroup>
+
+  <ItemGroup>
+	  <ProjectReference Include="..\..\src\makeITeasy.AppFramework.Core\makeITeasy.AppFramework.Core.csproj" />
+	  <ProjectReference Include="..\makeITeasy.CarCatalog.dotnet10.Models\makeITeasy.CarCatalog.dotnet10.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+  </ItemGroup>
+</Project>

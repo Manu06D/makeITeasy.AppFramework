@@ -4,10 +4,10 @@ using AutoMapper.QueryableExtensions;
 using DelegateDecompiler.EntityFrameworkCore;
 
 using EFCore.BulkExtensions;
-using System.Linq.Dynamic.Core;
 
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Interfaces;
+using makeITeasy.AppFramework.Core.Models;
 using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.AppFramework.Models.Exceptions;
@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 
+using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -429,12 +430,6 @@ namespace makeITeasy.AppFramework.Infrastructure.EF8.Persistence
             return dbResult;
         }
 
-        public async Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, Expression<Func<T, T>> updateExpression)
-        {
-
-            return await GetDbContext().Set<T>().Where(entityPredicate).BatchUpdateAsync(updateExpression);
-        }
-
         public async Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] propertyNames, bool saveChanges = true)
         {
             if (propertyNames == null || propertyNames.Length  == 0)
@@ -542,6 +537,17 @@ namespace makeITeasy.AppFramework.Infrastructure.EF8.Persistence
             if (disposing)
             {
             }
+        }
+
+        public async Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, UpdateDefinition<T> updates)
+        {
+            throw new NotImplementedException("Please use method UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, Expression<Func<T, T>> updateExpression)");
+        }
+
+        public async Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, Expression<Func<T, T>> updateExpression)
+        {
+
+            return await GetDbContext().Set<T>().Where(entityPredicate).BatchUpdateAsync(updateExpression);
         }
     }
 }

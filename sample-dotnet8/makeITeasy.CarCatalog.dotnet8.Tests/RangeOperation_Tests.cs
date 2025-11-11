@@ -12,6 +12,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Xunit;
+using makeITeasy.AppFramework.Core.Interfaces;
+using makeITeasy.AppFramework.Core.Models;
 
 namespace makeITeasy.CarCatalog.dotnet8.Tests
 {
@@ -90,7 +92,7 @@ namespace makeITeasy.CarCatalog.dotnet8.Tests
 
             var udbUpdate = await carService.UpdateRangeAsync(x => x.Id > 0, x => new Car { Name = x.Name + "XX" });
 
-            var queryResult = await carService.QueryAsync(new BaseCarQuery());
+            var queryResult = await carService.QueryAsync(new BaseCarQuery() {  });
 
             queryResult.Results.Should().Match(x => x.All(y => y.Name.EndsWith("XX")));
         }

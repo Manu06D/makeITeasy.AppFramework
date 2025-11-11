@@ -15,7 +15,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Infrastructure.Data.Configurations
         {
             entity.ToTable("Car");
 
-                entity.HasIndex(e => e.Name, "UniqueName")
+                entity.HasIndex(e => e.Name, "UniqueCarName")
                     .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("ID");

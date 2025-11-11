@@ -14,14 +14,17 @@ namespace makeITeasy.CarCatalog.dotnet8.Infrastructure.Data.Configurations
         {
             entity.ToTable("Country");
 
-            entity.Property(e => e.CountryCode)
-                .IsRequired()
-                .HasMaxLength(2);
+                entity.Property(e => e.Id).HasColumnName("ID");
 
-            entity.Property(e => e.Name)
-                .IsRequired()
-                .HasMaxLength(250)
-                .IsUnicode(false);
+                entity.Property(e => e.CountryCode)
+                    .IsRequired()
+                    .HasMaxLength(2)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(250)
+                    .IsUnicode(false);
 
             OnConfigurePartial(entity);
         }
