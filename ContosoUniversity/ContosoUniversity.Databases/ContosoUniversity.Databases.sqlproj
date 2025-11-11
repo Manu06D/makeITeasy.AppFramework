@@ -72,5 +72,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SqlSchemaCompare.scmp" />
+    <None Include="databaseSchema.md" />
   </ItemGroup>
 </Project>
