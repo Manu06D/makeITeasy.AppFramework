@@ -11,8 +11,9 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
 		<PackageTags>framework ef</PackageTags>
-		<Version>10.1.24</Version>
+		<Version>10.1.25</Version>
 		<PackageReleaseNotes>
+			10.1.25 : Initial .net10 release
 		</PackageReleaseNotes>
 	</PropertyGroup>
 

@@ -11,8 +11,9 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
 		<PackageTags>framework ef</PackageTags>
-		<Version>9.1.24</Version>
+		<Version>9.1.25</Version>
 		<PackageReleaseNotes>
+			9.1.25 : Dependencies update.
 			9.1.24 : Dependencies update.
 			9.1.23 : Dependencies update.
 			9.1.22 : Initial Release

@@ -11,8 +11,9 @@
 		<PackageReleaseNotes>Initial Release</PackageReleaseNotes>
 		<Authors>Emmanuel D.</Authors>
 		<Company>Make IT Easy</Company>
-		<Version>1.1.9</Version>
+		<Version>1.1.10</Version>
 		<Description>
+			1.1.10: Dependencies update.
 			1.1.9 : Dependencies update.
 			1.1.8 : Dependencies update. Add StringSelector to ISpecification
 			1.1.7 : Embed DelegateCompiler
