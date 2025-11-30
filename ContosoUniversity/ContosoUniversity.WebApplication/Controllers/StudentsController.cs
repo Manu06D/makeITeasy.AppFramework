@@ -4,8 +4,6 @@ using ContosoUniversity.Core.Queries.StudentQueries;
 using ContosoUniversity.Models;
 using ContosoUniversity.WebApplication.Models.StudentModels;
 
-using Dawn;
-
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Queries;
 
@@ -33,8 +31,6 @@ namespace ContosoUniversity.WebApplication.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            Guard.Argument(id, nameof(id)).Positive();
-
             if (id > 0)
             {
                 StudentEditViewModel? model =

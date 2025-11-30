@@ -463,7 +463,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         {
             (ICarService carService, _, _, string suffix, _) = await CreateCarsAsync();
 
-            QueryResult<Car> getResult = await carService.QueryAsync(new BasicCarQuery() { StringCriteria = "(Name == null ? \"\" : Name).Contains(\"" + suffix + "\")" });
+            QueryResult<Car> getResult = await carService.QueryAsync(new BasicCarQuery() { Expression = "x => (x.Name == null ? \"\" : x.Name).Contains(\"" + suffix + "\")" });
 
             getResult.Results.Should().NotBeEmpty();
             getResult.Results.Count.Should().Be(2);
