@@ -1,10 +1,6 @@
-﻿using makeITeasy.CarCatalog.dotnet9.WebApp.Modules.Models;
-
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 
 using Scalar.AspNetCore;
-
-using System.Runtime.CompilerServices;
 
 namespace makeITeasy.CarCatalog.dotnet9.WebApp.Modules.StartupModules
 {

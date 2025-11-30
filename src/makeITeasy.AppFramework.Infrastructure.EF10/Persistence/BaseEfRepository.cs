@@ -8,7 +8,6 @@ using makeITeasy.AppFramework.Core.Helpers;
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Core.Models;
 using makeITeasy.AppFramework.Core.Queries;
-using makeITeasy.AppFramework.Infrastructure.EF10.Persistence.Helpers;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.AppFramework.Models.Exceptions;
 
@@ -158,15 +157,15 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
 
             IQueryable<T>? filteredSet = BaseEfRepository<T, U>.ApplySpecification(spec, dbContext);
 
-            if (!string.IsNullOrEmpty(spec.StringCriteria))
+            if (!string.IsNullOrEmpty(spec.Expression))
             {
                 try
                 {
-                    filteredSet = filteredSet?.Where(ExpressionParser.ParsePredicate<T>(spec.StringCriteria, TypeFinder.FindType));
+                    filteredSet = filteredSet?.Where(ExpressionParser.ParsePredicate<T>(spec.Expression, TypeFinder.FindType));
                 }
                 catch (Exception ex)
                 {
-                    throw new InvalidSelectorException($"An error has occured while setting dynamic sql filer : {spec.StringCriteria}", ex);
+                    throw new InvalidSelectorException($"An error has occured while setting dynamic sql filer : {spec.Expression}", ex);
                 }
             }
 

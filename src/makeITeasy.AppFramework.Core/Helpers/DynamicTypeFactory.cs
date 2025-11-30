@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence.Helpers
+namespace makeITeasy.AppFramework.Core.Helpers
 {
     static class DynamicTypeFactory
     {

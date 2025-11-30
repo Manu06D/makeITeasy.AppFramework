@@ -11,8 +11,9 @@
 		<RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
 		<PackageTags>framework ef</PackageTags>
 		<LangVersion>latest</LangVersion>
-		<Version>2.0.2</Version>
+		<Version>2.0.3</Version>
 		<PackageReleaseNotes>
+			2.0.3 : Add string to Expression helper
 			2.0.2 : Dependencies update
 			2.0.1 : Update to .NET 8 and update dependencies
 			1.2.4 : Dependencies update and fix issue with validator
@@ -37,7 +38,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Autofac" Version="8.4.0" />
+		<PackageReference Include="Autofac" Version="9.0.0" />
 		<PackageReference Include="AutoMapper" Version="14.0.0" />
 		<PackageReference Include="FluentValidation" Version="12.1.0" />
 		<PackageReference Include="MediatR" Version="12.5.0" />

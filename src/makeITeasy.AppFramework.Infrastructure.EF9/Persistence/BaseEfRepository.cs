@@ -4,10 +4,11 @@ using AutoMapper.QueryableExtensions;
 using DelegateDecompiler.EntityFrameworkCore;
 
 using EFCore.BulkExtensions;
-using System.Linq.Dynamic.Core;
 
 using makeITeasy.AppFramework.Core.Commands;
+using makeITeasy.AppFramework.Core.Helpers;
 using makeITeasy.AppFramework.Core.Interfaces;
+using makeITeasy.AppFramework.Core.Models;
 using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.AppFramework.Models.Exceptions;
@@ -18,7 +19,6 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 using System.Linq.Expressions;
 using System.Reflection;
-using makeITeasy.AppFramework.Core.Models;
 
 namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
 {
@@ -155,15 +155,15 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
 
             IQueryable<T>? filteredSet = BaseEfRepository<T, U>.ApplySpecification(spec, dbContext);
 
-            if (!string.IsNullOrEmpty(spec.StringCriteria))
+            if (!string.IsNullOrEmpty(spec.Expression))
             {
                 try
                 {
-                    filteredSet = filteredSet?.Where(spec.StringCriteria);
+                    filteredSet = filteredSet?.Where(ExpressionParser.ParsePredicate<T>(spec.Expression, TypeFinder.FindType));
                 }
                 catch (Exception ex)
                 {
-                    throw new InvalidSelectorException($"An error has occured while setting dynamic sql filer : {spec.StringCriteria}", ex);
+                    throw new InvalidSelectorException($"An error has occured while setting dynamic sql filer : {spec.Expression}", ex);
                 }
             }
 

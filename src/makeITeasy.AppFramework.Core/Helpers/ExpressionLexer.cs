@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Linq.Expressions;
 using System.Text;
 
-namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence.Helpers
+namespace makeITeasy.AppFramework.Core.Helpers
 {
     class Token
     {

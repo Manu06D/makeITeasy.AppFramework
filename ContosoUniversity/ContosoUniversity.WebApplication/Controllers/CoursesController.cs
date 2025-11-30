@@ -4,8 +4,6 @@ using ContosoUniversity.Core.Queries.CourseQueries;
 using ContosoUniversity.Models;
 using ContosoUniversity.WebApplication.Models.CourseModels;
 
-using Dawn;
-
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Queries;
 using MediatR;
@@ -32,8 +30,6 @@ namespace ContosoUniversity.WebApplication.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            Guard.Argument(id, nameof(id)).Positive();
-
             if (id > 0)
             {
                 CourseEditViewModel? model =

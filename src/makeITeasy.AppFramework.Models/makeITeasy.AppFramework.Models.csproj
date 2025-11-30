@@ -11,8 +11,9 @@
 		<PackageReleaseNotes>Initial Release</PackageReleaseNotes>
 		<Authors>Emmanuel D.</Authors>
 		<Company>Make IT Easy</Company>
-		<Version>1.1.10</Version>
+		<Version>1.1.11</Version>
 		<Description>
+			1.1.11 : Rename ISpecification field StringCriteria to expression
 			1.1.10: Dependencies update.
 			1.1.9 : Dependencies update.
 			1.1.8 : Dependencies update. Add StringSelector to ISpecification
@@ -24,7 +25,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="DelegateDecompiler.EntityFrameworkCore5" Version="0.35.0" />
+		<PackageReference Include="DelegateDecompiler.EntityFrameworkCore5" Version="0.35.3" />
 		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
 	</ItemGroup>
 

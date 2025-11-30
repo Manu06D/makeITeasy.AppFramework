@@ -464,12 +464,12 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         {
             (ICarService carService, _, _, string suffix, _) = await CreateCarsAsync();
 
-            QueryResult<Car> getResult = await carService.QueryAsync(new BasicCarQuery() { StringCriteria = "x => ((((x == null) ? null : x.Name) ?? \"\").Contains(\"" + suffix +"\"))" });
+            QueryResult<Car> getResult = await carService.QueryAsync(new BasicCarQuery() { Expression = "x => ((((x == null) ? null : x.Name) ?? \"\").Contains(\"" + suffix +"\"))" });
 
             getResult.Results.Should().NotBeEmpty();
             getResult.Results.Count.Should().Be(2);
 
-            getResult = await carService.QueryAsync(new BasicCarQuery() { StringCriteria = "x => ((((x == null) ? null : x.Name) ?? \"\").Contains(\"" + suffix + "\") && (x.Name.Contains(\"C4\")))" });
+            getResult = await carService.QueryAsync(new BasicCarQuery() { Expression = "x => ((((x == null) ? null : x.Name) ?? \"\").Contains(\"" + suffix + "\") && (x.Name.Contains(\"C4\")))" });
 
             getResult.Results.Should().NotBeEmpty();
             getResult.Results.Count.Should().Be(1);
@@ -480,7 +480,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         {
             (ICarService carService, _, _, string suffix, _) = await CreateCarsAsync();//
 
-            QueryResult<Car> getResult = await carService.QueryAsync(new BasicCarQuery() { StringCriteria = "x => (x.CarType == (makeITeasy.CarCatalog.dotnet10.Models.CarType)0)" });
+            QueryResult<Car> getResult = await carService.QueryAsync(new BasicCarQuery() { Expression = "x => (x.CarType == (makeITeasy.CarCatalog.dotnet10.Models.CarType)0)" });
 
             getResult.Results.Should().NotBeEmpty();
             getResult.Results.Count.Should().Be(1);

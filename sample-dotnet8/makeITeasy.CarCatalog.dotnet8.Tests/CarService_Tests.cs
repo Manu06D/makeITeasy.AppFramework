@@ -480,7 +480,7 @@ namespace makeITeasy.CarCatalog.dotnet8.Tests
         {
             CreateCarCatalog();
 
-            QueryResult<Car> getResult = await carService.QueryAsync(new BaseCarQuery() { StringCriteria = "(Name == null ? \"\" : Name).Contains(\"3\")" });
+            QueryResult<Car> getResult = await carService.QueryAsync(new BaseCarQuery() { Expression = "x => (x.Name == null ? \"\" : x.Name).Contains(\"3\")" });
 
             getResult.Results.Count.Should().Be(TestCarsCatalog.GetCars().Count(x => x.Name.Contains("3")));
 

@@ -1,5 +1,7 @@
 ﻿
-namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence.Helpers
+using System;
+
+namespace makeITeasy.AppFramework.Core.Helpers
 {
     public static class TypeFinder
     {

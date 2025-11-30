@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Linq;
 
-namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence.Helpers
+namespace makeITeasy.AppFramework.Core.Helpers
 {
 
 

@@ -7,7 +7,7 @@ namespace makeITeasy.AppFramework.Models
     public abstract class BaseQuery<T> : ISpecification<T> where T : IBaseEntity
     {
         public Expression<Func<T, bool>> Criteria { get; set; }
-        public string StringCriteria { get; set; }
+        public string Expression { get; set; }
         public List<Expression<Func<T, object>>> Includes { get; set; }
 
         public List<string> IncludeStrings { get; set; }
@@ -86,7 +86,7 @@ namespace makeITeasy.AppFramework.Models
             //ParameterExpression param = GetFirstCriteriaParameter(this.Criteria);
             //this.Criteria = Expression.Lambda<Func<T, bool>>(Expression.AndAlso(this.Criteria.Body, Expression.Invoke(funcToAdd, param)), param);
 
-            return GetExpressionInfo(funcToAdd, criteria, Expression.AndAlso);
+            return GetExpressionInfo(funcToAdd, criteria, System.Linq.Expressions.Expression.AndAlso);
         }
 
         private static Expression<Func<T, bool>> OrElseCriteria(Expression<Func<T, bool>> funcToAdd, Expression<Func<T, bool>> criteria)
@@ -95,7 +95,7 @@ namespace makeITeasy.AppFramework.Models
             //ParameterExpression param = GetFirstCriteriaParameter(this.Criteria);
             //this.Criteria = Expression.Lambda<Func<T, bool>>(Expression.OrElse(this.Criteria.Body, Expression.Invoke(funcToAdd, param)), param);
 
-            return GetExpressionInfo(funcToAdd, criteria, Expression.OrElse);
+            return GetExpressionInfo(funcToAdd, criteria, System.Linq.Expressions.Expression.OrElse);
         }
 
         private static Expression<Func<T, bool>> GetExpressionInfo(
@@ -104,12 +104,12 @@ namespace makeITeasy.AppFramework.Models
                         Func<Expression, Expression, BinaryExpression> functionToApply
                         )
         {
-            ParameterExpression parameter = Expression.Parameter(typeof(T));
+            ParameterExpression parameter = System.Linq.Expressions.Expression.Parameter(typeof(T));
             var leftVisitor = new ReplaceExpressionVisitor(criteria.Parameters[0], parameter);
             Expression left = leftVisitor.Visit(criteria.Body);
             var rightVisitor = new ReplaceExpressionVisitor(funcToAdd.Parameters[0], parameter);
             Expression right = rightVisitor.Visit(funcToAdd.Body);
-            return Expression.Lambda<Func<T, bool>>(functionToApply(left, right), parameter);
+            return System.Linq.Expressions.Expression.Lambda<Func<T, bool>>(functionToApply(left, right), parameter);
         }
 
         public void AddOrder(OrderBySpecification<string> spec)
