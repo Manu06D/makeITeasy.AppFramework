@@ -28,12 +28,22 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         }
     }
 
-    public class ICurrentDateProvider_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture, [typeof(CustomerDateTimeProviderModule)])
+    public class XXX : DatabaseFixture
     {
+        public async ValueTask InitializeAsync()
+        {
+            base.Modules.Add(typeof(CustomerDateTimeProviderModule));
+            await base.InitializeAsync();
+        }
+    }
+
+    public class ICurrentDateProvider_Tests(XXX databaseEngineFixture) : IClassFixture<XXX>
+    {
+
         [Fact]
         public async Task CustomDateTimeProviderWithCustomService_DateTime()
         {
-            (ICarService carService, IBrandService brandService, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
+            (ICarService carService, IBrandService brandService, Brand citroenBrand, string suffix, _) = await databaseEngineFixture.CreateCarsAsync();
 
             var getResult = await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix});
 
@@ -45,7 +55,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task CustomerDateTimeProviderWithGenericService_DateTime()
         {
-            ICountryService countryService = Resolve<ICountryService>();
+            ICountryService countryService = databaseEngineFixture.Resolve<ICountryService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             var car = await countryService.CreateAsync(new Country() { Name = "FR" + suffix, CountryCode = "FR" });

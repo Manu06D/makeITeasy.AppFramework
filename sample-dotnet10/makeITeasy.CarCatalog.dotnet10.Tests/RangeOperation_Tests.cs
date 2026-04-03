@@ -1,6 +1,5 @@
 ﻿using AwesomeAssertions;
 
-using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Core.Models;
 using makeITeasy.CarCatalog.dotnet10.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet10.Core.Services.Queries.CarQueries;
@@ -12,12 +11,12 @@ using Xunit;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
-    public class RangeOperation_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
+    public class RangeOperation_Tests(DatabaseFixture databaseEngineFixture) : IClassFixture<DatabaseFixture>
     {
         [Fact]
         public async Task BasicRangeCreation_Test()
         {
-            ICarService carService = Resolve<ICarService>();
+            ICarService carService = databaseEngineFixture.Resolve<ICarService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             (await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix })).Results.Should().BeEmpty();
@@ -32,7 +31,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task BasicRangeCreationWithOneError_Test()
         {
-            ICarService carService = Resolve<ICarService>();
+            ICarService carService = databaseEngineFixture.Resolve<ICarService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             (await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix })).Results.Should().BeEmpty();
@@ -53,7 +52,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task RangeCreationWithInvalidObject_Test()
         {
-            ICarService carService = Resolve<ICarService>();
+            ICarService carService = databaseEngineFixture.Resolve<ICarService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             (await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix })).Results.Should().BeEmpty();
@@ -76,7 +75,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task UpdateRange_BasicTest()
         {
-            ICarService carService = Resolve<ICarService>();
+            ICarService carService = databaseEngineFixture.Resolve<ICarService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             var dbCreation = await carService.CreateRangeAsync([CarsCatalog.CitroenC4(suffix), CarsCatalog.CitroenC5(suffix)]);

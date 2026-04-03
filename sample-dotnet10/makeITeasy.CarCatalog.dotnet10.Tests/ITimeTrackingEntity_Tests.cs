@@ -12,14 +12,14 @@ using makeITeasy.CarCatalog.dotnet10.Core.Services.Queries.BrandQueries;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
-    public class ITimeTrackingEntity_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
+    public class ITimeTrackingEntity_Tests(DatabaseFixture databaseEngineFixture) : IClassFixture<DatabaseFixture>
     {
         [Fact]
         public async Task CreationDate_BasicTest()
         {
             DateTime creationDateTime = DateTime.Now;
 
-            (ICarService carService, IBrandService brandService, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
+            (ICarService carService, IBrandService brandService, Brand citroenBrand, string suffix, _) = await databaseEngineFixture.CreateCarsAsync();
 
             IList<Car> cars = (await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix, IncludeBrandAndCountry = true })).Results;
 
@@ -41,7 +41,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task CreationRangeDate_BasicTest()
         {
-            ICarService carService = Resolve<ICarService>();
+            ICarService carService = databaseEngineFixture.Resolve<ICarService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             var dbCreation = await carService.CreateRangeAsync(new List<Car>() { CarsCatalog.CitroenC4(suffix), CarsCatalog.CitroenC5(suffix) });
@@ -52,9 +52,9 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task EntityWithRowVersion_UpdateNofields_Test()
         {
-            if (DatabaseEngineFixture.CurentDatabaseType == DatabaseType.MsSql)
+            if (databaseEngineFixture.DatabaseType == DatabaseType.MsSql)
             {
-                ICarService carService = Resolve<ICarService>();
+                ICarService carService = databaseEngineFixture.Resolve<ICarService>();
                 string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
                 DateTime dateTimeBeforeSave = DateTime.Now;
@@ -82,7 +82,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task Entity_UpdateNofields_Test()
         {
-            IBrandService brandService = Resolve<IBrandService>();
+            IBrandService brandService = databaseEngineFixture.Resolve<IBrandService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             DateTime dateTimeBeforeSave = DateTime.Now;
@@ -109,7 +109,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task UpdateWithfields_Test()
         {
-            ICarService carService = Resolve<ICarService>();
+            ICarService carService = databaseEngineFixture.Resolve<ICarService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             DateTime dateTimeBeforeSave = DateTime.Now;
@@ -141,7 +141,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task UpdateProperties_LastModificationDateChanged()
         {
-            ICarService carService = Resolve<ICarService>();
+            ICarService carService = databaseEngineFixture.Resolve<ICarService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             Car newCar = CarsCatalog.CitroenC4(suffix);
@@ -163,7 +163,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task CreationRangeDate_RecursiveTest()
         {
-            ICountryService countryService = Resolve<ICountryService>();
+            ICountryService countryService = databaseEngineFixture.Resolve<ICountryService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             DateTime dateTimeOfTest = DateTime.Now;

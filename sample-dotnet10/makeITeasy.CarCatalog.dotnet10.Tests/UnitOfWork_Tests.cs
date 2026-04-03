@@ -15,13 +15,13 @@ using Xunit;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
-    public class UnitOfWork_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
+    public class UnitOfWork_Tests(DatabaseFixture databaseEngineFixture) : IClassFixture<DatabaseFixture>
     {
         [Fact]
         public async Task CreationUniqueName_ErrorTest()
         {
-            ICarService carService = Resolve<ICarService>();
-            IBrandService brandService = Resolve<IBrandService>();
+            ICarService carService = databaseEngineFixture.Resolve<ICarService>();
+            IBrandService brandService = databaseEngineFixture.Resolve<IBrandService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             Brand brand = new()
@@ -61,8 +61,8 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task CreationUnitOfWork_WorkingTest()
         {
-            ICarService carService = Resolve<ICarService>();
-            IBrandService brandService = Resolve<IBrandService>();
+            ICarService carService = databaseEngineFixture.Resolve<ICarService>();
+            IBrandService brandService = databaseEngineFixture.Resolve<IBrandService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             Brand brand = new()
@@ -75,7 +75,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
                 }
             };
 
-            IUnitOfWork uo = Resolve<IUnitOfWork>();
+            IUnitOfWork uo = databaseEngineFixture.Resolve<IUnitOfWork>();
 
             var brandRepository = uo.GetRepository<Brand>();
             var carRepository = uo.GetRepository<Car>();
@@ -115,7 +115,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task CreationUnitOfWork_ErrorTest()
         {
-            IBrandService brandService = Resolve<IBrandService>();
+            IBrandService brandService = databaseEngineFixture.Resolve<IBrandService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             Brand brand = new()
@@ -128,7 +128,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
                 }
             };
 
-            IUnitOfWork uo = Resolve<IUnitOfWork>();
+            IUnitOfWork uo = databaseEngineFixture.Resolve<IUnitOfWork>();
 
             var brandRepository = uo.GetRepository<Brand>();
             var carRepository = uo.GetRepository<Car>();

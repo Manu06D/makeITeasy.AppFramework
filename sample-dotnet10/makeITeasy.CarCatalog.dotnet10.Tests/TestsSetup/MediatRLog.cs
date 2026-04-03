@@ -3,5 +3,6 @@
     public class MediatRLog
     {
         public int Counter { get; set; }
+        public List<string> Logs { get; set; } = new List<string>();
     }
 }

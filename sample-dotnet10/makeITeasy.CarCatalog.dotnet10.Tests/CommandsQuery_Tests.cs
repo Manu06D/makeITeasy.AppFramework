@@ -15,13 +15,13 @@ using makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
-    public class CommandsQuery_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
+    public class CommandsQuery_Tests(DatabaseFixture databaseEngineFixture) : IClassFixture<DatabaseFixture>
     {
         [Fact]
         public async Task GenericQueryCommand_BasicTest()
         {
-            IMediator _mediator = Resolve<IMediator>();
-            ICarService carService = Resolve<ICarService>();
+            IMediator _mediator = databaseEngineFixture.Resolve<IMediator>();
+            ICarService carService = databaseEngineFixture.Resolve<ICarService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             CommandResult<Car> newCarResult = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
@@ -37,8 +37,8 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task GenericCreateCommand_BasicTest()
         {
-            IMediator _mediator = Resolve<IMediator>();
-            ICarService carService = Resolve<ICarService>();
+            IMediator _mediator = databaseEngineFixture.Resolve<IMediator>();
+            ICarService carService = databaseEngineFixture.Resolve<ICarService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             CommandResult<Car> createResult = await _mediator.Send(new CreateEntityCommand<Car>(CarsCatalog.CitroenC4(suffix)), TestContext.Current.CancellationToken);
@@ -54,8 +54,8 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task GenericUpdateCommand_BasicTest()
         {
-            IMediator _mediator = Resolve<IMediator>();
-            ICarService carService = Resolve<ICarService>();
+            IMediator _mediator = databaseEngineFixture.Resolve<IMediator>();
+            ICarService carService = databaseEngineFixture.Resolve<ICarService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             CommandResult<Car> newCarResult = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
@@ -77,8 +77,8 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task GenericFindUniqueCommand_BasicTest()
         {
-            IMediator _mediator = Resolve<IMediator>();
-            ICarService carService = Resolve<ICarService>();
+            IMediator _mediator = databaseEngineFixture.Resolve<IMediator>();
+            ICarService carService = databaseEngineFixture.Resolve<ICarService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             CommandResult<Car> dbCreationResult = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
@@ -100,8 +100,8 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task GenericFindUniqueCommandWithProject_BasicTest()
         {
-            IMediator _mediator = Resolve<IMediator>();
-            ICarService carService = Resolve<ICarService>();
+            IMediator _mediator = databaseEngineFixture.Resolve<IMediator>();
+            ICarService carService = databaseEngineFixture.Resolve<ICarService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
             _ = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
 

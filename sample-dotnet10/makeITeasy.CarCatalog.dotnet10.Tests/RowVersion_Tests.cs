@@ -11,14 +11,14 @@ using Xunit;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
-    public class RowVersion_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
+    public class RowVersion_Tests(DatabaseFixture databaseEngineFixture) : IClassFixture<DatabaseFixture>
     {
         [Fact]
         public async Task CreateAndGet_BasicRowVersionTest()
         {
-            if (DatabaseEngineFixture.CurentDatabaseType == DatabaseType.MsSql)
+            if (databaseEngineFixture.DatabaseType == DatabaseType.MsSql)
             {
-                ICarService carService = Resolve<ICarService>();
+                ICarService carService = databaseEngineFixture.Resolve<ICarService>();
                 string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
                 var result = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
@@ -48,10 +48,10 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task RowVersion_Test()
         {
-            (ICarService carService, _, _, string suffix, _) = await CreateCarsAsync();
+            (ICarService carService, _, _, string suffix, _) = await databaseEngineFixture.CreateCarsAsync();
 
             //This will not work on sql server but work here on sql lite cause lack of support of rowversion
-            if (DatabaseEngineFixture.CurentDatabaseType == DatabaseType.MsSql)
+            if (databaseEngineFixture.DatabaseType == DatabaseType.MsSql)
             {
                 Car firstCar = await carService.GetFirstByQueryAsync(new BasicCarQuery() { NameSuffix = suffix });
                 Car secondCar = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = firstCar.Id });

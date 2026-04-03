@@ -11,8 +11,9 @@
 		<PackageReleaseNotes>Initial Release</PackageReleaseNotes>
 		<Authors>Emmanuel D.</Authors>
 		<Company>Make IT Easy</Company>
-		<Version>1.1.11</Version>
+		<Version>1.1.12</Version>
 		<Description>
+			1.1.12 : Dependencies update
 			1.1.11 : Rename ISpecification field StringCriteria to expression
 			1.1.10: Dependencies update.
 			1.1.9 : Dependencies update.
@@ -30,7 +31,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.201" />
 	</ItemGroup>
 
 </Project>

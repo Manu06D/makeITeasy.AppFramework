@@ -14,8 +14,9 @@ using makeITeasy.AppFramework.Core.Commands;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
-    public class BrandService_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
+    public class BrandService_Tests(DatabaseFixture databaseEngineFixture) : IClassFixture<DatabaseFixture>
     {
+
         public class BrandInfo : IMapFrom<Brand>
         {
             public string? Name { get; set; }
@@ -33,7 +34,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task CreateAndGet_ListWithFunctionTest()
         {
-            (_, IBrandService brandService, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
+            (_, IBrandService brandService, Brand citroenBrand, string suffix, _) = await databaseEngineFixture.CreateCarsAsync();
 
             var getResult = await brandService.QueryWithProjectionAsync<BrandInfo>(new BasicBrandQuery());
 
@@ -56,7 +57,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
 
         public async Task CreateAndGet_ListWith2LevelMappingTest()
         {
-            (_, IBrandService brandService, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
+            (_, IBrandService brandService, Brand citroenBrand, string suffix, _) = await databaseEngineFixture.CreateCarsAsync();
 
             var getResult = await brandService.QueryWithProjectionAsync<SmallBrandInfo>(new BasicBrandQuery());
 
@@ -69,7 +70,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public void MissingValidator_Test()
         {
-            ICountryService countryService = Resolve<ICountryService>();
+            ICountryService countryService = databaseEngineFixture.Resolve<ICountryService>();
 
             var newCountry = new Country
             {
@@ -83,9 +84,9 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         public async Task TransactionWithError_Tests()
         {
             //Dont' work in unit test due to leak of support of transaction of sqllite
-            if (DatabaseEngineFixture.CurentDatabaseType == DatabaseType.MsSql)
+            if (databaseEngineFixture.DatabaseType == DatabaseType.MsSql)
             {
-                IBrandService brandService = Resolve<IBrandService>();
+                IBrandService brandService = databaseEngineFixture.Resolve<IBrandService>();
                 string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
                 var newBrand = new Brand
@@ -141,8 +142,8 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task EFCoreIncludeWithFunction_Test()
         {
-            (_, IBrandService brandService, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
-            (_, _, Brand citroenBrand2, string suffix2, _) = await CreateCarsAsync();
+            (_, IBrandService brandService, Brand citroenBrand, string suffix, _) = await databaseEngineFixture.CreateCarsAsync();
+            (_, _, Brand citroenBrand2, string suffix2, _) = await databaseEngineFixture.CreateCarsAsync();
 
             var getResult = await brandService.QueryAsync(
                 new BasicBrandQuery()
@@ -166,7 +167,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task EFCoreIncludeWithFunctionAndProjection_Test()
         {
-            (_, IBrandService brandService, Brand citroenBrand, string suffix, _) = await CreateCarsAsync();
+            (_, IBrandService brandService, Brand citroenBrand, string suffix, _) = await databaseEngineFixture.CreateCarsAsync();
 
             var getResult = await brandService.QueryWithProjectionAsync<CustomBrand>(
                 new BasicBrandQuery()
