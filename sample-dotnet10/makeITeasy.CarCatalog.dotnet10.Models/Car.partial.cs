@@ -19,7 +19,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Models
 
         public bool IsModernCar => ModernCarFunction.Compile()(this);
 
-        public static Expression<Func<Country, bool>> ItalianCarFunction => (x) => x.CountryCode == "IT";
+        public static Expression<Func<Country, bool>> ItalianCarFunction => (x) => x!= null && x.CountryCode == "IT";
 
         [Computed]
         [JsonIgnore]

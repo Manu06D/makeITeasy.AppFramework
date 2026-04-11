@@ -36,8 +36,8 @@ namespace makeITeasy.CarCatalog.dotnet10.Infrastructure.Persistence
         public InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
         {
             var context = eventData.Context;
-            context.ChangeTracker.DetectChanges();
-            foreach (var entry in context.ChangeTracker.Entries())
+            context?.ChangeTracker.DetectChanges();
+            foreach (var entry in context?.ChangeTracker?.Entries())
             {
                 var message = entry.State switch
                 {

@@ -424,6 +424,16 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
                     EntityEntry<T> ee = dbContext.Entry(databaseEntity);
 
                     ee.CurrentValues.SetValues(entity);
+
+                    var rowVersionProps = ee.Metadata
+                    .GetProperties()
+                        .Where(p => p.IsConcurrencyToken && p.ValueGenerated == ValueGenerated.OnAddOrUpdate);
+
+                    foreach (var prop in rowVersionProps)
+                    {
+                        var propEntry = ee.Property(prop.Name);
+                        propEntry.OriginalValue = prop.GetGetter().GetClrValue(entity);
+                    }
                 }
             }
 

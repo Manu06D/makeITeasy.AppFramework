@@ -11,7 +11,7 @@ using Xunit;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
-    public class JsonDynamicsFields_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
+    public class JsonDynamicsFields_Tests(DatabaseFixture databaseEngineFixture) : AutofacFixture(databaseEngineFixture)
     {
         [Fact]
         public async Task CreateAndGet_JsonDynamicFieldTest()

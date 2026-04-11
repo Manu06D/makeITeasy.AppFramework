@@ -49,7 +49,6 @@ app.UseStaticFiles();
 app.MapOpenApi();
 app.MapScalarApiReference(o =>
     o.WithTheme(ScalarTheme.None)
-    .WithEndpointPrefix("none/{documentName}")
 );
 
 app.UseRouting();

@@ -15,7 +15,7 @@ using Xunit;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
-    public class UnitOfWork_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
+    public class UnitOfWork_Tests(DatabaseFixture databaseEngineFixture) : AutofacFixture(databaseEngineFixture)
     {
         [Fact]
         public async Task CreationUniqueName_ErrorTest()

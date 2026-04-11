@@ -15,7 +15,7 @@ using makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
-    public class QueryWithValidation_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
+    public class QueryWithValidation_Tests(DatabaseFixture databaseEngineFixture) : AutofacFixture(databaseEngineFixture)
     {
         public class BaseCarQueryWithValidation : BasicCarQuery, IIsValidSpecification
         {

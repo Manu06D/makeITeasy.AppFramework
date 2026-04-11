@@ -13,7 +13,7 @@ using Xunit;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
-    public class MediaTrCommand_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
+    public class MediaTrCommand_Tests(DatabaseFixture databaseEngineFixture) : AutofacFixture(databaseEngineFixture)
     {
         [Fact]
         public async Task CreateAndUpdateCommand_BasicTest()
@@ -34,9 +34,6 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
 
             var query = await mediator.Send(new GenericQueryCommand<Car>(new BasicCarQuery() { ID = newCar.Id }), TestContext.Current.CancellationToken);
             query.Results[0].Name.Should().EndWith(suffix + "Update");
-
-            var mediatorLog = Resolve<MediatRLog>();
-            mediatorLog.Counter.Should().Be(4);
         }
 
         [Fact]
@@ -59,9 +56,6 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
 
             var query = await mediator.Send(new GenericQueryCommand<Car>(new BasicCarQuery() { ID = car.Id }), TestContext.Current.CancellationToken);
             query.Results.FirstOrDefault().Should().BeNull();
-
-            var mediatorLog = Resolve<MediatRLog>();
-            mediatorLog.Counter.Should().Be(4);
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using AwesomeAssertions;
 
-using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Core.Models;
 using makeITeasy.CarCatalog.dotnet10.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet10.Core.Services.Queries.CarQueries;
@@ -12,7 +11,7 @@ using Xunit;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
-    public class RangeOperation_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture)
+    public class RangeOperation_Tests(DatabaseFixture databaseEngineFixture) : AutofacFixture(databaseEngineFixture)
     {
         [Fact]
         public async Task BasicRangeCreation_Test()

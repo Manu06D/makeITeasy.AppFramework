@@ -23,8 +23,10 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup
             if (IsFrameworkCommandResult)
             {
                 var entity = request.GetType().GetInterfaces()[0].GetProperty("Entity")?.GetValue(request, null);
-                _logger.LogInformation($"Processing {typeof(TRequest).Name} with Entity {TestHelper.Dump(entity)}");
+                string message = $"Processing {typeof(TRequest).Name} with Entity {TestHelper.Dump(entity)}";
+                _logger.LogInformation(message);
                 _mediatRLog.Counter++;
+                _mediatRLog.Logs.Add(message);
             }
 
             var response = await next();
@@ -32,14 +34,18 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup
             if (typeof(TResponse).IsGenericType && typeof(TResponse).BaseType == typeof(CommandResult))
             {
                 var entityResponse = typeof(TResponse).GetProperty("Entity")?.GetValue(response, null);
-                _logger.LogInformation($"Processed {TestHelper.Dump(entityResponse)}");
+                string message = $"Processed {TestHelper.Dump(entityResponse)}";
+                _logger.LogInformation(message);
                 _mediatRLog.Counter++;
+                _mediatRLog.Logs.Add(message);
             }
             else if (typeof(TResponse) == typeof(CommandResult))
             {
                 var entityResponse = typeof(TResponse).GetProperty("Result")?.GetValue(response, null);
-                _logger.LogInformation($"Processed with result = {TestHelper.Dump(entityResponse)}");
+                string message = $"Processed with result = {TestHelper.Dump(entityResponse)}";
+                _logger.LogInformation(message);
                 _mediatRLog.Counter++;
+                _mediatRLog.Logs.Add(message);
             }
 
             return response;
