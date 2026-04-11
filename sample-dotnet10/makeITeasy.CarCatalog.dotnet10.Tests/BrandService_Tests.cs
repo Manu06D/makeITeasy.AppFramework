@@ -62,7 +62,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
             var getResult = await brandService.QueryWithProjectionAsync<SmallBrandInfo>(new BasicBrandQuery());
 
             getResult.Results.Where(x => x.Name == citroenBrand.Name).Should().HaveCount(1);
-            getResult.Results.First(x => x.Name == citroenBrand.Name).Name.Should().EndWith(suffix);
+            getResult.Results.First(x => x.Name == citroenBrand.Name).Name.Should().EndWith(TestUniqueId);
             getResult.Results.First(x => x.Name == citroenBrand.Name).Cars.Should().HaveCount(2);
             getResult.Results.First(x => x.Name == citroenBrand.Name).Cars.Should().OnlyContain(x => x.Name != null);
         }
