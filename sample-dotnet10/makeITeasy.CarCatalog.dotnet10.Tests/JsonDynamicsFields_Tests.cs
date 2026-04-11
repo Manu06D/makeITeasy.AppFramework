@@ -11,12 +11,12 @@ using Xunit;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
-    public class JsonDynamicsFields_Tests(DatabaseFixture databaseEngineFixture) : IClassFixture<DatabaseFixture>
+    public class JsonDynamicsFields_Tests(DatabaseFixture databaseEngineFixture) : AutofacFixture(databaseEngineFixture)
     {
         [Fact]
         public async Task CreateAndGet_JsonDynamicFieldTest()
         {
-            ICarService carService = databaseEngineFixture.Resolve<ICarService>();
+            ICarService carService = Resolve<ICarService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             Car newCar = new()
@@ -63,7 +63,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task CreateAndGet_EF9JsonFieldTest()
         {
-            IEngineService engineService = databaseEngineFixture.Resolve<IEngineService>();
+            IEngineService engineService = Resolve<IEngineService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             const bool hasTurbo = true;
@@ -94,7 +94,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task Query_EF9JsonFieldTest()
         {
-            IEngineService engineService = databaseEngineFixture.Resolve<IEngineService>();
+            IEngineService engineService = Resolve<IEngineService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             Engine engine = new()

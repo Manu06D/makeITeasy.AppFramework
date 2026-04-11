@@ -11,12 +11,12 @@ using Xunit;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
-    public class RangeOperation_Tests(DatabaseFixture databaseEngineFixture) : IClassFixture<DatabaseFixture>
+    public class RangeOperation_Tests(DatabaseFixture databaseEngineFixture) : AutofacFixture(databaseEngineFixture)
     {
         [Fact]
         public async Task BasicRangeCreation_Test()
         {
-            ICarService carService = databaseEngineFixture.Resolve<ICarService>();
+            ICarService carService = Resolve<ICarService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             (await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix })).Results.Should().BeEmpty();
@@ -31,7 +31,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task BasicRangeCreationWithOneError_Test()
         {
-            ICarService carService = databaseEngineFixture.Resolve<ICarService>();
+            ICarService carService = Resolve<ICarService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             (await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix })).Results.Should().BeEmpty();
@@ -52,7 +52,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task RangeCreationWithInvalidObject_Test()
         {
-            ICarService carService = databaseEngineFixture.Resolve<ICarService>();
+            ICarService carService = Resolve<ICarService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             (await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix })).Results.Should().BeEmpty();
@@ -75,7 +75,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task UpdateRange_BasicTest()
         {
-            ICarService carService = databaseEngineFixture.Resolve<ICarService>();
+            ICarService carService = Resolve<ICarService>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
             var dbCreation = await carService.CreateRangeAsync([CarsCatalog.CitroenC4(suffix), CarsCatalog.CitroenC5(suffix)]);

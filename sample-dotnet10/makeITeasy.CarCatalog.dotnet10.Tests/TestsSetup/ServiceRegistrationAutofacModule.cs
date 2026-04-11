@@ -11,8 +11,6 @@ using makeITeasy.AppFramework.Core.Helpers;
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.CarCatalog.dotnet10.Core.Ports;
-using makeITeasy.CarCatalog.dotnet10.Core.Services;
-using makeITeasy.CarCatalog.dotnet10.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet10.Infrastructure.Data;
 using makeITeasy.CarCatalog.dotnet10.Infrastructure.Persistence;
 using makeITeasy.CarCatalog.dotnet10.Infrastructure.Repositories;
@@ -48,16 +46,15 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup
 
             });
 
-            Assembly[] assembliesToScan = new Assembly[]{
+            Assembly[] assembliesToScan = [
                     AppFramework.Core.AppFrameworkCore.Assembly, //Framework Assembly
                     Core.CarCatalogCore.Assembly,                //Service Assembly
                     AppFrameworkModels.Assembly,                 //Models Assembly
                     Assembly.GetExecutingAssembly(),
                     typeof(Car).Assembly
-            };
+            ];
 
 
-            //services.AddDbContext<CarCatalogContext>(options =>
             _ = services.AddDbContextFactory<CarCatalogContext>(options =>
                         {
                             options.AddInterceptors(new DatabaseInterceptor());
@@ -71,8 +68,6 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup
                                 var sqlLiteMemoryConnection = new SqliteConnection("DataSource=:memory:");
                                 sqlLiteMemoryConnection.Open();
                                 options.UseSqlite(sqlLiteMemoryConnection);
-                                //TODO : use strategy for database
-                                //options.UseSqlite(DatabaseConnectionString);
                             }
                             else if (DatabaseType == DatabaseType.CosmosDb)
                             {
@@ -102,17 +97,12 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup
             builder.RegisterType<CarCatalogContext>();
 
             builder.RegisterGeneric(typeof(LoggingBehavior<,>)).As(typeof(IPipelineBehavior<,>));
-            builder.RegisterType<MediatRLog>().SingleInstance();
+            builder.RegisterType<MediatRLog>().InstancePerLifetimeScope();
 
             builder.RegisterGeneric(typeof(TransactionCarCatalogRepository<>)).As(typeof(IAsyncRepository<>)).InstancePerLifetimeScope()
                 .PropertiesAutowired()
                 .OnActivated(args => AutofacHelper.InjectProperties(args.Context, args.Instance, true));
 
-            //specific service/repository
-            builder.RegisterType<CarService>().As<ICarService>()
-                //let's inject the properties (IDateTimeProvider)
-                .OnActivated(args => AutofacHelper.InjectProperties(args.Context, args.Instance, true));
-            ;
             builder.RegisterType<CarRepository>().As<ICarRepository>();
 
             builder.RegisterType<UnitOfWork>().As(typeof(IUnitOfWork));

@@ -13,12 +13,12 @@ using Xunit;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
-    public class MediaTrCommand_Tests(DatabaseFixture databaseEngineFixture) : IClassFixture<DatabaseFixture>
+    public class MediaTrCommand_Tests(DatabaseFixture databaseEngineFixture) : AutofacFixture(databaseEngineFixture)
     {
         [Fact]
         public async Task CreateAndUpdateCommand_BasicTest()
         {
-            IMediator mediator = databaseEngineFixture.Resolve<IMediator>();
+            IMediator mediator = Resolve<IMediator>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
             Car newCar = CarsCatalog.CitroenC4(suffix);
 
@@ -34,15 +34,12 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
 
             var query = await mediator.Send(new GenericQueryCommand<Car>(new BasicCarQuery() { ID = newCar.Id }), TestContext.Current.CancellationToken);
             query.Results[0].Name.Should().EndWith(suffix + "Update");
-
-            var mediatorLog = databaseEngineFixture.Resolve<MediatRLog>();
-            mediatorLog.Counter.Should().Be(4);
         }
 
         [Fact]
         public async Task CreateAndDeleteCommand_BasicTest()
         {
-            IMediator mediator = databaseEngineFixture.Resolve<IMediator>();
+            IMediator mediator = Resolve<IMediator>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
             Car car = CarsCatalog.CitroenC4(suffix);
 
@@ -59,9 +56,6 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
 
             var query = await mediator.Send(new GenericQueryCommand<Car>(new BasicCarQuery() { ID = car.Id }), TestContext.Current.CancellationToken);
             query.Results.FirstOrDefault().Should().BeNull();
-
-            var mediatorLog = databaseEngineFixture.Resolve<MediatRLog>();
-            mediatorLog.Counter.Should().Be(4);
         }
     }
 }

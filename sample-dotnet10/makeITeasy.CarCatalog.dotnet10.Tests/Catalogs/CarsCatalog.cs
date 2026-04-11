@@ -1,10 +1,44 @@
-﻿using makeITeasy.CarCatalog.dotnet10.Core.Services.Interfaces;
+﻿using makeITeasy.AppFramework.Core.Commands;
+using makeITeasy.CarCatalog.dotnet10.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet10.Models;
+using makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup;
+
+using MediatR;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests.Catalogs
 {
-    public class CarsCatalog
+    public static class CarsCatalog
     {
+        public static async Task<(ICarService carService, IBrandService brandService, Brand citroenBrand, string suffix, List<Car> cars)> CreateCarsAsync(IResolveEntity resolveEntity)
+        {
+            ICarService carService = resolveEntity.Resolve<ICarService>();
+            IBrandService brandService = resolveEntity.Resolve<IBrandService>();
+            ICountryService countryService = resolveEntity.Resolve<ICountryService>();
+
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+            List<Car> cars = [];
+
+            Country country = CarsCatalog.France;
+            await countryService.CreateAsync(country);
+
+            Brand citroenBrand = CarsCatalog.Citroen(suffix, countryId: country.Id);
+            await brandService.CreateAsync(citroenBrand);
+
+            Car c4car = CarsCatalog.CitroenC4(suffix, brandId: citroenBrand.Id);
+            if ((await carService.CreateAsync(c4car)).Result == CommandState.Success)
+            {
+                cars.Add(c4car);
+            }
+
+            Car c5car = CarsCatalog.CitroenC5(suffix, brandId: citroenBrand.Id);
+            if ((await carService.CreateAsync(c5car)).Result == CommandState.Success)
+            {
+                cars.Add(c5car);
+            }
+
+            return (carService, brandService, citroenBrand, suffix, cars);
+        }
+
         public static Car CitroenC4(string? suffix = "", Brand? brand = null, int? brandId = null) => new()
         {
             Name = "C4" + suffix,

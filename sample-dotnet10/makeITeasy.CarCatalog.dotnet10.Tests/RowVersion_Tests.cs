@@ -1,24 +1,34 @@
 ﻿using AwesomeAssertions;
 
 using makeITeasy.AppFramework.Core.Commands;
+using makeITeasy.AppFramework.Core.Models.Exceptions;
+using makeITeasy.CarCatalog.dotnet10.Core.Services;
 using makeITeasy.CarCatalog.dotnet10.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet10.Core.Services.Queries.CarQueries;
 using makeITeasy.CarCatalog.dotnet10.Models;
 using makeITeasy.CarCatalog.dotnet10.Tests.Catalogs;
 using makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup;
 
+using MediatR;
+
+using Microsoft.EntityFrameworkCore;
+
+using SQLitePCL;
+
+using System.Text.Json;
+
 using Xunit;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
-    public class RowVersion_Tests(DatabaseFixture databaseEngineFixture) : IClassFixture<DatabaseFixture>
+    public class RowVersion_Tests(DatabaseFixture databaseEngineFixture) : AutofacFixture(databaseEngineFixture)
     {
         [Fact]
         public async Task CreateAndGet_BasicRowVersionTest()
         {
-            if (databaseEngineFixture.DatabaseType == DatabaseType.MsSql)
+            if (GlobalTestSetup.DatabaseType == DatabaseType.MsSql)
             {
-                ICarService carService = databaseEngineFixture.Resolve<ICarService>();
+                ICarService carService = Resolve<ICarService>();
                 string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
 
                 var result = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
@@ -48,13 +58,13 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task RowVersion_Test()
         {
-            (ICarService carService, _, _, string suffix, _) = await databaseEngineFixture.CreateCarsAsync();
+            (ICarService carService, _, _, string suffix, _) = await CarsCatalog.CreateCarsAsync(this);
 
             //This will not work on sql server but work here on sql lite cause lack of support of rowversion
-            if (databaseEngineFixture.DatabaseType == DatabaseType.MsSql)
+            if (GlobalTestSetup.DatabaseType == DatabaseType.MsSql)
             {
                 Car firstCar = await carService.GetFirstByQueryAsync(new BasicCarQuery() { NameSuffix = suffix });
-                Car secondCar = await carService.GetFirstByQueryAsync(new BasicCarQuery() { ID = firstCar.Id });
+                Car secondCar = JsonSerializer.Deserialize<Car>(JsonSerializer.Serialize(firstCar));
 
                 firstCar.Should().NotBeNull();
                 secondCar.Should().NotBeNull();
@@ -64,9 +74,9 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
                 firstCar.RowVersion.Should().BeEquivalentTo(secondCar.RowVersion);
 
                 firstCar!.Name += "Test";
-                await carService.UpdateAsync(firstCar);
+                var t = await carService.UpdateAsync(firstCar);
 
-                //todo firstcar should been updated with new row
+                //firstcar should been updated with new row
                 //firstCarRowVersion.Should().NotBeEquivalentTo(BitConverter.ToString(firstCar.RowVersion));
 
                 Car firstCarAterUpdate = await carService.GetFirstByQueryAsync(new BasicCarQuery() { NameSuffix = suffix + "Test" });
@@ -74,11 +84,8 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
                 firstCarRowVersion.Should().NotBeEquivalentTo(BitConverter.ToString(firstCarAterUpdate.RowVersion));
 
                 secondCar!.Name += " 2";
-                var updateResultProperty = await carService.UpdateAsync(secondCar);
-                updateResultProperty.Result.Should().Be(CommandState.Error);
 
-                var carAfterUpdate = (await carService.GetFirstByQueryAsync(new BasicCarQuery() { NameSuffix = suffix += "Test" }));
-                carAfterUpdate.RowVersion.Should().BeEquivalentTo(firstCarAterUpdate.RowVersion);
+                carService.Invoking(y => y.UpdateAsync(secondCar)).Should().ThrowAsync<DbUpdateConcurrencyException>();
             }
         }
     }

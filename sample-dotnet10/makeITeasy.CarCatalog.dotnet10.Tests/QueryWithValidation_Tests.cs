@@ -15,7 +15,7 @@ using makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
-    public class QueryWithValidation_Tests(DatabaseFixture databaseEngineFixture) : IClassFixture<DatabaseFixture>
+    public class QueryWithValidation_Tests(DatabaseFixture databaseEngineFixture) : AutofacFixture(databaseEngineFixture)
     {
         public class BaseCarQueryWithValidation : BasicCarQuery, IIsValidSpecification
         {
@@ -28,8 +28,8 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         [Fact]
         public async Task GenericQueryCommand_BasicTest()
         {
-            ICarService carService = databaseEngineFixture.Resolve<ICarService>();
-            IMediator mediator= databaseEngineFixture.Resolve<IMediator>();
+            ICarService carService = Resolve<ICarService>();
+            IMediator mediator= Resolve<IMediator>();
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
             Car newCar = CarsCatalog.CitroenC4(suffix);
 
