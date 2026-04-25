@@ -342,3 +342,5 @@ healthchecksdb
 **/wwwroot/lib/**
 **/wwwroot/dist/**
 
+
+.claude

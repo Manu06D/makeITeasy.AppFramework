@@ -1,10 +1,4 @@
-﻿using Autofac;
-
-using makeITeasy.AppFramework.Core.Commands;
-using makeITeasy.CarCatalog.dotnet10.Core.Services.Interfaces;
-using makeITeasy.CarCatalog.dotnet10.Models;
-using makeITeasy.CarCatalog.dotnet10.Tests.Catalogs;
-using makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup;
+﻿using makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup;
 
 using Microsoft.Data.Sqlite;
 
@@ -18,7 +12,6 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup
     public class DatabaseFixture : IAsyncLifetime
     {
         public string? ConnectionString;
-        protected IContainer? container;
 
         public async ValueTask InitializeAsync()
         {

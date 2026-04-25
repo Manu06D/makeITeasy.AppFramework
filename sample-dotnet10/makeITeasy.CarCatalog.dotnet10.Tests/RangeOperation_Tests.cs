@@ -58,8 +58,8 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
             (await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix })).Results.Should().BeEmpty();
 
             Car citroenC4 = CarsCatalog.CitroenC4(suffix);
+            citroenC4.Name = "C"; //force invalidation
             Car citroenC5 = CarsCatalog.CitroenC5(suffix);
-            citroenC4.Name = "C";
 
             var createResult = await carService.CreateRangeAsync([citroenC4, citroenC5]);
 
