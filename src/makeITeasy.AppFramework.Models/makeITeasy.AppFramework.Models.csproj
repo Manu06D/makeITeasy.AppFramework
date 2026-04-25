@@ -20,7 +20,7 @@
 			1.1.8 : Dependencies update. Add StringSelector to ISpecification
 			1.1.7 : Embed DelegateCompiler
 			1.1.6 : Add ReadUncommitedQuery
-			1.1.5 : Add Time tracking model
+			1.1.5 : Add ICurrentDateProvider model
 		</Description>
 		<AssemblyVersion></AssemblyVersion>
 	</PropertyGroup>
@@ -31,7 +31,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.201" />
+		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.203" />
 	</ItemGroup>
 
 </Project>
