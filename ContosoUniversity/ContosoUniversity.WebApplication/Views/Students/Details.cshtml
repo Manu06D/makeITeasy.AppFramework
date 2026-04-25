@@ -1,0 +1,30 @@
+﻿@using ContosoUniversity.WebApplication.ApiControllers
+@using ContosoUniversity.WebApplication.Models.Datatables
+@using ContosoUniversity.WebApplication.Models.StudentModels
+@model StudentDetailsViewModel
+
+@{
+    Layout = "_Modal";
+    ViewBag.PageTitle = "Student Details";
+    var enrollmentDatatable = new StudentEnrollmentDatatable(Url?.RouteUrl(nameof(DatatablesApiController.StudentEnrollmentsDatatableSearchRequest)));
+}
+
+<div>
+Name : @Model.FirstName @Model.LastName
+</div>
+<div>
+Enrollment Date : @Model.EnrollmentDate.ToLongDateString()
+</div>
+
+<h4>Enrollments</h4>
+<form asp-antiforgery="false" onsubmit="event.preventDefault();" id="enrollmentSearchRequestForm">
+    <input type="text" class="form-control" name="StudentId" hidden="hidden" value="@Model.Id"/>
+</form>
+
+<vc:datatable configuration="enrollmentDatatable"></vc:datatable>
+
+<script>
+$("#@enrollmentDatatable.TableID").ready(function () {
+    initDatatable("@enrollmentDatatable.TableID", "#enrollmentSearchRequestForm", null, null);
+});
+</script>

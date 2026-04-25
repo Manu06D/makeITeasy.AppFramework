@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\sample-dotnet10\makeITeasy.CarCatalog.dotnet10.Infrastructure\makeITeasy.CarCatalog.dotnet10.Infrastructure.csproj" />
+    <ProjectReference Include="..\ContosoUniversity.Core\ContosoUniversity.Core.csproj" />
+    <ProjectReference Include="..\ContosoUniversity.Models\ContosoUniversity.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Repositories\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.203" />
+  </ItemGroup>
+
+</Project>

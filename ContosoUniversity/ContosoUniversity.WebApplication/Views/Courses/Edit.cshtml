@@ -1,0 +1,27 @@
+﻿@using makeITeasy.AppFramework.Web.Helpers
+@model ContosoUniversity.WebApplication.Models.CourseModels.CourseEditViewModel
+@{
+    Layout = "_Modal";
+    ViewBag.PageTitle = "Edit Course : " + Model.Title;
+}
+
+<div id="app">
+    <button v-on:click="count++">
+        Count is: {{ count }} and {{model.Title}}
+    </button>
+</div>
+
+@section Scripts
+{
+<script>
+    Vue.createApp({
+      data() {
+        return {
+            model:@(Html.GetClientModel(Model)),
+          count:0,
+          message: 'Hello Vue!'
+        }
+      }
+    }).mount('#app')
+</script>
+}
