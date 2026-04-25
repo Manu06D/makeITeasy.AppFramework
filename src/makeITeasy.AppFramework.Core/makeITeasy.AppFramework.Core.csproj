@@ -11,7 +11,7 @@
 		<RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
 		<PackageTags>framework ef</PackageTags>
 		<LangVersion>latest</LangVersion>
-		<Version>2.0.3</Version>
+		<Version>2.0.4</Version>
 		<PackageReleaseNotes>
 			2.0.3 : Add string to Expression helper
 			2.0.2 : Dependencies update

@@ -11,7 +11,7 @@
 		<PackageReleaseNotes>Initial Release</PackageReleaseNotes>
 		<Authors>Emmanuel D.</Authors>
 		<Company>Make IT Easy</Company>
-		<Version>1.1.12</Version>
+		<Version>1.1.13</Version>
 		<Description>
 			1.1.12 : Dependencies update
 			1.1.11 : Rename ISpecification field StringCriteria to expression
