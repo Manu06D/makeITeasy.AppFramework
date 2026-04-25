@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContosoUniversity.WebApplic
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ContosoUniversity", "ContosoUniversity", "{5C62E738-F3AD-41B7-AB88-37AF61F68090}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "makeITeasy.AppFramework.Web", "src\makeITeasy.AppFramework.Web\makeITeasy.AppFramework.Web.csproj", "{5BDEBA71-4CB2-4788-0D5F-EC7647B66A4A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -119,6 +121,10 @@ Global
 		{8BB6304A-CF8E-CE7B-2E60-0FA981DB8BA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BB6304A-CF8E-CE7B-2E60-0FA981DB8BA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BB6304A-CF8E-CE7B-2E60-0FA981DB8BA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BDEBA71-4CB2-4788-0D5F-EC7647B66A4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BDEBA71-4CB2-4788-0D5F-EC7647B66A4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BDEBA71-4CB2-4788-0D5F-EC7647B66A4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BDEBA71-4CB2-4788-0D5F-EC7647B66A4A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -139,6 +145,7 @@ Global
 		{6448036B-AE4E-DCC6-33D2-C8FAD1CB9731} = {5C62E738-F3AD-41B7-AB88-37AF61F68090}
 		{068077F1-E7B2-DFEF-F1D7-3291B494DCBD} = {5C62E738-F3AD-41B7-AB88-37AF61F68090}
 		{8BB6304A-CF8E-CE7B-2E60-0FA981DB8BA8} = {5C62E738-F3AD-41B7-AB88-37AF61F68090}
+		{5BDEBA71-4CB2-4788-0D5F-EC7647B66A4A} = {9E17E052-0091-4B8C-BA9C-1DCF26F0D0F0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0C3977D6-0D6B-40FF-BF97-481316AA2FB9}
