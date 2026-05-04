@@ -39,6 +39,7 @@ namespace makeITeasy.CarCatalog.dotnet9.WebApp.Modules.StartupModules
             ////specific service/repository
             builder.RegisterType<CarService>().As<ICarService>();
             builder.RegisterType<CarRepository>().As<ICarRepository>();
+            builder.RegisterType<CompositeKeyTableService>().As<ICompositeKeyTableService>();
         }
     }
 }

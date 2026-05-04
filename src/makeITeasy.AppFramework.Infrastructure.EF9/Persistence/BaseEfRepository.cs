@@ -59,25 +59,9 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
 
         public virtual async Task<T?> GetByIdAsync(object id)
         {
-            if (id.GetType().IsArray)
+            if (id is object[] compositeKeys)
             {
-                //not so elegant, need to investigate on more suitable solution
-                Array a = (Array)id;
-
-                if (a == null)
-                {
-                    throw new Exception("An error has occured while casting the primary key");
-                }
-
-                return a.Length switch
-                {
-                    1 => await GetDbContext().Set<T>().FindAsync(a.GetValue(0)),
-                    2 => await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1)),
-                    3 => await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1), a.GetValue(2)),
-                    4 => await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1), a.GetValue(2), a.GetValue(3)),
-                    5 => await GetDbContext().Set<T>().FindAsync(a.GetValue(0), a.GetValue(1), a.GetValue(2), a.GetValue(3), a.GetValue(4)),
-                    _ => throw new Exception("Composite key with more than 5 columns are not supported"),
-                };
+                return await GetDbContext().Set<T>().FindAsync(compositeKeys);
             }
 
             return await GetDbContext().Set<T>().FindAsync(id);
@@ -414,8 +398,17 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
 
             if (entityEntry.State == EntityState.Detached)
             {
+                T? databaseEntity;
+
                 //This can be an issue if input entity is not fully filled with database value. Data can be lost !!
-                T? databaseEntity = await dbContext.FindAsync<T>(entity.DatabaseID);
+                if (entity.DatabaseID is object[] compositeKey)
+                {
+                    databaseEntity = await dbContext.FindAsync<T>(compositeKey);
+                }
+                else
+                {
+                    databaseEntity = await dbContext.FindAsync<T>(entity.DatabaseID);
+                }
 
                 if (databaseEntity != null)
                 {

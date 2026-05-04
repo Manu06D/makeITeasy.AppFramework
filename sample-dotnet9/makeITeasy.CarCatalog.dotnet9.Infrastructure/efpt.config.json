@@ -5,7 +5,7 @@
    "FilterSchemas": false,
    "IncludeConnectionString": false,
    "IrregularWords": null,
-   "MinimumProductVersion": "2.6.1224",
+   "MinimumProductVersion": "2.6.1465",
    "ModelNamespace": "",
    "OutputContextPath": null,
    "OutputPath": "Data",
@@ -31,6 +31,10 @@
             "DynamicCarDetails"
          ],
          "Name": "[dbo].[CarDetails]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CompositeKeyTable]",
          "ObjectType": 0
       },
       {
@@ -71,5 +75,6 @@
    "UseSchemaNamespaces": false,
    "UseSpatial": false,
    "UseT4": false,
-   "UseT4Split": false
+   "UseT4Split": false,
+   "UseTypedTvpParameters": true
 }

@@ -80,6 +80,7 @@ builder.Host.ConfigureContainer<ContainerBuilder>(
 
         ////specific service/repository
         builder.RegisterType<CarService>().As<ICarService>();
+        builder.RegisterType<CompositeKeyTableService>().As<ICompositeKeyTableService>();
         builder.RegisterType<CarRepository>().As<ICarRepository>();
     }
 );
