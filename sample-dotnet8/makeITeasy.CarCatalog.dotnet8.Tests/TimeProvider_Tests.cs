@@ -17,7 +17,7 @@ namespace makeITeasy.CarCatalog.dotnet8.Tests
     {
         public override DateTimeOffset GetUtcNow()
         {
-            var localDate = new DateTime(2000, 12, 25, 0, 0, 0, DateTimeKind.Local);
+            DateTime localDate = new(2000, 12, 25, 0, 0, 0, DateTimeKind.Local);
             return new DateTimeOffset(localDate).ToUniversalTime();
         }
     }

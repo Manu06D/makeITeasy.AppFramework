@@ -2,7 +2,6 @@
 
 using AwesomeAssertions;
 
-using makeITeasy.AppFramework.Models;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CarQueries;
 using makeITeasy.CarCatalog.dotnet9.Core.Services.Queries.CountryQueries;
@@ -17,7 +16,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
     {
         public override DateTimeOffset GetUtcNow()
         {
-            var localDate = new DateTime(2000, 12, 25, 0, 0, 0, DateTimeKind.Local);
+            DateTime localDate = new(2000, 12, 25, 0, 0, 0, DateTimeKind.Local);
             return new DateTimeOffset(localDate).ToUniversalTime();
         }
     }
