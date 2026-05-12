@@ -16,11 +16,8 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
 
-using System;
 using System.Linq.Expressions;
 using System.Reflection;
-
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
 {
@@ -30,7 +27,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
         private readonly IMapper _mapper;
         private readonly U? _dbContext = null;
 
-        public ICurrentDateProvider? DateProvider { get; set; }
+        public TimeProvider? DateProvider { get; set; }
 
         protected BaseEfRepository(IDbContextFactory<U> dbFactory, IMapper mapper)
         {
@@ -64,12 +61,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
             if (id.GetType().IsArray)
             {
                 //not so elegant, need to investigate on more suitable solution
-                Array a = (Array)id;
-
-                if(a == null)
-                {
-                    throw new Exception("An error has occured while casting the primary key");
-                }
+                Array a = (Array)id ?? throw new Exception("An error has occured while casting the primary key");
 
                 return a.Length switch
                 {
@@ -91,12 +83,8 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
 
             if (includes != null && dbContext != null)
             {
-                IProperty? keyProperty = dbContext.Model.FindEntityType(typeof(T))?.FindPrimaryKey()?.Properties[0];
-                if (keyProperty == null)
-                {
-                    throw new Exception($"An error has occred while guessing the primary key of object {typeof(T).FullName}"); ;
-                }
-
+                IProperty? keyProperty = (dbContext.Model.FindEntityType(typeof(T))?.FindPrimaryKey()?.Properties[0])
+                    ?? throw new Exception($"An error has occred while guessing the primary key of object {typeof(T).FullName}");
                 IQueryable<T> dbSet = dbContext.Set<T>().AsQueryable();
 
                 //TODO : test if it works :)
@@ -142,7 +130,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
 
             if (filteredSet != null && _mapper?.ConfigurationProvider != null)
             {
-                result.Results = filteredSet.AsNoTracking().ProjectTo<X>(_mapper.ConfigurationProvider).DecompileAsync().ToList();
+                result.Results = [.. filteredSet.AsNoTracking().ProjectTo<X>(_mapper.ConfigurationProvider).DecompileAsync()];
             }
 
             return result;
@@ -240,7 +228,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
 
                 if (entry.State == EntityState.Modified)
                 {
-                    List<string> propertiesToExclude = typeof(ITimeTrackingEntity).GetProperties().Select(x => x.Name).ToList();
+                    List<string> propertiesToExclude = [.. typeof(ITimeTrackingEntity).GetProperties().Select(x => x.Name)];
 
                     foreach (var property in entry.Properties.Where(x => !propertiesToExclude.Contains(x.Metadata.Name)))
                     {
@@ -272,7 +260,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
 
                 if (hasAnyChangeOnEntry)
                 {
-                    DateTime now = DateProvider?.Now ?? DateTime.Now;
+                    DateTime now = DateProvider?.LocalTimeZone != null ? DateProvider.GetLocalNow().LocalDateTime : DateTime.Now;
 
                     ((ITimeTrackingEntity)entry.Entity).LastModificationDate = now;
 
@@ -293,7 +281,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
 
         private bool PrepareEntityForDbOperation(T entity, EntityState state)
         {
-            DateTime now = DateProvider?.Now ?? DateTime.Now;
+            DateTime now = DateProvider?.LocalTimeZone != null ? DateProvider.GetLocalNow().LocalDateTime : DateTime.Now;
 
             (var action, bool recursive) = BaseEfRepository<T, U>.GetITimeTrackingAction(state, now);
 
@@ -318,13 +306,13 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
 
                 case EntityState.Modified:
                     {
-                        action = (x) => { x.LastModificationDate = date; };
+                        action = (x) => x.LastModificationDate = date;
                         break;
                     }
 
                 default:
                     {
-                        action = (x) => { };
+                        action = (_) => { };
                         break;
                     }
             }
@@ -334,7 +322,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
 
         private void PrepareEntitiesForDbOperation(ICollection<T> entities, EntityState state)
         {
-            DateTime now = DateProvider?.Now ?? DateTime.Now;
+            DateTime now = DateProvider?.LocalTimeZone != null ? DateProvider.GetLocalNow().LocalDateTime : DateTime.Now;
 
             (var action, bool recursive) = BaseEfRepository<T, U>.GetITimeTrackingAction(state, now);
 
@@ -403,7 +391,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
         }
 
         /// <summary>
-        /// Update Entity. Only entity will be 
+        /// Update Entity. Only entity will be
         /// </summary>'
         /// <param name="entity"></param>
         /// <param name="saveChanges"></param>
@@ -474,7 +462,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
                         if (
                             oldValue?.Equals(newValue) == false
                             ||
-                            oldValue == null && newValue != null)
+                            (oldValue == null && newValue != null))
                         {
                             property.SetValue(databaseEntity, newValue);
                             dbContext.Entry(databaseEntity).Property(property.Name).IsModified = true;
@@ -499,11 +487,11 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
 
         private static PropertyInfo[] GetPropertiesToUpdate(string[] propertyNames)
         {
-            PropertyInfo[] objectProperties = typeof(T).GetProperties().Where(x => x.CanRead && x.CanWrite).ToArray();
+            PropertyInfo[] objectProperties = [.. typeof(T).GetProperties().Where(x => x.CanRead && x.CanWrite)];
 
-            string[] propertiesToUpdate = objectProperties.Select(x => x.Name).Intersect(propertyNames).ToArray();
+            string[] propertiesToUpdate = [.. objectProperties.Select(x => x.Name).Intersect(propertyNames)];
 
-            return objectProperties.Where(x => propertiesToUpdate.Contains(x.Name)).ToArray();
+            return [.. objectProperties.Where(x => propertiesToUpdate.Contains(x.Name))];
         }
 
         public async Task<CommandResult> DeleteAsync(T entity, bool saveChanges = true)
@@ -530,12 +518,9 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
 
         private static IQueryable<T>? ApplyPaging(IQueryable<T>? filteredSet, ISpecification<T> spec)
         {
-            if (spec is null)
-            {
-                throw new ArgumentNullException(nameof(spec));
-            }
+            ArgumentNullException.ThrowIfNull(spec);
 
-            return filteredSet?.Skip(spec.Skip.GetValueOrDefault()).Take(spec.Take.GetValueOrDefault(10));
+            return filteredSet?.Skip(spec.Skip.GetValueOrDefault()).Take(spec.Take ?? 10);
         }
 
         public void Dispose()

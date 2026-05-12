@@ -11,8 +11,9 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
 		<PackageTags>framework ef</PackageTags>
-		<Version>9.1.27</Version>
+		<Version>9.1.28</Version>
 		<PackageReleaseNotes>
+			9.1.28 : Remove ICurrentDateProvider
 			9.1.27 : Dependencies update
 			9.1.26 : Update expression filtering
 			9.1.25 : Dependencies update.
@@ -23,10 +24,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AutoMapper" Version="14.0.0" />
 		<PackageReference Include="EFCore.BulkExtensions.Core" Version="9.0.2" />
 		<PackageReference Include="EFCore.BulkExtensions.SqlServer" Version="9.0.2" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.14" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.15" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -35,6 +35,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.201" />
+		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.203" />
 	</ItemGroup>
 </Project>

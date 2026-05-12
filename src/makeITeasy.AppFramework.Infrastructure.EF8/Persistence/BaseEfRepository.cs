@@ -28,7 +28,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF8.Persistence
         private readonly IMapper _mapper;
         private readonly U? _dbContext = null;
 
-        public ICurrentDateProvider? DateProvider { get; set; }
+        public TimeProvider? DateProvider { get; set; }
 
         protected BaseEfRepository(IDbContextFactory<U> dbFactory, IMapper mapper)
         {
@@ -270,7 +270,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF8.Persistence
 
                 if (hasAnyChangeOnEntry)
                 {
-                    DateTime now = DateProvider?.Now ?? DateTime.Now;
+                    DateTime now = DateProvider?.LocalTimeZone != null ? DateProvider.GetLocalNow().LocalDateTime : DateTime.Now;
 
                     ((ITimeTrackingEntity)entry.Entity).LastModificationDate = now;
 
@@ -291,7 +291,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF8.Persistence
 
         private bool PrepareEntityForDbOperation(T entity, EntityState state)
         {
-            DateTime now = DateProvider?.Now ?? DateTime.Now;
+            DateTime now = DateProvider?.LocalTimeZone != null ? DateProvider.GetLocalNow().LocalDateTime : DateTime.Now;
 
             (var action, bool recursive) = BaseEfRepository<T, U>.GetITimeTrackingAction(state, now);
 
@@ -332,7 +332,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF8.Persistence
 
         private void PrepareEntitiesForDbOperation(ICollection<T> entities, EntityState state)
         {
-            DateTime now = DateProvider?.Now ?? DateTime.Now;
+            DateTime now = DateProvider?.LocalTimeZone != null ? DateProvider.GetLocalNow().LocalDateTime : DateTime.Now;
 
             (var action, bool recursive) = BaseEfRepository<T, U>.GetITimeTrackingAction(state, now);
 

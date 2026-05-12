@@ -2,40 +2,39 @@
 
 using AwesomeAssertions;
 
-using makeITeasy.AppFramework.Models;
 using makeITeasy.CarCatalog.dotnet8.Core.Services.Interfaces;
-using makeITeasy.CarCatalog.dotnet8.Core.Services.Queries.BrandQueries;
 using makeITeasy.CarCatalog.dotnet8.Core.Services.Queries.CarQueries;
 using makeITeasy.CarCatalog.dotnet8.Core.Services.Queries.CountryQueries;
 using makeITeasy.CarCatalog.dotnet8.Infrastructure.Data;
 using makeITeasy.CarCatalog.dotnet8.Tests.Catalogs;
 
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 using Xunit;
 
 namespace makeITeasy.CarCatalog.dotnet8.Tests
 {
-    public class CustomerDateTimeProvider : ICurrentDateProvider
+    public class FakeTimeProvider : TimeProvider
     {
-        public DateTime Now => new(2000, 12, 25);
+        public override DateTimeOffset GetUtcNow()
+        {
+            var localDate = new DateTime(2000, 12, 25, 0, 0, 0, DateTimeKind.Local);
+            return new DateTimeOffset(localDate).ToUniversalTime();
+        }
     }
 
     public class ServiceRegistrationAutofacModuleWithDateProvider : ServiceRegistrationAutofacModule
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<CustomerDateTimeProvider>().As<ICurrentDateProvider>();
+            builder.RegisterType<FakeTimeProvider>().As<TimeProvider>();
 
             base.Load(builder);
         }
     }
 
-    public class ICurrentDateProvider_Tests : UnitTestAutofacService<ServiceRegistrationAutofacModuleWithDateProvider>
+    public class TimeProvider_Tests : UnitTestAutofacService<ServiceRegistrationAutofacModuleWithDateProvider>
     {
-        public ICurrentDateProvider_Tests()
+        public TimeProvider_Tests()
         {
             var t = Resolve<CarCatalogContext>();
 

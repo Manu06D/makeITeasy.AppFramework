@@ -28,7 +28,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
         private readonly IMapper _mapper;
         private readonly U? _dbContext = null;
 
-        public ICurrentDateProvider? DateProvider { get; set; }
+        public TimeProvider? DateProvider { get; set; }
 
         protected BaseEfRepository(IDbContextFactory<U> dbFactory, IMapper mapper)
         {
@@ -270,8 +270,9 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
 
                 if (hasAnyChangeOnEntry)
                 {
-                    DateTime? modifiedDate = (DateTime) (entry?.Property(nameof(ITimeTrackingEntity.LastModificationDate))?.CurrentValue ?? DateProvider?.Now ?? DateTime.Now);
-                    modifiedDate ??= DateProvider?.Now ?? DateTime.Now;
+                    DateTime now = DateProvider?.LocalTimeZone != null ? DateProvider.GetLocalNow().LocalDateTime : DateTime.Now;
+                    DateTime? modifiedDate = (DateTime) (entry?.Property(nameof(ITimeTrackingEntity.LastModificationDate))?.CurrentValue ?? now);
+                    modifiedDate ??= now;
 
                     ((ITimeTrackingEntity)entry.Entity).LastModificationDate = modifiedDate;
 
@@ -292,7 +293,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
 
         private bool PrepareEntityForDbOperation(T entity, EntityState state)
         {
-            DateTime now = DateProvider?.Now ?? DateTime.Now;
+            DateTime now = DateProvider?.LocalTimeZone != null ? DateProvider.GetLocalNow().LocalDateTime : DateTime.Now;
 
             (var action, bool recursive) = BaseEfRepository<T, U>.GetITimeTrackingAction(state, now);
 
@@ -333,7 +334,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
 
         private void PrepareEntitiesForDbOperation(ICollection<T> entities, EntityState state)
         {
-            DateTime now = DateProvider?.Now ?? DateTime.Now;
+            DateTime now = DateProvider?.LocalTimeZone != null ? DateProvider.GetLocalNow().LocalDateTime : DateTime.Now;
 
             (var action, bool recursive) = BaseEfRepository<T, U>.GetITimeTrackingAction(state, now);
 

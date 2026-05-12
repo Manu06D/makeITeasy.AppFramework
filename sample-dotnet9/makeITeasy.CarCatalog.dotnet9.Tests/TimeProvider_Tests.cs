@@ -13,22 +13,26 @@ using Xunit;
 
 namespace makeITeasy.CarCatalog.dotnet9.Tests
 {
-    public class CustomerDateTimeProvider : ICurrentDateProvider
+    public class FakeTimeProvider : TimeProvider
     {
-        public DateTime Now => new(2000, 12, 25);
+        public override DateTimeOffset GetUtcNow()
+        {
+            var localDate = new DateTime(2000, 12, 25, 0, 0, 0, DateTimeKind.Local);
+            return new DateTimeOffset(localDate).ToUniversalTime();
+        }
     }
 
     public class CustomerDateTimeProviderModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<CustomerDateTimeProvider>().As<ICurrentDateProvider>();
+            builder.RegisterType<FakeTimeProvider>().As<TimeProvider>();
 
             base.Load(builder);
         }
     }
 
-    public class ICurrentDateProvider_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture, [typeof(CustomerDateTimeProviderModule)])
+    public class TimeProvider_Tests(DatabaseEngineFixture databaseEngineFixture) : UnitTestAutofacService(databaseEngineFixture, [typeof(CustomerDateTimeProviderModule)])
     {
         [Fact]
         public async Task CustomDateTimeProviderWithCustomService_DateTime()
