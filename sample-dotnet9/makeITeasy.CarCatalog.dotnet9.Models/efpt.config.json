@@ -4,15 +4,18 @@
    "ContextNamespace": null,
    "FilterSchemas": false,
    "IncludeConnectionString": false,
-   "MinimumProductVersion": "2.6.1130",
+   "IrregularWords": null,
+   "MinimumProductVersion": "2.6.1465",
    "ModelNamespace": null,
    "OutputContextPath": null,
    "OutputPath": "",
+   "PluralRules": null,
    "PreserveCasingWithRegex": true,
    "ProjectRootNamespace": "makeITeasy.CarCatalog.dotnet9.Models",
    "Schemas": null,
    "SelectedHandlebarsLanguage": 0,
    "SelectedToBeGenerated": 2,
+   "SingularRules": null,
    "T4TemplatePath": null,
    "Tables": [
       {
@@ -31,6 +34,10 @@
             "DynamicCarDetails"
          ],
          "Name": "[dbo].[CarDetails]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CompositeKeyTable]",
          "ObjectType": 0
       },
       {
@@ -71,5 +78,6 @@
    "UseSchemaNamespaces": false,
    "UseSpatial": false,
    "UseT4": false,
-   "UseT4Split": false
+   "UseT4Split": false,
+   "UseTypedTvpParameters": true
 }
