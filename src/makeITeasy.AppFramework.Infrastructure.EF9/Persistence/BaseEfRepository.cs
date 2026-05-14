@@ -71,20 +71,37 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
         {
             U? dbContext = GetDbContext();
 
-            if (includes != null && dbContext != null)
+            if (includes != null && includes.Count > 0 && dbContext != null)
             {
-                IProperty? keyProperty = dbContext.Model.FindEntityType(typeof(T))?.FindPrimaryKey()?.Properties[0];
-                if (keyProperty == null)
-                {
-                    throw new Exception($"An error has occred while guessing the primary key of object {typeof(T).FullName}"); ;
-                }
+                var keyProperties = dbContext.Model.FindEntityType(typeof(T))?.FindPrimaryKey()?.Properties
+                    ?? throw new Exception($"An error has occurred while guessing the primary key of object {typeof(T).FullName}");
 
                 IQueryable<T> dbSet = dbContext.Set<T>().AsQueryable();
 
-                //TODO : test if it works :)
                 dbSet = includes.Aggregate(dbSet, (current, include) => current.Include(include));
 
-                return await dbSet.FirstOrDefaultAsync(e => EF.Property<object>(e, keyProperty.Name) == id);
+                ParameterExpression parameter = Expression.Parameter(typeof(T), "e");
+                Expression? predicate = null;
+                object[] keys = id is object[] ids ? ids : [id];
+
+                for (int i = 0; i < keyProperties.Count; i++)
+                {
+                    var property = keyProperties[i];
+                    var keyValue = keys[i];
+
+                    var efPropertyCall = Expression.Call(
+                        typeof(EF),
+                        nameof(EF.Property),
+                        [property.ClrType],
+                        parameter,
+                        Expression.Constant(property.Name));
+
+                    var condition = Expression.Equal(efPropertyCall, Expression.Constant(keyValue, property.ClrType));
+
+                    predicate = predicate == null ? condition : Expression.AndAlso(predicate, condition);
+                }
+
+                return await dbSet.FirstOrDefaultAsync(Expression.Lambda<Func<T, bool>>(predicate!, parameter));
             }
 
             return await GetByIdAsync(id);
