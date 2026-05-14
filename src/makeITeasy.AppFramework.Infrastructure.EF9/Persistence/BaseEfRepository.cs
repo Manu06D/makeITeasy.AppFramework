@@ -28,7 +28,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
         private readonly IMapper _mapper;
         private readonly U? _dbContext = null;
 
-        public ICurrentDateProvider? DateProvider { get; set; }
+        public TimeProvider? DateProvider { get; set; }
 
         protected BaseEfRepository(IDbContextFactory<U> dbFactory, IMapper mapper)
         {
@@ -71,20 +71,37 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
         {
             U? dbContext = GetDbContext();
 
-            if (includes != null && dbContext != null)
+            if (includes != null && includes.Count > 0 && dbContext != null)
             {
-                IProperty? keyProperty = dbContext.Model.FindEntityType(typeof(T))?.FindPrimaryKey()?.Properties[0];
-                if (keyProperty == null)
-                {
-                    throw new Exception($"An error has occred while guessing the primary key of object {typeof(T).FullName}"); ;
-                }
+                var keyProperties = dbContext.Model.FindEntityType(typeof(T))?.FindPrimaryKey()?.Properties
+                    ?? throw new Exception($"An error has occurred while guessing the primary key of object {typeof(T).FullName}");
 
                 IQueryable<T> dbSet = dbContext.Set<T>().AsQueryable();
 
-                //TODO : test if it works :)
                 dbSet = includes.Aggregate(dbSet, (current, include) => current.Include(include));
 
-                return await dbSet.FirstOrDefaultAsync(e => EF.Property<object>(e, keyProperty.Name) == id);
+                ParameterExpression parameter = Expression.Parameter(typeof(T), "e");
+                Expression? predicate = null;
+                object[] keys = id is object[] ids ? ids : [id];
+
+                for (int i = 0; i < keyProperties.Count; i++)
+                {
+                    var property = keyProperties[i];
+                    var keyValue = keys[i];
+
+                    var efPropertyCall = Expression.Call(
+                        typeof(EF),
+                        nameof(EF.Property),
+                        [property.ClrType],
+                        parameter,
+                        Expression.Constant(property.Name));
+
+                    var condition = Expression.Equal(efPropertyCall, Expression.Constant(keyValue, property.ClrType));
+
+                    predicate = predicate == null ? condition : Expression.AndAlso(predicate, condition);
+                }
+
+                return await dbSet.FirstOrDefaultAsync(Expression.Lambda<Func<T, bool>>(predicate!, parameter));
             }
 
             return await GetByIdAsync(id);
@@ -254,8 +271,9 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
 
                 if (hasAnyChangeOnEntry)
                 {
-                    DateTime? modifiedDate = (DateTime) (entry?.Property(nameof(ITimeTrackingEntity.LastModificationDate))?.CurrentValue ?? DateProvider?.Now ?? DateTime.Now);
-                    modifiedDate ??= DateProvider?.Now ?? DateTime.Now;
+                    DateTime now = DateProvider?.LocalTimeZone != null ? DateProvider.GetLocalNow().LocalDateTime : DateTime.Now;
+                    DateTime? modifiedDate = (DateTime) (entry?.Property(nameof(ITimeTrackingEntity.LastModificationDate))?.CurrentValue ?? now);
+                    modifiedDate ??= now;
 
                     ((ITimeTrackingEntity)entry.Entity).LastModificationDate = modifiedDate;
 
@@ -276,7 +294,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
 
         private bool PrepareEntityForDbOperation(T entity, EntityState state)
         {
-            DateTime now = DateProvider?.Now ?? DateTime.Now;
+            DateTime now = DateProvider?.LocalTimeZone != null ? DateProvider.GetLocalNow().LocalDateTime : DateTime.Now;
 
             (var action, bool recursive) = BaseEfRepository<T, U>.GetITimeTrackingAction(state, now);
 
@@ -317,7 +335,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
 
         private void PrepareEntitiesForDbOperation(ICollection<T> entities, EntityState state)
         {
-            DateTime now = DateProvider?.Now ?? DateTime.Now;
+            DateTime now = DateProvider?.LocalTimeZone != null ? DateProvider.GetLocalNow().LocalDateTime : DateTime.Now;
 
             (var action, bool recursive) = BaseEfRepository<T, U>.GetITimeTrackingAction(state, now);
 

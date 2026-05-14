@@ -11,8 +11,9 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
 		<PackageTags>framework ef</PackageTags>
-		<Version>10.1.27</Version>
+		<Version>10.1.28</Version>
 		<PackageReleaseNotes>
+			10.1.28 : Remove ICurrentDateProvider
 			10.1.27 : Dependencies update
 			10.1.26 : Update expression filtering
 			10.1.25 : Initial .net10 release
@@ -20,7 +21,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="[10.0.8,11.0)" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -29,7 +30,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.201" />
+		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<NuGetAuditSuppress Include="https://github.com/advisories/GHSA-rvv3-g6hj-g44x" PackageId="AutoMapper" Reason="Known advisory; internal work around applied" />
+		<PackageVersion Include="AutoMapper" Version="14.0.0" />
+	</ItemGroup>
 </Project>

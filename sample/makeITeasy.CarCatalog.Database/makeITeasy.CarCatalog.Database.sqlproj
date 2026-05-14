@@ -66,6 +66,7 @@
     <Build Include="CarDetails.sql" />
     <Build Include="Engine.sql" />
     <Build Include="CompositeKeyTable.sql" />
+    <Build Include="CompositeKeySubTable.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="feed.sql" />

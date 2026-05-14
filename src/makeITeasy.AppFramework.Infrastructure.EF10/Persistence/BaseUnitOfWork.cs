@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-using AutoMapper;
+﻿using AutoMapper;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -31,7 +27,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
             }
             catch (Exception exception)
             {
-                _logger.LogError("An error has occured while commiting unit of work", exception);
+                _logger.LogError(exception, "An error has occured while commiting unit of work");
                 return -1;
             }
         }

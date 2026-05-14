@@ -1,19 +1,13 @@
 ﻿using AwesomeAssertions;
 
 using makeITeasy.AppFramework.Core.Commands;
-using makeITeasy.AppFramework.Core.Models.Exceptions;
-using makeITeasy.CarCatalog.dotnet10.Core.Services;
 using makeITeasy.CarCatalog.dotnet10.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet10.Core.Services.Queries.CarQueries;
 using makeITeasy.CarCatalog.dotnet10.Models;
 using makeITeasy.CarCatalog.dotnet10.Tests.Catalogs;
 using makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup;
 
-using MediatR;
-
 using Microsoft.EntityFrameworkCore;
-
-using SQLitePCL;
 
 using System.Text.Json;
 
@@ -85,7 +79,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
 
                 secondCar!.Name += " 2";
 
-                carService.Invoking(y => y.UpdateAsync(secondCar)).Should().ThrowAsync<DbUpdateConcurrencyException>();
+                await carService.Invoking(y => y.UpdateAsync(secondCar)).Should().ThrowAsync<DbUpdateConcurrencyException>();
             }
         }
     }

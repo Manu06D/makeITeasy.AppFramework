@@ -131,7 +131,7 @@ namespace makeITeasy.CarCatalog.dotnet8.Tests
         public async Task CreateAndGet_ListTest()
         {
             CreateCarCatalog();
-            
+         
             var getResult = await carService.QueryAsync(new BaseCarQuery(), includeCount: true);
 
             getResult.TotalItems.Should().Be(carList.Count);

@@ -37,6 +37,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[CompositeKeySubTable]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[CompositeKeyTable]",
          "ObjectType": 0
       },

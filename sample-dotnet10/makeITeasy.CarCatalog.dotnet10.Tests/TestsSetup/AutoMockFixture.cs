@@ -32,8 +32,6 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup
             return autoMock.Create<TEntity>();
         }
 
-        public static string TestUniqueId => TestContext.Current?.Test?.UniqueID[..10] ?? DateTime.Now.Ticks.ToString()[..10];
-
         private static readonly SemaphoreSlim semaphore = new(1);
 
         public void InitDatabase<T>() where T : DbContext

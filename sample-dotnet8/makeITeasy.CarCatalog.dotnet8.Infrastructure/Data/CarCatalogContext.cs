@@ -11,6 +11,7 @@ namespace makeITeasy.CarCatalog.dotnet8.Infrastructure.Data
 public virtual DbSet<Brand> Brands { get; set; }
 public virtual DbSet<Car> Cars { get; set; }
 public virtual DbSet<CarDetail> CarDetails { get; set; }
+public virtual DbSet<CompositeKeySubTable> CompositeKeySubTables { get; set; }
 public virtual DbSet<CompositeKeyTable> CompositeKeyTables { get; set; }
 public virtual DbSet<Country> Countries { get; set; }
 public virtual DbSet<Engine> Engines { get; set; }
@@ -24,6 +25,7 @@ public CarCatalogContext(DbContextOptions<CarCatalogContext> options) : base(opt
         modelBuilder.ApplyConfiguration(new Configurations.BrandConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.CarConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.CarDetailConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.CompositeKeySubTableConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.CompositeKeyTableConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.CountryConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.EngineConfiguration());
