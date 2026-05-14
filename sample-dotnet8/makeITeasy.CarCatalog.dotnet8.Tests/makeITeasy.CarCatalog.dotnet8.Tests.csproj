@@ -12,12 +12,12 @@
 		<PackageReference Include="Bogus" Version="35.6.5" />
 		<PackageReference Include="AwesomeAssertions" Version="9.4.0" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
-		<PackageReference Include="AutoMapper.Contrib.Autofac.DependencyInjection" Version="9.0.0" />
-		<PackageReference Include="MediatR.Extensions.Autofac.DependencyInjection" Version="12.3.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="8.0.25" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.25" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.5" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+		<PackageReference Include="AutoMapper.Contrib.Autofac.DependencyInjection" Version="[9.0.0]" />
+		<PackageReference Include="MediatR.Extensions.Autofac.DependencyInjection" Version="[12.3.0]" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="[8.0.*,9.0)" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="[8.0.*,9.0)" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.8" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
 		<PackageReference Include="Moq" Version="4.20.72" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 		<PackageReference Include="Serilog" Version="4.3.1" />
@@ -28,10 +28,11 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="coverlet.collector" Version="8.0.1">
+		<PackageReference Include="coverlet.collector" Version="10.0.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -42,6 +43,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.201" />
+		<NuGetAuditSuppress Include="https://github.com/advisories/GHSA-rvv3-g6hj-g44x" PackageId="AutoMapper" Reason="Known advisory; internal work around applied" />
+		<PackageVersion Include="AutoMapper" Version="14.0.0" />
 	</ItemGroup>
 </Project>

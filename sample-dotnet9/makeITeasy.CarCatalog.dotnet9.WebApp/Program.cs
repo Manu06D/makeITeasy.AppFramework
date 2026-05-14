@@ -6,6 +6,7 @@ using makeITeasy.CarCatalog.dotnet9.WebApp.Components;
 using makeITeasy.CarCatalog.dotnet9.WebApp.Modules.StartupModules;
 
 using Microsoft.AspNetCore.HttpLogging;
+using Microsoft.Extensions.Http;
 
 using Radzen;
 
@@ -33,6 +34,7 @@ builder.Services.AddHttpLogging(options =>
 
 builder.AddApiSupport();
 builder.AddLogger();
+builder.Services.AddHttpClient();
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(builder => builder.RegisterModule(new AutofacModule() { AssembliesToScan = assembliesToScan }));
@@ -51,7 +53,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
- 
+
 app.UseAntiforgery();
 
 app.MapStaticAssets();

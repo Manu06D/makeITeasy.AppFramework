@@ -73,7 +73,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
             if (includes != null && dbContext != null)
             {
                 IProperty? keyProperty = (dbContext.Model.FindEntityType(typeof(T))?.FindPrimaryKey()?.Properties[0])
-                    ?? throw new Exception($"An error has occred while guessing the primary key of object {typeof(T).FullName}");
+                    ?? throw new Exception($"An error has occured while guessing the primary key of object {typeof(T).FullName}");
                 IQueryable<T> dbSet = dbContext.Set<T>().AsQueryable();
 
                 //TODO : test if it works :)

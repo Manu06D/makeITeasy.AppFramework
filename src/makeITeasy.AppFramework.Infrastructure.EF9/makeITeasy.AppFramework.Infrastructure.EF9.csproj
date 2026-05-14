@@ -24,9 +24,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="EFCore.BulkExtensions.Core" Version="9.0.2" />
-		<PackageReference Include="EFCore.BulkExtensions.SqlServer" Version="9.0.2" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.15" />
+		<PackageReference Include="EFCore.BulkExtensions.Core" Version="[9.0.2,10.0)" />
+		<PackageReference Include="EFCore.BulkExtensions.SqlServer" Version="[9.0.2,10.0)" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="[9.0.16,10.0)" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -35,6 +35,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.203" />
+		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<NuGetAuditSuppress Include="https://github.com/advisories/GHSA-rvv3-g6hj-g44x" PackageId="AutoMapper" Reason="Known advisory; internal work around applied" />
+		<PackageVersion Include="AutoMapper" Version="14.0.0" />
 	</ItemGroup>
 </Project>
