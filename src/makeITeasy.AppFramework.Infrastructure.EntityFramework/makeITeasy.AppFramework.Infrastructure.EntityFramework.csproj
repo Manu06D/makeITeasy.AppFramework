@@ -11,7 +11,7 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
 		<PackageTags>framework ef</PackageTags>
-		<Version>10.2.0</Version>
+		<Version>10.2.0-beta01</Version>
 		<PackageReleaseNotes>
 			10.2.0  : Rework dotnet dependencies
 		</PackageReleaseNotes>

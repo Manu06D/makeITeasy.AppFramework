@@ -14,7 +14,6 @@ using makeITeasy.AppFramework.Models.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Query;
 
 using System.Linq.Expressions;
 using System.Reflection;
@@ -88,12 +87,12 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
 
                 for (int i = 0; i < keyProperties.Count; i++)
                 {
-                    var property = keyProperties[i];
-                    var keyValue = keys[i];
+                    IProperty property = keyProperties[i];
+                    object keyValue = keys[i];
 
                     var efPropertyCall = Expression.Call(
-                        typeof(Microsoft.EntityFrameworkCore.EF),
-                        nameof(Microsoft.EntityFrameworkCore.EF.Property),
+                        typeof(EF),
+                        nameof(EF.Property),
                         [property.ClrType],
                         parameter,
                         Expression.Constant(property.Name));

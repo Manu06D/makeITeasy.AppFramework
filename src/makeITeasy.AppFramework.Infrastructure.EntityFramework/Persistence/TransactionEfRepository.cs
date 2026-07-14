@@ -31,7 +31,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
 
             if (isolationLevel.HasValue)
             {
-                using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = isolationLevel.Value }, TransactionScopeAsyncFlowOption.Enabled))
+                using (TransactionScope scope = new(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = isolationLevel.Value }, TransactionScopeAsyncFlowOption.Enabled))
                 {
                     var result = await functionToExecute();
                     scope.Complete();
