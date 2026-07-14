@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-using makeITeasy.AppFramework.Infrastructure.EF10.Persistence;
+using makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.CarCatalog.dotnet10.Infrastructure.Data;
 

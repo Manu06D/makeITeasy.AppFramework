@@ -23,9 +23,9 @@ using System.Reflection;
 using EFCore.BulkExtensions;
 #endif
 
-namespace makeITeasy.AppFramework.Infrastructure.EF.Persistence
+namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
 {
-    public abstract class BaseEfRepository<T, U> : IAsyncRepository<T> where T : class, IBaseEntity where U : DbContext
+    public abstract partial class BaseEfRepository<T, U> : IAsyncRepository<T> where T : class, IBaseEntity where U : DbContext
     {
         private readonly IDbContextFactory<U>? _dbFactory;
         private readonly IMapper _mapper;
@@ -576,15 +576,6 @@ namespace makeITeasy.AppFramework.Infrastructure.EF.Persistence
             });
 #else
             throw new NotImplementedException(nameof(UpdateRangeAsync));
-#endif
-        }
-
-        public async Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, Expression<Func<T, T>> updateExpression)
-        {
-#if NET10_0_OR_GREATER
-            throw new NotImplementedException(nameof(UpdateRangeAsync));
-#else
-            return await GetDbContext().Set<T>().Where(entityPredicate).BatchUpdateAsync(updateExpression);
 #endif
         }
     }

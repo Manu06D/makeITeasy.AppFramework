@@ -22,7 +22,6 @@
 	<ItemGroup>
 
 		<ProjectReference Include="..\..\src\makeITeasy.AppFramework.Core\makeITeasy.AppFramework.Core.csproj" />
-		<ProjectReference Include="..\..\src\makeITeasy.AppFramework.Infrastructure.EF8\makeITeasy.AppFramework.Infrastructure.EF8.csproj" />
 		<ProjectReference Include="..\..\src\makeITeasy.AppFramework.Web\makeITeasy.AppFramework.Web.csproj" />
 		<ProjectReference Include="..\makeITeasy.CarCatalog.dotnet8.Core\makeITeasy.CarCatalog.dotnet8.Core.csproj" />
 		<ProjectReference Include="..\makeITeasy.CarCatalog.dotnet8.Infrastructure\makeITeasy.CarCatalog.dotnet8.Infrastructure.csproj" />

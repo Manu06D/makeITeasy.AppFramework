@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-using makeITeasy.AppFramework.Infrastructure.EF10.Persistence;
+using makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence;
 using makeITeasy.CarCatalog.dotnet10.Core.Ports;
 using makeITeasy.CarCatalog.dotnet10.Infrastructure.Data;
 using makeITeasy.CarCatalog.dotnet10.Models;

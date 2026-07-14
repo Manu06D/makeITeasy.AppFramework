@@ -4,7 +4,7 @@ using makeITeasy.AppFramework.Core.Queries;
 using Microsoft.EntityFrameworkCore;
 using System.Transactions;
 
-namespace makeITeasy.AppFramework.Infrastructure.EF.Persistence
+namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
 {
     public class TransactionEfRepository<T, U> : BaseEfRepository<T, U> where T : class, IBaseEntity where U : DbContext
     {

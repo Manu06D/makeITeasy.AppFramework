@@ -3,7 +3,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace makeITeasy.AppFramework.Infrastructure.EF.Persistence
+namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
 {
     public class BaseUnitOfWork<T> where T : DbContext
     {

@@ -3,7 +3,7 @@ using makeITeasy.AppFramework.Models;
 using Microsoft.EntityFrameworkCore;
 using makeITeasy.AppFramework.Core.Extensions;
 
-namespace makeITeasy.AppFramework.Infrastructure.EF.Persistence
+namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
 {
     public static class SpecificationEvaluator<T> where T : class, IBaseEntity
     {

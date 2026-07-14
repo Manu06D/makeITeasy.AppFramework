@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using AutoMapper;
 
 using makeITeasy.AppFramework.Core.Interfaces;
-using makeITeasy.AppFramework.Infrastructure.EF8.Persistence;
+using makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence;
 using makeITeasy.AppFramework.Models;
 using makeITeasy.CarCatalog.dotnet8.Infrastructure.Data;
 
