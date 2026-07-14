@@ -559,13 +559,13 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
 
         public async Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, UpdateDefinition<T> updates)
         {
-#if NET10_0_OR_GREATER
+#if NET10
             var dbContext = GetDbContext();
             var query = GetDbContext().Set<T>().AsQueryable().Where(entityPredicate);
 
             return await query.ExecuteUpdateAsync(setters =>
             {
-                UpdateSettersBuilder<T> s = setters;
+                var s = setters;
                 foreach (var (propertyLambda, valueLambda) in updates.GetUpdates())
                 {
                     dynamic ds = s;
