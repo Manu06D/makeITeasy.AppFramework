@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-
-using makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence;
+﻿using makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence;
 using makeITeasy.CarCatalog.dotnet10.Core.Ports;
 using makeITeasy.CarCatalog.dotnet10.Infrastructure.Data;
 using makeITeasy.CarCatalog.dotnet10.Models;
@@ -13,7 +11,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Infrastructure.Repositories
 {
     public class CarRepository : BaseEfRepository<Car, CarCatalogContext>, ICarRepository
     {
-        public CarRepository(IDbContextFactory<CarCatalogContext> dbFactory, IMapper mapper) : base(dbFactory, mapper)
+        public CarRepository(IDbContextFactory<CarCatalogContext> dbFactory) : base(dbFactory)
         {
         }
 

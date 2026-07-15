@@ -16,6 +16,7 @@ using MediatR;
 
 using Xunit;
 using makeITeasy.AppFramework.Core.Interfaces;
+using makeITeasy.CarCatalog.dotnet8.Tests.Projections;
 
 namespace makeITeasy.CarCatalog.dotnet8.Tests
 {
@@ -97,22 +98,17 @@ namespace makeITeasy.CarCatalog.dotnet8.Tests
             searchResult.Should().BeNull();
         }
 
-        public class SmallCarInfo : IMapFrom<Car>
-        {
-            public string Name { get; set; }
-        }
-
         [Fact]
         public async Task GenericFindUniqueCommandWithProject_BasicTest()
         {
             var carService = Resolve<ICarService>();
             CommandResult<Car> newCarResult = await carService.CreateAsync(TestCarsCatalog.GetCars().First(x => x.Name == "A3"));
 
-            SmallCarInfo searchResult = await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, SmallCarInfo>(new BaseCarQuery() { Name = "A3" }));
+            CarNameInfo searchResult = await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, CarNameInfo>(new BaseCarQuery() { Name = "A3" }));
             searchResult.Should().NotBeNull();
             searchResult.Name.Should().Be("A3");
 
-            searchResult = await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, SmallCarInfo>(new BaseCarQuery() { Name = "XX" }));
+            searchResult = await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, CarNameInfo>(new BaseCarQuery() { Name = "XX" }));
             searchResult.Should().BeNull();
         }
     }

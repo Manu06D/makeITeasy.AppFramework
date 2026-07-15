@@ -15,7 +15,8 @@
 		<PackageReference Include="Bogus" Version="35.6.5" />
 		<PackageReference Include="EFCore.BulkExtensions.Sqlite" Version="[9.0.*, 10.0)" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
-		<PackageReference Include="AutoMapper.Contrib.Autofac.DependencyInjection" Version="[9.0.0]" />
+		<PackageReference Include="Facet" Version="6.6.8" />
+		<PackageReference Include="Facet.Mapping" Version="6.6.8" />
 		<PackageReference Include="MediatR.Extensions.Autofac.DependencyInjection" Version="[12.3.0]" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="[9.0.*, 10.0)" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="[9.0.*, 10.0)" />
@@ -50,10 +51,5 @@
 
 	<ItemGroup>
 		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<NuGetAuditSuppress Include="https://github.com/advisories/GHSA-rvv3-g6hj-g44x" PackageId="AutoMapper" Reason="Known advisory; internal work around applied" />
-		<PackageVersion Include="AutoMapper" Version="14.0.0" />
 	</ItemGroup>
 </Project>

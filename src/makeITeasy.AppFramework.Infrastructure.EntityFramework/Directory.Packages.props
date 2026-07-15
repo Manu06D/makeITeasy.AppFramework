@@ -6,8 +6,9 @@
 
 	<ItemGroup>
 		<PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.300" />
-		<PackageVersion Include="AutoMapper" Version="14.0.0" />
 		<PackageVersion Include="DelegateDecompiler.EntityFrameworkCore5" Version="0.35.3" />
+		<PackageVersion Include="Facet.Extensions.EFCore" Version="6.6.8" />
+		<PackageVersion Include="Facet.Extensions.EFCore.Mapping" Version="6.6.8" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">

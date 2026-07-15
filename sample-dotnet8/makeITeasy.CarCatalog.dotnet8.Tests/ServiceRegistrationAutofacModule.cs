@@ -3,8 +3,6 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 
-using AutoMapper.Contrib.Autofac.DependencyInjection;
-
 using FluentValidation;
 
 using makeITeasy.AppFramework.Core.Helpers;
@@ -80,7 +78,6 @@ namespace makeITeasy.CarCatalog.dotnet8.Tests
             builder.Populate(services);
 
             builder.RegisterModule(new RegisterAutofacModule() { Assemblies = assembliesToScan });
-            builder.RegisterAutoMapper(assemblies: assembliesToScan);
 
             var mediatrConfiguration = MediatRConfigurationBuilder.Create(assembliesToScan)
                     .WithAllOpenGenericHandlerTypesRegistered()

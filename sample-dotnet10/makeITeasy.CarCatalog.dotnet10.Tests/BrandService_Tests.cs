@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-
-using AwesomeAssertions;
+﻿using AwesomeAssertions;
 
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Interfaces;
@@ -12,6 +10,7 @@ using makeITeasy.CarCatalog.dotnet10.Models;
 using makeITeasy.CarCatalog.dotnet10.Models.Collections;
 using makeITeasy.CarCatalog.dotnet10.Tests.Catalogs;
 using makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup;
+using makeITeasy.CarCatalog.dotnet10.Tests.Projections;
 
 using System.Transactions;
 
@@ -21,20 +20,6 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
     public class BrandService_Tests(DatabaseFixture databaseEngineFixture) : AutofacFixture(databaseEngineFixture)
     {
-        public class BrandInfo : IMapFrom<Brand>
-        {
-            public string? Name { get; set; }
-            public int FirstRelease { get; set; }
-            public int CarsCount { get; set; }
-
-            public void Mapping(Profile profile)
-            {
-                profile?.CreateMap<Brand, BrandInfo>()
-                        .ForMember(dest => dest.CarsCount, src => src.MapFrom(x => x.Cars.Count))
-                        .ForMember(dest => dest.FirstRelease, src => src.MapFrom(x => x.Cars.MinimalReleaseYear()));
-            }
-        }
-
         [Fact]
         public async Task CreateAndGet_ListWithFunctionTest()
         {
@@ -48,24 +33,13 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
                 .Be(new List<Car>() { CarsCatalog.CitroenC4(), CarsCatalog.CitroenC5() }.Min(x => x.ReleaseYear));
         }
 
-        public class SmallBrandInfo : IMapFrom<Brand>
-        {
-            public string? Name { get; set; }
-            public List<SmallCarInfo>? Cars { get; set; }
-        }
-
-        public class SmallCarInfo : IMapFrom<Car>
-        {
-            public string? Name { get; set; }
-        }
-
         [Fact]
         public async Task CreateAndGet_ListWith2LevelMappingTest()
         {
             (_, IBrandService brandService, Brand citroenBrand, string suffix, _) = await CarsCatalog.CreateCarsAsync(this);
 
 
-            QueryResult<SmallBrandInfo> getResult = await brandService.QueryWithProjectionAsync<SmallBrandInfo>(new BasicBrandQuery());
+            QueryResult<BrandWithCarsInfo> getResult = await brandService.QueryWithProjectionAsync<BrandWithCarsInfo>(new BasicBrandQuery());
 
             getResult.Results.Where(x => x.Name == citroenBrand.Name).Should().HaveCount(1);
             getResult.Results.First(x => x.Name == citroenBrand.Name).Name.Should().EndWith(suffix);
@@ -163,18 +137,12 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
             getResult.Results.SelectMany(x => x.Cars).Should().AllSatisfy(x => x.Name.Should().EndWith(suffix));
         }
 
-        public class CustomBrand : IMapFrom<Brand>
-        {
-            public int Id { get; set; }
-            public string? Name { get; set; }
-        }
-
         [Fact]
         public async Task EFCoreIncludeWithFunctionAndProjection_Test()
         {
             (_, IBrandService brandService, Brand citroenBrand, string suffix, _) = await CarsCatalog.CreateCarsAsync(this);
 
-            var getResult = await brandService.QueryWithProjectionAsync<CustomBrand>(
+            var getResult = await brandService.QueryWithProjectionAsync<BrandIdNameInfo>(
                 new BasicBrandQuery()
                 {
                     Includes =

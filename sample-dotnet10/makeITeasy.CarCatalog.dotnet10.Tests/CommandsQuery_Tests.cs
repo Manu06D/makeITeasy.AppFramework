@@ -12,6 +12,7 @@ using MediatR;
 using Xunit;
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup;
+using makeITeasy.CarCatalog.dotnet10.Tests.Projections;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
@@ -92,11 +93,6 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
             searchResult.Should().BeNull();
         }
 
-        public class SmallCarInfo : IMapFrom<Car>
-        {
-            public string? Name { get; set; }
-        }
-
         [Fact]
         public async Task GenericFindUniqueCommandWithProject_BasicTest()
         {
@@ -105,11 +101,11 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
             _ = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
 
-            SmallCarInfo searchResult = await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, SmallCarInfo>(new BasicCarQuery() { NameSuffix = suffix }), TestContext.Current.CancellationToken);
+            CarNameInfo searchResult = await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, CarNameInfo>(new BasicCarQuery() { NameSuffix = suffix }), TestContext.Current.CancellationToken);
             searchResult.Should().NotBeNull();
             searchResult.Name.Should().Be("C4" + suffix);
 
-            searchResult = await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, SmallCarInfo>(new BasicCarQuery() { Name = "XX" + suffix }), TestContext.Current.CancellationToken);
+            searchResult = await _mediator.Send(new GenericFindUniqueWithProjectCommand<Car, CarNameInfo>(new BasicCarQuery() { Name = "XX" + suffix }), TestContext.Current.CancellationToken);
             searchResult.Should().BeNull();
         }
     }

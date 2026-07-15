@@ -1,21 +1,17 @@
-﻿using AutoMapper;
-
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
 {
     public class BaseUnitOfWork<T> where T : DbContext
     {
-        protected readonly IMapper _mapper;
         protected DbContext _context;
         protected Dictionary<Type, object> _repositories = new Dictionary<Type, object>();
         protected ILogger<BaseUnitOfWork<T>> _logger;
 
-        public BaseUnitOfWork(IDbContextFactory<T> dbFactory, IMapper mapper, ILogger<BaseUnitOfWork<T>> logger)
+        public BaseUnitOfWork(IDbContextFactory<T> dbFactory, ILogger<BaseUnitOfWork<T>> logger)
         {
             _context = dbFactory.CreateDbContext();
-            _mapper = mapper;
             _logger = logger;
         }
 

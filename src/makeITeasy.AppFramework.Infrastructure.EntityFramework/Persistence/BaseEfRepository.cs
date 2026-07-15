@@ -1,7 +1,7 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
+﻿using DelegateDecompiler.EntityFrameworkCore;
 
-using DelegateDecompiler.EntityFrameworkCore;
+using Facet.Extensions;
+using Facet.Extensions.EFCore;
 
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Helpers;
@@ -18,7 +18,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using System.Linq.Expressions;
 using System.Reflection;
 
-#if !NET10_0_OR_GREATER
+#if !NET10
 using EFCore.BulkExtensions;
 #endif
 
@@ -27,21 +27,18 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
     public abstract partial class BaseEfRepository<T, U> : IAsyncRepository<T> where T : class, IBaseEntity where U : DbContext
     {
         private readonly IDbContextFactory<U>? _dbFactory;
-        private readonly IMapper _mapper;
         private readonly U? _dbContext = null;
 
         public TimeProvider? DateProvider { get; set; }
 
-        protected BaseEfRepository(IDbContextFactory<U> dbFactory, IMapper mapper)
+        protected BaseEfRepository(IDbContextFactory<U> dbFactory)
         {
             _dbFactory = dbFactory;
-            _mapper = mapper;
         }
 
-        protected BaseEfRepository(U dbContext, IMapper mapper)
+        protected BaseEfRepository(U dbContext)
         {
             _dbContext = dbContext;
-            _mapper = mapper;
         }
 
         protected U GetDbContext()
@@ -140,9 +137,9 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
 
             (result.TotalItems, IQueryable<T>? filteredSet) = await CreateQueryableFromSpec(spec, GetDbContext(), includeCount);
 
-            if (filteredSet != null && _mapper?.ConfigurationProvider != null)
+            if (filteredSet != null)
             {
-                result.Results = [.. filteredSet.AsNoTracking().ProjectTo<X>(_mapper.ConfigurationProvider).DecompileAsync()];
+                result.Results = [.. filteredSet.AsNoTracking().SelectFacet<X>().DecompileAsync()];
             }
 
             return result;

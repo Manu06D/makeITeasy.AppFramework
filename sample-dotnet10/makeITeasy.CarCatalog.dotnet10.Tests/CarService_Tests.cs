@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Xunit;
 using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup;
+using makeITeasy.CarCatalog.dotnet10.Tests.Projections;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
@@ -167,30 +168,16 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
             getResultFluent.Results.Should().OnlyContain(x => x.Brand.Country != null);
         }
 
-        public class SmallCarInfo : IMapFrom<Car>
-        {
-            public long ID { get; set; }
-            public string? Name { get; set; }
-        }
-
         [Fact]
         public async Task CreateAndGet_ListWithMappingTest()
         {
             (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CarsCatalog.CreateCarsAsync(this);
 
-            var getResult = await carService.QueryWithProjectionAsync<SmallCarInfo>(new BasicCarQuery() { NameSuffix = suffix }, includeCount: true);
+            var getResult = await carService.QueryWithProjectionAsync<CarIdNameInfo>(new BasicCarQuery() { NameSuffix = suffix }, includeCount: true);
 
             getResult.TotalItems.Should().Be(2);
 
             getResult.Results.Should().OnlyContain(x => x.Name != null);
-        }
-
-        public class SmallCarWithCentury : IMapFrom<Car>
-        {
-            public long ID { get; set; }
-            public string? Name { get; set; }
-            public bool CurrentCentury { get; set; }
-            public int ReleaseYear { get; set; }
         }
 
         [Fact]
@@ -221,24 +208,16 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
             getResult.TotalItems.Should().Be(2);
         }
 
-        public class SmallCarInfoWithBrand : IMapFrom<Car>
-        {
-            public long ID { get; set; }
-            public string? Name { get; set; }
-            public string? BrandName { get; set; } //Automatic mapping with Brand.Name
-            public string? BrandCountryName { get; set; }
-        }
-
         [Fact]
         public async Task CreateAndGet_ListWithMapping2LevelTest()
         {
             (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CarsCatalog.CreateCarsAsync(this);
 
-            var getResult = await carService.QueryWithProjectionAsync<SmallCarInfoWithBrand>(new BasicCarQuery() { NameSuffix = suffix }, includeCount: true);
+            var getResult = await carService.QueryWithProjectionAsync<CarWithBrandInfo>(new BasicCarQuery() { NameSuffix = suffix }, includeCount: true);
 
             getResult.TotalItems.Should().Be(2);
 
-            getResult.Results.Select(x => x.ID).Should().BeInAscendingOrder();
+            getResult.Results.Select(x => x.Id).Should().BeInAscendingOrder();
 
             getResult.Results.Should().OnlyContain(x => x.Name != null);
             getResult.Results.Select(x => x.Name).Should().AllSatisfy(x => x.EndsWith(suffix));
@@ -540,8 +519,8 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         {
             (ICarService carService, _, Brand citroenBrand, string suffix, _) = await CarsCatalog.CreateCarsAsync(this);
 
-            SmallCarInfo result =
-                await carService.GetFirstByQueryWithProjectionAsync<SmallCarInfo>(
+            CarIdNameInfo result =
+                await carService.GetFirstByQueryWithProjectionAsync<CarIdNameInfo>(
                     QueryBuilder.Create(new BasicCarQuery()).Where(x => x.Brand.Name == citroenBrand.Name)
                     .OrderBy("Id", true)
                     .Build());
@@ -550,7 +529,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
             result.Name.Should().Be("C5" + suffix);
 
             result =
-                 await carService.GetFirstByQueryWithProjectionAsync<SmallCarInfo>(
+                 await carService.GetFirstByQueryWithProjectionAsync<CarIdNameInfo>(
                     QueryBuilder.Create(new BasicCarQuery()).Where(x => x.Brand.Name == citroenBrand.Name)
                     .OrderBy("Id", false)
                     .Build());
@@ -559,7 +538,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
             result.Name.Should().Be("C4" + suffix);
 
             result =
-                 await carService.GetFirstByQueryWithProjectionAsync<SmallCarInfo>(
+                 await carService.GetFirstByQueryWithProjectionAsync<CarIdNameInfo>(
                 QueryBuilder.Create(new BasicCarQuery()).Where(x => x.Brand.Name == "XXXX")
                 .Build());
 

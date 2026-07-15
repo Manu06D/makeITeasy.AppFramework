@@ -1,7 +1,5 @@
 ﻿using Autofac;
 
-using AutoMapper.Contrib.Autofac.DependencyInjection;
-
 using makeITeasy.AppFramework.Core.Helpers;
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.CarCatalog.dotnet10.Core.Ports;
@@ -23,7 +21,6 @@ namespace makeITeasy.CarCatalog.dotnet10.WebApp.Modules.StartupModules
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterModule(new RegisterAutofacModule() { Assemblies = AssembliesToScan });
-            builder.RegisterAutoMapper(assemblies: AssembliesToScan);
             var mediatrConfiguration = MediatRConfigurationBuilder.Create(AssembliesToScan)
                     .WithAllOpenGenericHandlerTypesRegistered()
                     .WithRegistrationScope(RegistrationScope.Scoped) // currently only supported values are `Transient` and `Scoped`

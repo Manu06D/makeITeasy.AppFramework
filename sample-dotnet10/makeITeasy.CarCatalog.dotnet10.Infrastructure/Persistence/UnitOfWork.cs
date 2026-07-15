@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using AutoMapper;
-
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence;
 using makeITeasy.AppFramework.Models;
@@ -15,8 +13,8 @@ namespace makeITeasy.CarCatalog.dotnet10.Infrastructure.Persistence
 {
     public class UnitOfWork : BaseUnitOfWork<CarCatalogContext>, IUnitOfWork
     {
-        public UnitOfWork(IDbContextFactory<CarCatalogContext> dbFactory, IMapper mapper, ILogger<UnitOfWork> logger)
-            : base(dbFactory, mapper, logger)
+        public UnitOfWork(IDbContextFactory<CarCatalogContext> dbFactory, ILogger<UnitOfWork> logger)
+            : base(dbFactory, logger)
         {
         }
 
@@ -31,7 +29,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Infrastructure.Persistence
 
             if (!_repositories.ContainsKey(type))
             {
-                _repositories[type] = new EfRepository<TEntity>(_context, _mapper);
+                _repositories[type] = new EfRepository<TEntity>(_context);
             }
 
             return (IAsyncRepository<TEntity>)_repositories[type];

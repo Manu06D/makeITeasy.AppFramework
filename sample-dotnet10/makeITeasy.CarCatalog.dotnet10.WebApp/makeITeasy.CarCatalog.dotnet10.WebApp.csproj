@@ -9,7 +9,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="11.0.0" />
-		<PackageReference Include="AutoMapper.Contrib.Autofac.DependencyInjection" Version="[9.0.0]" />
 		<PackageReference Include="MediatR.Extensions.Autofac.DependencyInjection" Version="[12.3.0]" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="10.0.8" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.8" />
