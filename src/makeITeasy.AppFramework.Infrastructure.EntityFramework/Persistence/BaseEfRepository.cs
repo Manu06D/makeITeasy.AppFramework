@@ -559,7 +559,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
 
         public async Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, UpdateDefinition<T> updates)
         {
-#if NET10
+#if NET10_0
             var dbContext = GetDbContext();
             var query = GetDbContext().Set<T>().AsQueryable().Where(entityPredicate);
 

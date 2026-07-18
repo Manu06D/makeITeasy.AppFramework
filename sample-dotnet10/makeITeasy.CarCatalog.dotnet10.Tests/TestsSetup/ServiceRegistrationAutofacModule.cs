@@ -23,8 +23,11 @@ using MediatR.Extensions.Autofac.DependencyInjection.Builder;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+
+using Serilog;
 
 using Module = Autofac.Module;
 
@@ -39,11 +42,19 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup
         {
             var services = new ServiceCollection();
 
+            IConfiguration configuration = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+                .Build();
+
+            var serilogLogger = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
+
             services.AddLogging(opt =>
             {
                 opt.SetMinimumLevel(LogLevel.Debug);
-                opt.AddDebug();
-
+                opt.AddSerilog(serilogLogger, dispose: true);
             });
 
             Assembly[] assembliesToScan = [
@@ -53,7 +64,6 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup
                     Assembly.GetExecutingAssembly(),
                     typeof(Car).Assembly
             ];
-
 
             _ = services.AddDbContextFactory<CarCatalogContext>(options =>
                         {
