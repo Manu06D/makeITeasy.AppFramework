@@ -4,7 +4,7 @@ using makeITeasy.AppFramework.Core.Queries;
 using Microsoft.EntityFrameworkCore;
 using System.Transactions;
 
-namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
+namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
 {
     public class TransactionEfRepository<T, U> : BaseEfRepository<T, U> where T : class, IBaseEntity where U : DbContext
     {
@@ -31,7 +31,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF9.Persistence
 
             if (isolationLevel.HasValue)
             {
-                using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = isolationLevel.Value }, TransactionScopeAsyncFlowOption.Enabled))
+                using (TransactionScope scope = new(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = isolationLevel.Value }, TransactionScopeAsyncFlowOption.Enabled))
                 {
                     var result = await functionToExecute();
                     scope.Complete();

@@ -8,5 +8,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Core.Ports
     public interface ICarRepository : IAsyncRepository<Car>
     {
         Task<List<BrandGroupByCarCount>> GroupByBrandAndCountAsync();
+
+        Task<int> AddCarsInResilientTransactionAsync(IEnumerable<Car> cars, CancellationToken cancellationToken = default);
     }
 }

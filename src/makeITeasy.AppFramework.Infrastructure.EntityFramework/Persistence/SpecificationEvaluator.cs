@@ -1,15 +1,14 @@
-﻿using System.Linq;
-using makeITeasy.AppFramework.Models;
+﻿using makeITeasy.AppFramework.Models;
 using Microsoft.EntityFrameworkCore;
 using makeITeasy.AppFramework.Core.Extensions;
 
-namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
+namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
 {
     public static class SpecificationEvaluator<T> where T : class, IBaseEntity
     {
         public static IQueryable<T>? GetQuery(IQueryable<T> inputQuery, ISpecification<T> specification)
         {
-            var query = inputQuery;
+            IQueryable<T>? query = inputQuery;
 
             // modify the IQueryable using the specification's criteria expression
             if (specification.Criteria != null)
@@ -39,28 +38,24 @@ namespace makeITeasy.AppFramework.Infrastructure.EF10.Persistence
 
         private static IQueryable<T>? HandQueryForOrder(ISpecification<T> specification, IQueryable<T>? query)
         {
-            if (query is null)
-            {
-                throw new ArgumentNullException(nameof(query));
-            }
+            ArgumentNullException.ThrowIfNull(query);
 
             if (specification?.OrderBy?.Count > 0)
             {
-                IOrderedQueryable<T> sortedQuery = 
-                    specification.OrderBy.First().SortDescending ? query.OrderByDescending(specification.OrderBy.First().OrderBy) : query.OrderBy(specification.OrderBy.First().OrderBy);
+                IOrderedQueryable<T> sortedQuery =
+                    specification.OrderBy[0].SortDescending ? query.OrderByDescending(specification.OrderBy.First().OrderBy) : query.OrderBy(specification.OrderBy.First().OrderBy);
 
                 query = specification.OrderBy.Aggregate(sortedQuery,
                          (current, orderSpec) => orderSpec.SortDescending ? current.ThenByDescending(orderSpec.OrderBy) : current.ThenBy(orderSpec.OrderBy));
             }
             else if (specification?.OrderByStrings?.Count > 0)
             {
-                IOrderedQueryable<T>? sortedQuery = 
-                    specification.OrderByStrings.First().SortDescending ? query.OrderByDescending(specification.OrderByStrings.First().OrderBy) : query.OrderBy(specification.OrderByStrings.First().OrderBy);
+                IOrderedQueryable<T>? sortedQuery =
+                    specification.OrderByStrings[0].SortDescending ? query.OrderByDescending(specification.OrderByStrings.First().OrderBy) : query.OrderBy(specification.OrderByStrings.First().OrderBy);
 
                 query = specification.OrderByStrings.Aggregate(sortedQuery,
                     (current, orderSpec) => orderSpec.SortDescending ? current?.ThenByDescending(orderSpec.OrderBy) : current?.OrderBy(orderSpec.OrderBy));
             }
-
 
             return query;
         }

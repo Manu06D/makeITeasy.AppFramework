@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 using AutoMapper;
 
-using makeITeasy.AppFramework.Infrastructure.EF8.Persistence;
+using makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence;
 using makeITeasy.CarCatalog.dotnet8.Core.Ports;
 using makeITeasy.CarCatalog.dotnet8.Infrastructure.Data;
 using makeITeasy.CarCatalog.dotnet8.Models.Custom;

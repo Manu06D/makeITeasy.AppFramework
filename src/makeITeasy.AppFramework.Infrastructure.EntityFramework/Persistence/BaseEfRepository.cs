@@ -3,8 +3,6 @@ using AutoMapper.QueryableExtensions;
 
 using DelegateDecompiler.EntityFrameworkCore;
 
-using EFCore.BulkExtensions;
-
 using makeITeasy.AppFramework.Core.Commands;
 using makeITeasy.AppFramework.Core.Helpers;
 using makeITeasy.AppFramework.Core.Interfaces;
@@ -20,9 +18,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace makeITeasy.AppFramework.Infrastructure.EF8.Persistence
+#if !NET10_0_OR_GREATER
+using EFCore.BulkExtensions;
+#endif
+
+namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
 {
-    public abstract class BaseEfRepository<T, U> : IAsyncRepository<T> where T : class, IBaseEntity where U : DbContext
+    public abstract partial class BaseEfRepository<T, U> : IAsyncRepository<T> where T : class, IBaseEntity where U : DbContext
     {
         private readonly IDbContextFactory<U>? _dbFactory;
         private readonly IMapper _mapper;
@@ -71,14 +73,13 @@ namespace makeITeasy.AppFramework.Infrastructure.EF8.Persistence
         {
             U? dbContext = GetDbContext();
 
-            if (includes != null && includes.Count > 0 && dbContext != null)
+            if (includes?.Count > 0 && dbContext != null)
             {
-                var keyProperties = dbContext.Model.FindEntityType(typeof(T))?.FindPrimaryKey()?.Properties
-                    ?? throw new Exception($"An error has occurred while guessing the primary key of object {typeof(T).FullName}");
-
                 IQueryable<T> dbSet = dbContext.Set<T>().AsQueryable();
-
                 dbSet = includes.Aggregate(dbSet, (current, include) => current.Include(include));
+
+                IReadOnlyList<IProperty> keyProperties = dbContext.Model.FindEntityType(typeof(T))?.FindPrimaryKey()?.Properties
+                    ?? throw new Exception($"An error has occurred while guessing the primary key of object {typeof(T).FullName}");
 
                 ParameterExpression parameter = Expression.Parameter(typeof(T), "e");
                 Expression? predicate = null;
@@ -86,8 +87,8 @@ namespace makeITeasy.AppFramework.Infrastructure.EF8.Persistence
 
                 for (int i = 0; i < keyProperties.Count; i++)
                 {
-                    var property = keyProperties[i];
-                    var keyValue = keys[i];
+                    IProperty property = keyProperties[i];
+                    object keyValue = keys[i];
 
                     var efPropertyCall = Expression.Call(
                         typeof(EF),
@@ -141,7 +142,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF8.Persistence
 
             if (filteredSet != null && _mapper?.ConfigurationProvider != null)
             {
-                result.Results = filteredSet.AsNoTracking().ProjectTo<X>(_mapper.ConfigurationProvider).DecompileAsync().ToList();
+                result.Results = [.. filteredSet.AsNoTracking().ProjectTo<X>(_mapper.ConfigurationProvider).DecompileAsync()];
             }
 
             return result;
@@ -239,7 +240,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF8.Persistence
 
                 if (entry.State == EntityState.Modified)
                 {
-                    List<string> propertiesToExclude = typeof(ITimeTrackingEntity).GetProperties().Select(x => x.Name).ToList();
+                    List<string> propertiesToExclude = [.. typeof(ITimeTrackingEntity).GetProperties().Select(x => x.Name)];
 
                     foreach (var property in entry.Properties.Where(x => !propertiesToExclude.Contains(x.Metadata.Name)))
                     {
@@ -317,13 +318,13 @@ namespace makeITeasy.AppFramework.Infrastructure.EF8.Persistence
 
                 case EntityState.Modified:
                     {
-                        action = (x) => { x.LastModificationDate = date; };
+                        action = (x) => x.LastModificationDate = date;
                         break;
                     }
 
                 default:
                     {
-                        action = (x) => { };
+                        action = (_) => { };
                         break;
                     }
             }
@@ -402,7 +403,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF8.Persistence
         }
 
         /// <summary>
-        /// Update Entity. Only entity will be 
+        /// Update Entity. Only entity will be
         /// </summary>'
         /// <param name="entity"></param>
         /// <param name="saveChanges"></param>
@@ -432,6 +433,16 @@ namespace makeITeasy.AppFramework.Infrastructure.EF8.Persistence
                     EntityEntry<T> ee = dbContext.Entry(databaseEntity);
 
                     ee.CurrentValues.SetValues(entity);
+
+                    var rowVersionProps = ee.Metadata
+                    .GetProperties()
+                        .Where(p => p.IsConcurrencyToken && p.ValueGenerated == ValueGenerated.OnAddOrUpdate);
+
+                    foreach (var prop in rowVersionProps)
+                    {
+                        var propEntry = ee.Property(prop.Name);
+                        propEntry.OriginalValue = prop.GetGetter().GetClrValue(entity);
+                    }
                 }
             }
 
@@ -472,7 +483,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EF8.Persistence
                         if (
                             oldValue?.Equals(newValue) == false
                             ||
-                            oldValue == null && newValue != null)
+                            (oldValue == null && newValue != null))
                         {
                             property.SetValue(databaseEntity, newValue);
                             dbContext.Entry(databaseEntity).Property(property.Name).IsModified = true;
@@ -497,11 +508,11 @@ namespace makeITeasy.AppFramework.Infrastructure.EF8.Persistence
 
         private static PropertyInfo[] GetPropertiesToUpdate(string[] propertyNames)
         {
-            PropertyInfo[] objectProperties = typeof(T).GetProperties().Where(x => x.CanRead && x.CanWrite).ToArray();
+            PropertyInfo[] objectProperties = [.. typeof(T).GetProperties().Where(x => x.CanRead && x.CanWrite)];
 
-            string[] propertiesToUpdate = objectProperties.Select(x => x.Name).Intersect(propertyNames).ToArray();
+            string[] propertiesToUpdate = [.. objectProperties.Select(x => x.Name).Intersect(propertyNames)];
 
-            return objectProperties.Where(x => propertiesToUpdate.Contains(x.Name)).ToArray();
+            return [.. objectProperties.Where(x => propertiesToUpdate.Contains(x.Name))];
         }
 
         public async Task<CommandResult> DeleteAsync(T entity, bool saveChanges = true)
@@ -528,12 +539,9 @@ namespace makeITeasy.AppFramework.Infrastructure.EF8.Persistence
 
         private static IQueryable<T>? ApplyPaging(IQueryable<T>? filteredSet, ISpecification<T> spec)
         {
-            if (spec is null)
-            {
-                throw new ArgumentNullException(nameof(spec));
-            }
+            ArgumentNullException.ThrowIfNull(spec);
 
-            return filteredSet?.Skip(spec.Skip.GetValueOrDefault()).Take(spec.Take.GetValueOrDefault(10));
+            return filteredSet?.Skip(spec.Skip.GetValueOrDefault()).Take(spec.Take ?? 10);
         }
 
         public void Dispose()
@@ -551,13 +559,23 @@ namespace makeITeasy.AppFramework.Infrastructure.EF8.Persistence
 
         public async Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, UpdateDefinition<T> updates)
         {
-            throw new NotImplementedException("Please use method UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, Expression<Func<T, T>> updateExpression)");
-        }
+#if NET10_0
+            var dbContext = GetDbContext();
+            var query = GetDbContext().Set<T>().AsQueryable().Where(entityPredicate);
 
-        public async Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, Expression<Func<T, T>> updateExpression)
-        {
-
-            return await GetDbContext().Set<T>().Where(entityPredicate).BatchUpdateAsync(updateExpression);
+            return await query.ExecuteUpdateAsync(setters =>
+            {
+                var s = setters;
+                foreach (var (propertyLambda, valueLambda) in updates.GetUpdates())
+                {
+                    dynamic ds = s;
+                    ds = ds.SetProperty((dynamic)propertyLambda, (dynamic)valueLambda);
+                    s = ds;
+                }
+            });
+#else
+            throw new NotImplementedException(nameof(UpdateRangeAsync));
+#endif
         }
     }
 }

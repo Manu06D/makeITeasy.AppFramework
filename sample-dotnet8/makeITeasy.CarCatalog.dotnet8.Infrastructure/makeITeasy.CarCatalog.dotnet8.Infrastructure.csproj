@@ -13,7 +13,7 @@
 
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\makeITeasy.AppFramework.Infrastructure.EF8\makeITeasy.AppFramework.Infrastructure.EF8.csproj" />
+		<ProjectReference Include="..\..\src\makeITeasy.AppFramework.Infrastructure.EntityFramework\makeITeasy.AppFramework.Infrastructure.EntityFramework.csproj" />
 		<ProjectReference Include="..\makeITeasy.CarCatalog.dotnet8.Core\makeITeasy.CarCatalog.dotnet8.Core.csproj" />
 		<ProjectReference Include="..\makeITeasy.CarCatalog.dotnet8.Models\makeITeasy.CarCatalog.dotnet8.Models.csproj" />
 	</ItemGroup>

@@ -43,7 +43,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\makeITeasy.AppFramework.Infrastructure.EF9\makeITeasy.AppFramework.Infrastructure.EF9.csproj" />
 		<ProjectReference Include="..\makeITeasy.CarCatalog.dotnet9.Core\makeITeasy.CarCatalog.dotnet9.Core.csproj" />
 		<ProjectReference Include="..\makeITeasy.CarCatalog.dotnet9.Infrastructure\makeITeasy.CarCatalog.dotnet9.Infrastructure.csproj" />
 		<ProjectReference Include="..\makeITeasy.CarCatalog.dotnet9.Models\makeITeasy.CarCatalog.dotnet9.Models.csproj" />
