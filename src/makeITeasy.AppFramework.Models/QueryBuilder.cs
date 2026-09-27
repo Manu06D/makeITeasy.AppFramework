@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq.Expressions;
 
 namespace makeITeasy.AppFramework.Models
@@ -6,12 +6,15 @@ namespace makeITeasy.AppFramework.Models
     public interface ICanBuild<T> where T:IBaseEntity
     {
         BaseQuery<T> Build();
+        ICanBuild<T> WithSplitQuery(bool useSplitQuery = true);
+        ICanBuild<T> UseSplitQuery(bool useSplitQuery = true);
     }
 
     public interface ICanAddPostBuilder<T> : ICanOrder<T>, ICanAddInclude<T> where T : IBaseEntity
     {
         ICanAddFunctionFilter<T> Where(Expression<Func<T, bool>> funcToAdd);
-
+        new ICanAddPostBuilder<T> WithSplitQuery(bool useSplitQuery = true);
+        new ICanAddPostBuilder<T> UseSplitQuery(bool useSplitQuery = true);
     }
 
     public interface ICanAddFunctionFilter<T> : ICanOrder<T> , ICanAddInclude<T> where T : IBaseEntity
@@ -43,6 +46,8 @@ namespace makeITeasy.AppFramework.Models
     {
         ICanAddInclude<T> Include(Expression<Func<T, object>> spec);
         ICanAddInclude<T> Include(string spec);
+        new ICanAddInclude<T> WithSplitQuery(bool useSplitQuery = true);
+        new ICanAddInclude<T> UseSplitQuery(bool useSplitQuery = true);
     }
 
     public class QueryBuilder
@@ -152,5 +157,26 @@ namespace makeITeasy.AppFramework.Models
 
             return this;
         }
+
+        public FluentQueryBuilder<T> WithSplitQuery(bool useSplitQuery = true)
+        {
+            _baseQuery.SplitQuery = useSplitQuery;
+
+            return this;
+        }
+
+        public FluentQueryBuilder<T> UseSplitQuery(bool useSplitQuery = true)
+        {
+            return WithSplitQuery(useSplitQuery);
+        }
+
+        ICanAddPostBuilder<T> ICanAddPostBuilder<T>.WithSplitQuery(bool useSplitQuery) => WithSplitQuery(useSplitQuery);
+        ICanAddPostBuilder<T> ICanAddPostBuilder<T>.UseSplitQuery(bool useSplitQuery) => WithSplitQuery(useSplitQuery);
+
+        ICanAddInclude<T> ICanAddInclude<T>.WithSplitQuery(bool useSplitQuery) => WithSplitQuery(useSplitQuery);
+        ICanAddInclude<T> ICanAddInclude<T>.UseSplitQuery(bool useSplitQuery) => WithSplitQuery(useSplitQuery);
+
+        ICanBuild<T> ICanBuild<T>.WithSplitQuery(bool useSplitQuery) => WithSplitQuery(useSplitQuery);
+        ICanBuild<T> ICanBuild<T>.UseSplitQuery(bool useSplitQuery) => WithSplitQuery(useSplitQuery);
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
@@ -17,6 +17,8 @@ namespace makeITeasy.AppFramework.Models
         public int? Skip { get; set; }
 
         public bool IsPagingEnabled => Take.HasValue || Skip.HasValue;
+
+        public bool? SplitQuery { get; set; }
 
         public List<OrderBySpecification<String>> OrderByStrings { get; set; }
 
