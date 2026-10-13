@@ -24,8 +24,7 @@
 		<DebugType>Embedded</DebugType>
 		<EmbedAllSources>True</EmbedAllSources>
 		<!-- Enabling nullable might cause issues on Model validation-->
-		<!--<Nullable>enable</Nullable>-->
-		<LangVersion>9.0</LangVersion>
+		<Nullable>disable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>

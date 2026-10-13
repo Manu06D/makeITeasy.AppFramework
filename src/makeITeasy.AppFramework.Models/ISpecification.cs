@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
@@ -15,6 +15,8 @@ namespace makeITeasy.AppFramework.Models
         int? Take { get; set; }
         int? Skip { get; set; }
         bool IsPagingEnabled { get; }
+        bool? SplitQuery { get; set; }
+        string? TagWith { get; set; }
         void AddOrder(OrderBySpecification<string> spec);
         void AddOrder(OrderBySpecification<Expression<Func<T, object>>> spec);
         void AddFunctionToCriteria(Expression<Func<T, bool>> funcToAdd, FunctionAggregatorEnum type = FunctionAggregatorEnum.And);

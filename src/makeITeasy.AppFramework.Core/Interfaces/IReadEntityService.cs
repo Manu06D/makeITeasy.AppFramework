@@ -1,11 +1,7 @@
-﻿using makeITeasy.AppFramework.Core.Queries;
+using makeITeasy.AppFramework.Core.Queries;
 using makeITeasy.AppFramework.Models;
 
-using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace makeITeasy.AppFramework.Core.Interfaces
 {

@@ -1,4 +1,4 @@
-﻿using makeITeasy.AppFramework.Models;
+using makeITeasy.AppFramework.Models;
 using Microsoft.EntityFrameworkCore;
 using makeITeasy.AppFramework.Core.Extensions;
 
@@ -31,6 +31,23 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
             if (specification.OrderBy?.Any() != null || specification.OrderByStrings?.Any() != null)
             {
                 query = HandQueryForOrder(specification, query);
+            }
+
+#if NET10_0_OR_GREATER
+            if (specification.SplitQuery.HasValue && query != null)
+            {
+                query = specification.SplitQuery.Value ? query.AsSplitQuery() : query.AsSingleQuery();
+            }
+#else
+            if (specification.SplitQuery.GetValueOrDefault())
+            {
+                throw new NotSupportedException("SplitQuery is not supported in .NET versions prior to .NET 10.");
+            }
+#endif
+
+            if (!string.IsNullOrWhiteSpace(specification.TagWith) && query != null)
+            {
+                query = query.TagWith(specification.TagWith);
             }
 
             return query;
