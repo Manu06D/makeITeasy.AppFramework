@@ -20,6 +20,8 @@ namespace makeITeasy.AppFramework.Models
 
         public bool? SplitQuery { get; set; }
 
+        public string? TagWith { get; set; }
+
         public List<OrderBySpecification<String>> OrderByStrings { get; set; }
 
         public List<OrderBySpecification<Expression<Func<T, object>>>> OrderBy { get; set; }

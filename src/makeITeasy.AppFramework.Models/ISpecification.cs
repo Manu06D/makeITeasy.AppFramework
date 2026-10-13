@@ -16,6 +16,7 @@ namespace makeITeasy.AppFramework.Models
         int? Skip { get; set; }
         bool IsPagingEnabled { get; }
         bool? SplitQuery { get; set; }
+        string? TagWith { get; set; }
         void AddOrder(OrderBySpecification<string> spec);
         void AddOrder(OrderBySpecification<Expression<Func<T, object>>> spec);
         void AddFunctionToCriteria(Expression<Func<T, bool>> funcToAdd, FunctionAggregatorEnum type = FunctionAggregatorEnum.And);

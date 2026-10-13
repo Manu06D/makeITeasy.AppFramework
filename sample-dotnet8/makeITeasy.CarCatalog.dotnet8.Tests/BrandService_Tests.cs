@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using makeITeasy.AppFramework.Core.Interfaces;
 using makeITeasy.CarCatalog.dotnet8.Infrastructure.Data;
 using makeITeasy.CarCatalog.dotnet8.Models;
@@ -11,6 +11,8 @@ using makeITeasy.AppFramework.Core.Models.Exceptions;
 using System.Transactions;
 using System;
 using makeITeasy.CarCatalog.dotnet8.Tests.Catalogs;
+using makeITeasy.AppFramework.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace makeITeasy.CarCatalog.dotnet8.Tests
 {
@@ -186,6 +188,83 @@ namespace makeITeasy.CarCatalog.dotnet8.Tests
 
             //getResult.Results.Where(x => x.Cars.Count >= 1).Should().HaveCount(1);
             //getResult.Results.First(x => x.Cars.Count >= 1).Cars.FirstOrDefault().Name.Should().Be("A3");
+        }
+
+        [Fact]
+        public async Task SplitQuery_ViaSpecification_ShouldThrowNotSupportedException()
+        {
+            var query = new BaseBrandQuery { Includes = [x => x.Cars], SplitQuery = true };
+
+            Func<Task> act = async () => await brandService.QueryAsync(query);
+
+            await act.Should().ThrowAsync<NotSupportedException>();
+        }
+
+        [Fact]
+        public async Task SplitQuery_ViaQueryBuilder_ShouldThrowNotSupportedException()
+        {
+            var query = QueryBuilder.Create<BaseBrandQuery, Brand>()
+                .Include(x => x.Cars)
+                .WithSplitQuery()
+                .Build();
+
+            Func<Task> act = async () => await brandService.QueryAsync(query);
+
+            await act.Should().ThrowAsync<NotSupportedException>();
+        }
+
+        [Fact]
+        public void SplitQuery_SpecificationEvaluator_ShouldThrowNotSupportedException()
+        {
+            var spec = new BaseBrandQuery { Includes = [x => x.Cars], SplitQuery = true };
+
+            Action act = () => AppFramework.Infrastructure.EntityFramework.Persistence.SpecificationEvaluator<Brand>.GetQuery(new List<Brand>().AsQueryable(), spec);
+
+            act.Should().Throw<NotSupportedException>();
+        }
+
+        [Fact]
+        public async Task SplitQuery_False_ShouldNotThrow()
+        {
+            var query = new BaseBrandQuery { Includes = [x => x.Cars], SplitQuery = false };
+
+            var result = await brandService.QueryAsync(query);
+
+            result.Results.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task TagWith_ViaSpecification_SuccessTest()
+        {
+            var query = new BaseBrandQuery { TagWith = "BrandQueryTag" };
+            var result = await brandService.QueryAsync(query);
+            result.Results.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task TagWith_ViaQueryBuilder_SuccessTest()
+        {
+            var query = QueryBuilder.Create<BaseBrandQuery, Brand>()
+                .TagWith("QueryBuilderTag")
+                .Build();
+
+            query.TagWith.Should().Be("QueryBuilderTag");
+
+            var result = await brandService.QueryAsync(query);
+            result.Results.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void TagWith_SpecificationEvaluator_GeneratesSqlComment_Test()
+        {
+            var dbFactory = Resolve<IDbContextFactory<CarCatalogContext>>();
+            using var dbContext = dbFactory.CreateDbContext();
+
+            var spec = new BaseBrandQuery { TagWith = "MySpecialBrandTag" };
+            var query = AppFramework.Infrastructure.EntityFramework.Persistence.SpecificationEvaluator<Brand>.GetQuery(dbContext.Set<Brand>().AsQueryable(), spec);
+
+            string? sql = query.ToQueryString();
+            sql.Should().Contain("-- MySpecialBrandTag");
         }
     }
 }

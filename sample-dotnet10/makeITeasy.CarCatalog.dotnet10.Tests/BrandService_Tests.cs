@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 
 using AwesomeAssertions;
 
@@ -14,6 +14,9 @@ using makeITeasy.CarCatalog.dotnet10.Tests.Catalogs;
 using makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup;
 
 using System.Transactions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using makeITeasy.AppFramework.Models;
 
 using Xunit;
 
@@ -185,6 +188,175 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
                 , includeCount: true);
 
             getResult.Results.Where(x => x.Name?.EndsWith(suffix) == true).Should().HaveCount(1);
+        }
+
+        [Fact]
+        public void SplitQuery_SpecificationEvaluator_GeneratesSplitQuery_Test()
+        {
+            var connection = new Microsoft.Data.Sqlite.SqliteConnection("DataSource=:memory:");
+            connection.Open();
+
+            var options = new DbContextOptionsBuilder<Infrastructure.Data.CarCatalogContext>()
+                .UseSqlite(connection)
+                .Options;
+
+            using var dbContext = new Infrastructure.Data.CarCatalogContext(options);
+
+            var specWithSplit = new BasicBrandQuery { Includes = [x => x.Cars], SplitQuery = true };
+            var specWithSingle = new BasicBrandQuery { Includes = [x => x.Cars], SplitQuery = false };
+
+            var splitQuery = AppFramework.Infrastructure.EntityFramework.Persistence.SpecificationEvaluator<Brand>.GetQuery(dbContext.Set<Brand>().AsQueryable(), specWithSplit);
+            var singleQuery = AppFramework.Infrastructure.EntityFramework.Persistence.SpecificationEvaluator<Brand>.GetQuery(dbContext.Set<Brand>().AsQueryable(), specWithSingle);
+
+            string? splitSql = splitQuery.ToQueryString();
+            string? singleSql = singleQuery.ToQueryString();
+
+            splitSql.Should().NotBe(singleSql);
+            singleSql.Should().Contain("JOIN");
+            splitSql.Should().NotContain("JOIN");
+        }
+
+        [Fact]
+        public async Task SplitQuery_ViaSpecification_SuccessTest()
+        {
+            (_, IBrandService brandService, _, _, _) = await CarsCatalog.CreateCarsAsync(this);
+
+            var result = await brandService.QueryAsync(new BasicBrandQuery { Includes = [x => x.Cars], SplitQuery = true });
+
+            result.Results.Should().NotBeEmpty();
+            result.Results.Should().Contain(x => x.Cars.Count > 0);
+        }
+
+        [Fact]
+        public async Task SplitQuery_ViaQueryBuilder_SuccessTest()
+        {
+            (_, IBrandService brandService, _, _, _) = await CarsCatalog.CreateCarsAsync(this);
+
+            var query = QueryBuilder.Create<BasicBrandQuery, Brand>()
+                .Include(x => x.Cars)
+                .WithSplitQuery()
+                .Build();
+
+            query.SplitQuery.Should().BeTrue();
+
+            var result = await brandService.QueryAsync(query);
+
+            result.Results.Should().NotBeEmpty();
+            result.Results.Should().Contain(x => x.Cars.Count > 0);
+        }
+
+        [Fact]
+        public void SplitQuery_DbContextGlobalConfiguration_DefaultAndOverride_Test()
+        {
+            var connection = new Microsoft.Data.Sqlite.SqliteConnection("DataSource=:memory:");
+            connection.Open();
+
+            var options = new DbContextOptionsBuilder<Infrastructure.Data.CarCatalogContext>()
+                .UseSqlite(connection, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery))
+                .Options;
+
+            using var dbContext = new Infrastructure.Data.CarCatalogContext(options);
+
+            var defaultSpec = new BasicBrandQuery { Includes = [x => x.Cars] };
+            var overrideToSingleSpec = new BasicBrandQuery { Includes = [x => x.Cars], SplitQuery = false };
+            var explicitSplitSpec = new BasicBrandQuery { Includes = [x => x.Cars], SplitQuery = true };
+
+            var defaultQuery = AppFramework.Infrastructure.EntityFramework.Persistence.SpecificationEvaluator<Brand>.GetQuery(dbContext.Set<Brand>().AsQueryable(), defaultSpec);
+            var singleQuery = AppFramework.Infrastructure.EntityFramework.Persistence.SpecificationEvaluator<Brand>.GetQuery(dbContext.Set<Brand>().AsQueryable(), overrideToSingleSpec);
+            var splitQuery = AppFramework.Infrastructure.EntityFramework.Persistence.SpecificationEvaluator<Brand>.GetQuery(dbContext.Set<Brand>().AsQueryable(), explicitSplitSpec);
+
+            string? defaultSql = defaultQuery.ToQueryString();
+            string? singleSql = singleQuery.ToQueryString();
+            string? splitSql = splitQuery.ToQueryString();
+
+            defaultSql.Should().NotContain("JOIN");
+            singleSql.Should().Contain("JOIN");
+            splitSql.Should().NotContain("JOIN");
+            splitSql.Should().Be(defaultSql);
+        }
+
+        [Fact]
+        public async Task SplitQuery_DbContextGlobalConfiguration_ExecutionSuccessTest()
+        {
+            var connection = new Microsoft.Data.Sqlite.SqliteConnection("DataSource=:memory:");
+            connection.Open();
+
+            var services = new ServiceCollection();
+            services.AddDbContextFactory<Infrastructure.Data.CarCatalogContext>(opt =>
+            {
+                opt.UseSqlite(connection, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
+            });
+            var sp = services.BuildServiceProvider();
+            var dbFactory = sp.GetRequiredService<IDbContextFactory<Infrastructure.Data.CarCatalogContext>>();
+
+            using (var initContext = dbFactory.CreateDbContext())
+            {
+                initContext.Database.EnsureCreated();
+                var country = new Country { Name = "France", CountryCode = "FR" };
+                initContext.Countries.Add(country);
+                initContext.Brands.Add(new Brand { Name = "TestBrand", Country = country, Cars = new List<Car> { new Car { Name = "Car1" } } });
+                initContext.SaveChanges();
+            }
+
+            var brandRepo = new Infrastructure.Persistence.TransactionCarCatalogRepository<Brand>(dbFactory, Resolve<AutoMapper.IMapper>());
+            using var customBrandService = new Core.Services.BrandService { EntityRepository = brandRepo };
+
+            var defaultResult = await customBrandService.QueryAsync(new BasicBrandQuery { Includes = [x => x.Cars] });
+            defaultResult.Results.Should().NotBeEmpty();
+            defaultResult.Results.Should().Contain(x => x.Cars.Count > 0);
+
+            var singleResult = await customBrandService.QueryAsync(new BasicBrandQuery { Includes = [x => x.Cars], SplitQuery = false });
+            singleResult.Results.Should().NotBeEmpty();
+            singleResult.Results.Should().Contain(x => x.Cars.Count > 0);
+        }
+
+        [Fact]
+        public async Task SplitQuery_GetFirstByQueryAsync_SuccessTest()
+        {
+            (_, IBrandService brandService, _, _, _) = await CarsCatalog.CreateCarsAsync(this);
+
+            var firstBrand = await brandService.GetFirstByQueryAsync(new BasicBrandQuery { Includes = [x => x.Cars], SplitQuery = true });
+
+            firstBrand.Should().NotBeNull();
+            firstBrand.Cars.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public async Task TagWith_ViaSpecification_SuccessTest()
+        {
+            (_, IBrandService brandService, _, _, _) = await CarsCatalog.CreateCarsAsync(this);
+
+            var query = new BasicBrandQuery { TagWith = "BrandQueryTag" };
+            var result = await brandService.QueryAsync(query);
+            result.Results.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task TagWith_ViaQueryBuilder_SuccessTest()
+        {
+            (_, IBrandService brandService, _, _, _) = await CarsCatalog.CreateCarsAsync(this);
+
+            var query = QueryBuilder.Create<BasicBrandQuery, Brand>()
+                .TagWith("QueryBuilderTag")
+                .Build();
+
+            query.TagWith.Should().Be("QueryBuilderTag");
+
+            var result = await brandService.QueryAsync(query);
+            result.Results.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void TagWith_SpecificationEvaluator_GeneratesSqlComment_Test()
+        {
+            var dbFactory = Resolve<IDbContextFactory<Infrastructure.Data.CarCatalogContext>>();
+            using var dbContext = dbFactory.CreateDbContext();
+
+            var spec = new BasicBrandQuery { TagWith = "MySpecialBrandTag" };
+            var query = AppFramework.Infrastructure.EntityFramework.Persistence.SpecificationEvaluator<Brand>.GetQuery(dbContext.Set<Brand>().AsQueryable(), spec);
+
+            string? sql = query.ToQueryString();
+            sql.Should().Contain("-- MySpecialBrandTag");
         }
     }
 }
