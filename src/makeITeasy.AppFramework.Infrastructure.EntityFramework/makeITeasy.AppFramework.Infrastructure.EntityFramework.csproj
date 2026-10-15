@@ -11,8 +11,9 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
 		<PackageTags>framework ef</PackageTags>
-		<Version>10.3.0</Version>
+		<Version>10.4.0</Version>
 		<PackageReleaseNotes>
+			10.4.0  : Add ForceLastModificationDateUpdate parameter in UpdateProperties
 			10.3.0  : Add Tag and Split() query in ISpecification
 			10.2.0  : Rework dotnet dependencies
 		</PackageReleaseNotes>

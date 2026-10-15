@@ -9,6 +9,7 @@ using makeITeasy.CarCatalog.dotnet10.Core.Services.Queries.CarQueries;
 using makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup;
 using makeITeasy.CarCatalog.dotnet10.Tests.Catalogs;
 using makeITeasy.CarCatalog.dotnet10.Core.Services.Queries.BrandQueries;
+using MediatR;
 
 namespace makeITeasy.CarCatalog.dotnet10.Tests
 {
@@ -158,6 +159,101 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
 
             carAfterUpdate.Should().NotBeNull();
             carAfterUpdate.LastModificationDate.GetValueOrDefault().Should().BeAfter(creationDateTime);
+        }
+
+        [Fact]
+        public async Task UpdateProperties_LastModificationDateUpdatedAfterCreation()
+        {
+            //Brand has no RowVersion : with a RowVersion (MsSql) LastModificationDate is always updated, which would hide the issue
+            IBrandService brandService = Resolve<IBrandService>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+
+            CommandResult<Brand> creationResult = await brandService.CreateAsync(CarsCatalog.Citroen(suffix));
+            creationResult.Result.Should().Be(CommandState.Success);
+
+            Brand? brandAfterCreation = await brandService.GetByIdAsync(creationResult.Entity!.Id);
+            DateTime creationDate = brandAfterCreation!.CreationDate!.Value;
+            DateTime lastModificationDateAfterCreation = brandAfterCreation.LastModificationDate!.Value;
+
+            await Task.Delay(50, TestContext.Current.CancellationToken);
+
+            Brand brandToUpdate = new() { Id = creationResult.Entity.Id, Name = "Updated" + suffix };
+            DateTime dateBeforeUpdate = DateTime.Now;
+            CommandResult<Brand> updateResult = await brandService.UpdatePropertiesAsync(brandToUpdate, [nameof(Brand.Name)]);
+            updateResult.Result.Should().Be(CommandState.Success);
+
+            Brand? brandAfterUpdate = await brandService.GetByIdAsync(creationResult.Entity.Id);
+
+            brandAfterUpdate.Should().NotBeNull();
+            brandAfterUpdate!.Name.Should().Be("Updated" + suffix);
+            brandAfterUpdate.CreationDate.Should().Be(creationDate);
+            brandAfterUpdate.LastModificationDate.Should().BeAfter(lastModificationDateAfterCreation)
+                .And.BeOnOrAfter(dateBeforeUpdate.AddMilliseconds(-5));
+        }
+
+        [Fact]
+        public async Task UpdateProperties_NoChange_LastModificationDateUnchanged()
+        {
+            //Brand has no RowVersion : on MsSql an entity with RowVersion always gets LastModificationDate updated (see EntityWithRowVersion_UpdateNofields_Test)
+            IBrandService brandService = Resolve<IBrandService>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+
+            CommandResult<Brand> creationResult = await brandService.CreateAsync(CarsCatalog.Citroen(suffix));
+            Brand? brandAfterCreation = await brandService.GetByIdAsync(creationResult.Entity!.Id);
+
+            await Task.Delay(50, TestContext.Current.CancellationToken);
+
+            Brand brandToUpdate = new() { Id = brandAfterCreation!.Id, Name = brandAfterCreation.Name };
+            await brandService.UpdatePropertiesAsync(brandToUpdate, [nameof(Brand.Name)]);
+
+            Brand? brandAfterUpdate = await brandService.GetByIdAsync(brandAfterCreation.Id);
+
+            brandAfterUpdate!.LastModificationDate.Should().Be(brandAfterCreation.LastModificationDate);
+        }
+
+        [Fact]
+        public async Task UpdateProperties_NoChangeWithForce_LastModificationDateUpdated()
+        {
+            IBrandService brandService = Resolve<IBrandService>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+
+            CommandResult<Brand> creationResult = await brandService.CreateAsync(CarsCatalog.Citroen(suffix));
+            Brand? brandAfterCreation = await brandService.GetByIdAsync(creationResult.Entity!.Id);
+
+            await Task.Delay(50, TestContext.Current.CancellationToken);
+
+            Brand brandToUpdate = new() { Id = brandAfterCreation!.Id, Name = brandAfterCreation.Name };
+            CommandResult<Brand> updateResult = await brandService.UpdatePropertiesAsync(brandToUpdate, [nameof(Brand.Name)], forceLastModificationDateUpdate: true);
+            updateResult.Result.Should().Be(CommandState.Success);
+
+            Brand? brandAfterUpdate = await brandService.GetByIdAsync(brandAfterCreation.Id);
+
+            brandAfterUpdate!.Name.Should().Be(brandAfterCreation.Name);
+            brandAfterUpdate.CreationDate.Should().Be(brandAfterCreation.CreationDate);
+            brandAfterUpdate.LastModificationDate.Should().BeAfter(brandAfterCreation.LastModificationDate!.Value);
+        }
+
+        [Fact]
+        public async Task UpdatePartialEntityCommand_NoChangeWithForce_LastModificationDateUpdated()
+        {
+            IBrandService brandService = Resolve<IBrandService>();
+            IMediator mediator = Resolve<IMediator>();
+            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+
+            CommandResult<Brand> creationResult = await brandService.CreateAsync(CarsCatalog.Citroen(suffix));
+            Brand? brandAfterCreation = await brandService.GetByIdAsync(creationResult.Entity!.Id);
+
+            await Task.Delay(50, TestContext.Current.CancellationToken);
+
+            Brand brandToUpdate = new() { Id = brandAfterCreation!.Id, Name = brandAfterCreation.Name };
+            CommandResult<Brand> updateResult = await mediator.Send(
+                new UpdatePartialEntityCommand<Brand>(brandToUpdate, [nameof(Brand.Name)], forceLastModificationDateUpdate: true),
+                TestContext.Current.CancellationToken);
+            updateResult.Result.Should().Be(CommandState.Success);
+
+            Brand? brandAfterUpdate = await brandService.GetByIdAsync(brandAfterCreation.Id);
+
+            brandAfterUpdate!.LastModificationDate.Should().BeAfter(brandAfterCreation.LastModificationDate!.Value);
         }
 
         [Fact]
