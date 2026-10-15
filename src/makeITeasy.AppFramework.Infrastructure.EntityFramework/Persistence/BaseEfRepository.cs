@@ -61,12 +61,17 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
 
         public virtual async Task<T?> GetByIdAsync(object id)
         {
+            return await GetByIdAsync(GetDbContext(), id);
+        }
+
+        protected static async Task<T?> GetByIdAsync(U dbContext, object id)
+        {
             if (id is object[] compositeKeys)
             {
-                return await GetDbContext().Set<T>().FindAsync(compositeKeys);
+                return await dbContext.Set<T>().FindAsync(compositeKeys);
             }
 
-            return await GetDbContext().Set<T>().FindAsync(id);
+            return await dbContext.Set<T>().FindAsync(id);
         }
 
         public virtual async Task<T?> GetByIdAsync(object id, List<Expression<Func<T, object>>>? includes)
@@ -229,7 +234,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
             return entities;
         }
 
-        private async Task<int> SaveOrUpdateChanges(U dbContext, bool saveChanges = true)
+        private async Task<int> SaveOrUpdateChanges(U dbContext, bool saveChanges = true, object? forceLastModificationDateEntity = null)
         {
             var entries =
                 dbContext.ChangeTracker.Entries().Where(e => e.Entity is ITimeTrackingEntity && (e.State == EntityState.Added || e.State == EntityState.Modified));
@@ -238,7 +243,8 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
             {
                 bool hasAnyChangeOnEntry = true;
 
-                if (entry.State == EntityState.Modified)
+                //LastModificationDate change is reverted when no other property changed, unless it is forced for this entity
+                if (entry.State == EntityState.Modified && !ReferenceEquals(entry.Entity, forceLastModificationDateEntity))
                 {
                     List<string> propertiesToExclude = [.. typeof(ITimeTrackingEntity).GetProperties().Select(x => x.Name)];
 
@@ -390,11 +396,11 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
             return result;
         }
 
-        private async Task<CommandResult<T>> SaveOrUpdateChangesWithResult(T entity, U dbContext, bool saveChanges = true)
+        private async Task<CommandResult<T>> SaveOrUpdateChangesWithResult(T entity, U dbContext, bool saveChanges = true, object? forceLastModificationDateEntity = null)
         {
             var result = new CommandResult<T>();
 
-            int dbChanges = await SaveOrUpdateChanges(dbContext, saveChanges);
+            int dbChanges = await SaveOrUpdateChanges(dbContext, saveChanges, forceLastModificationDateEntity);
 
             result.Entity = entity;
             result.Result = dbChanges >= 0 ? CommandState.Success : CommandState.Error;
@@ -451,7 +457,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
             return dbResult;
         }
 
-        public async Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] propertyNames, bool saveChanges = true)
+        public async Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] propertyNames, bool saveChanges = true, bool forceLastModificationDateUpdate = false)
         {
             if (propertyNames == null || propertyNames.Length  == 0)
             {
@@ -461,7 +467,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
             var dbContext = GetDbContext();
 
             var result = new CommandResult<T>();
-            T? databaseEntity = await GetByIdAsync(entity.DatabaseID);
+            T? databaseEntity = await GetByIdAsync(dbContext, entity.DatabaseID);
 
             if (PrepareEntityForDbOperation(entity, EntityState.Modified))
             {
@@ -494,7 +500,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
 
                 if (shouldSave)
                 {
-                    result = await SaveOrUpdateChangesWithResult(entity, dbContext, shouldSave);
+                    result = await SaveOrUpdateChangesWithResult(entity, dbContext, shouldSave, forceLastModificationDateUpdate ? databaseEntity : null);
                 }
                 else
                 {

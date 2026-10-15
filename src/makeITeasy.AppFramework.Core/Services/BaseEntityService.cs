@@ -222,11 +222,11 @@ namespace makeITeasy.AppFramework.Core.Services
         //    return entities.Select(x => new CommandResult<TEntity>(CommandState.Success) { Entity = x }).ToList();
         //}
 
-        public virtual async Task<CommandResult<TEntity>> UpdatePropertiesAsync(TEntity entity, string[] properties)
+        public virtual async Task<CommandResult<TEntity>> UpdatePropertiesAsync(TEntity entity, string[] properties, bool forceLastModificationDateUpdate = false)
         {
             EnsureThatRepositoryExists();
 
-            return await EntityRepository!.UpdatePropertiesAsync(entity, properties);
+            return await EntityRepository!.UpdatePropertiesAsync(entity, properties, forceLastModificationDateUpdate: forceLastModificationDateUpdate);
         }
 
         public virtual async Task<int> UpdateRangeAsync(Expression<Func<TEntity, bool>> entityPredicate, UpdateDefinition<TEntity> updates)

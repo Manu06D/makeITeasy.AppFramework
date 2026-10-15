@@ -9,10 +9,13 @@ namespace makeITeasy.AppFramework.Core.Commands
 
         public string[] Properties { get; private set; }
 
-        public UpdatePartialEntityCommand(TEntity entity, string[] properties)
+        public bool ForceLastModificationDateUpdate { get; private set; }
+
+        public UpdatePartialEntityCommand(TEntity entity, string[] properties, bool forceLastModificationDateUpdate = false)
         {
             Entity = entity;
             Properties = properties;
+            ForceLastModificationDateUpdate = forceLastModificationDateUpdate;
         }
     }
 }

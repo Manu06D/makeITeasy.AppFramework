@@ -12,7 +12,7 @@ namespace makeITeasy.AppFramework.Core.Interfaces
     {
         Task<CommandResult<TEntity>> CreateAsync(TEntity entity, bool saveChanges = true);
         Task<CommandResult<TEntity>> UpdateAsync(TEntity entity);
-        Task<CommandResult<TEntity>> UpdatePropertiesAsync(TEntity entity, string[] properties);
+        Task<CommandResult<TEntity>> UpdatePropertiesAsync(TEntity entity, string[] properties, bool forceLastModificationDateUpdate = false);
         Task<CommandResult> DeleteAsync(TEntity entity, bool saveChanges = true);
         Task<ICollection<CommandResult<TEntity>>> CreateRangeAsync(ICollection<TEntity> entities, bool saveChanges = true);
         Task<int> UpdateRangeAsync(Expression<Func<TEntity, bool>> entityPredicate, Expression<Func<TEntity, TEntity>> updateExpression);

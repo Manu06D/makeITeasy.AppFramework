@@ -24,7 +24,7 @@ namespace makeITeasy.AppFramework.Core.Commands
                 throw new ArgumentNullException(nameof(request));
             }
 
-            return await baseService.UpdatePropertiesAsync(request.Entity, request.Properties);
+            return await baseService.UpdatePropertiesAsync(request.Entity, request.Properties, request.ForceLastModificationDateUpdate);
         }
     }
 }
