@@ -1,5 +1,3 @@
-using makeITeasy.AppFramework.Models;
-using Microsoft.EntityFrameworkCore;
 using makeITeasy.AppFramework.Core.Extensions;
 
 namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence

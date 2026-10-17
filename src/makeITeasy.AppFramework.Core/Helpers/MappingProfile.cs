@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using AutoMapper;
-using makeITeasy.AppFramework.Core.Interfaces;
+﻿using makeITeasy.AppFramework.Core.Interfaces;
 
 namespace makeITeasy.AppFramework.Core.Helpers
 {

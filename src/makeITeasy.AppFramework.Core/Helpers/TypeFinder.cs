@@ -1,7 +1,4 @@
-﻿
-using System;
-
-namespace makeITeasy.AppFramework.Core.Helpers
+﻿namespace makeITeasy.AppFramework.Core.Helpers
 {
     public static class TypeFinder
     {

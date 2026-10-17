@@ -50,6 +50,14 @@
 		<Compile Include="Persistence\BaseEfRepository.net8.cs" />
 		<None Include="Persistence\BaseEfRepository.net10.cs" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="AutoMapper" />
+		<Using Include="AutoMapper.QueryableExtensions"/>
+		<Using Include="Microsoft.EntityFrameworkCore"/>
+		<Using Include="System.Linq.Expressions"/>
+		<Using Include="makeITeasy.AppFramework.Models"/>
+	</ItemGroup>
 	
 	<ItemGroup>
 		<NuGetAuditSuppress Include="https://github.com/advisories/GHSA-rvv3-g6hj-g44x" PackageId="AutoMapper" Reason="Known advisory; internal work around applied" />

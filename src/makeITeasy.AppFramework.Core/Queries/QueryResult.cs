@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace makeITeasy.AppFramework.Core.Queries
+﻿namespace makeITeasy.AppFramework.Core.Queries
 {
     public class QueryResult<T> where T : class
     {

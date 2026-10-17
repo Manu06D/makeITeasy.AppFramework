@@ -1,6 +1,4 @@
 using makeITeasy.AppFramework.Core.Queries;
-using makeITeasy.AppFramework.Models;
-
 using System.Linq.Expressions;
 
 namespace makeITeasy.AppFramework.Core.Interfaces

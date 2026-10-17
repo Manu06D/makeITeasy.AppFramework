@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
 {

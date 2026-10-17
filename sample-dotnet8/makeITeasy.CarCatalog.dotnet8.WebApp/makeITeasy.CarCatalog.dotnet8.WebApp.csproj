@@ -8,15 +8,15 @@
 
 
 	<ItemGroup>
-		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="11.0.0" />
+		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="11.0.2" />
 		<PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="[8.*,9.0)" />
-		<PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="3.0.71" />
+		<PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="3.0.114" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 		<PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
 		<PackageReference Include="AutoMapper.Contrib.Autofac.DependencyInjection" Version="[9.0.0]" />
 		<PackageReference Include="MediatR.Extensions.Autofac.DependencyInjection" Version="[12.3.0]" />
-		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -26,10 +26,6 @@
 		<ProjectReference Include="..\makeITeasy.CarCatalog.dotnet8.Core\makeITeasy.CarCatalog.dotnet8.Core.csproj" />
 		<ProjectReference Include="..\makeITeasy.CarCatalog.dotnet8.Infrastructure\makeITeasy.CarCatalog.dotnet8.Infrastructure.csproj" />
 		<ProjectReference Include="..\makeITeasy.CarCatalog.dotnet8.Models\makeITeasy.CarCatalog.dotnet8.Models.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300" />
 	</ItemGroup>
 	
 	<ItemGroup>

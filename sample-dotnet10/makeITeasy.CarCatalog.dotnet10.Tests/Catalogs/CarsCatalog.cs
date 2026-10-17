@@ -3,8 +3,6 @@ using makeITeasy.CarCatalog.dotnet10.Core.Services.Interfaces;
 using makeITeasy.CarCatalog.dotnet10.Models;
 using makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup;
 
-using MediatR;
-
 namespace makeITeasy.CarCatalog.dotnet10.Tests.Catalogs
 {
     public static class CarsCatalog
@@ -18,19 +16,19 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests.Catalogs
             string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
             List<Car> cars = [];
 
-            Country country = CarsCatalog.France;
+            Country country = France;
             await countryService.CreateAsync(country);
 
-            Brand citroenBrand = CarsCatalog.Citroen(suffix, countryId: country.Id);
+            Brand citroenBrand = Citroen(suffix, countryId: country.Id);
             await brandService.CreateAsync(citroenBrand);
 
-            Car c4car = CarsCatalog.CitroenC4(suffix, brandId: citroenBrand.Id);
+            Car c4car = CitroenC4(suffix, brandId: citroenBrand.Id);
             if ((await carService.CreateAsync(c4car)).Result == CommandState.Success)
             {
                 cars.Add(c4car);
             }
 
-            Car c5car = CarsCatalog.CitroenC5(suffix, brandId: citroenBrand.Id);
+            Car c5car = CitroenC5(suffix, brandId: citroenBrand.Id);
             if ((await carService.CreateAsync(c5car)).Result == CommandState.Success)
             {
                 cars.Add(c5car);

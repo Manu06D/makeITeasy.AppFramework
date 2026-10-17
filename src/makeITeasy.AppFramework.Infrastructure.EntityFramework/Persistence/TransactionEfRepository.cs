@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using makeITeasy.AppFramework.Models;
-using makeITeasy.AppFramework.Core.Queries;
-using Microsoft.EntityFrameworkCore;
+﻿using makeITeasy.AppFramework.Core.Queries;
 using System.Transactions;
 
 namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence

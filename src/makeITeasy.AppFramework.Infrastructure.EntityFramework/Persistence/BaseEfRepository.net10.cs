@@ -1,7 +1,4 @@
 ﻿using makeITeasy.AppFramework.Core.Interfaces;
-using makeITeasy.AppFramework.Models;
-
-using Microsoft.EntityFrameworkCore;
 
 using System.Linq.Expressions;
 

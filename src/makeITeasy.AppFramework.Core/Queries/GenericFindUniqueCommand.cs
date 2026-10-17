@@ -1,9 +1,4 @@
-﻿using makeITeasy.AppFramework.Models;
-using MediatR;
-
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MediatR;
 
 namespace makeITeasy.AppFramework.Core.Queries
 {
