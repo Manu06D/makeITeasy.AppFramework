@@ -13,7 +13,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests.Catalogs
             IBrandService brandService = resolveEntity.Resolve<IBrandService>();
             ICountryService countryService = resolveEntity.Resolve<ICountryService>();
 
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+            string suffix = TestHelper.UniqueSuffix();
             List<Car> cars = [];
 
             Country country = France;

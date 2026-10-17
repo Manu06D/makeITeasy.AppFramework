@@ -20,7 +20,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         {
             ICarRepository carRepository = Resolve<ICarRepository>();
             ICarService carService = Resolve<ICarService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+            string suffix = TestHelper.UniqueSuffix();
 
             Brand brand = CarsCatalog.Citroen(suffix, country: CarsCatalog.France);
             List<Car> cars =
@@ -43,7 +43,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         {
             ICarRepository carRepository = Resolve<ICarRepository>();
             ICarService carService = Resolve<ICarService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+            string suffix = TestHelper.UniqueSuffix();
 
             Brand brand = CarsCatalog.Citroen(suffix, country: CarsCatalog.France);
 

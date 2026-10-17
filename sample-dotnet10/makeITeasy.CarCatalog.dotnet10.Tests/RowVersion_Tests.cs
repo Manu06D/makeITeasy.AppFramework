@@ -23,7 +23,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
             if (GlobalTestSetup.DatabaseType == DatabaseType.MsSql)
             {
                 ICarService carService = Resolve<ICarService>();
-                string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+                string suffix = TestHelper.UniqueSuffix();
 
                 var result = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
 

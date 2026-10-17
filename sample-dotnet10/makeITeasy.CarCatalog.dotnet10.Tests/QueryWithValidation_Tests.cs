@@ -30,7 +30,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
         {
             ICarService carService = Resolve<ICarService>();
             IMediator mediator= Resolve<IMediator>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+            string suffix = TestHelper.UniqueSuffix();
             Car newCar = CarsCatalog.CitroenC4(suffix);
 
             CommandResult<Car> newCarResult = await carService.CreateAsync(newCar);

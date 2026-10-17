@@ -82,7 +82,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         public async Task CreateAndGet_BasicTest()
         {
             ICarService carService = Resolve<ICarService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+            string suffix = TestHelper.UniqueSuffix();
 
             Car entity = CarsCatalog.CitroenC4(suffix);
             var result = await carService.CreateAsync(entity);
@@ -352,7 +352,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         [Fact]
         public async Task OrderFunction2Level_Tests()
         {
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+            string suffix = TestHelper.UniqueSuffix();
 
             ICarService carService = Resolve<ICarService>();
             IBrandService brandService = Resolve<IBrandService>();

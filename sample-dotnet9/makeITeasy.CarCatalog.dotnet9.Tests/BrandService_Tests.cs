@@ -89,7 +89,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             if (DatabaseEngineFixture.CurentDatabaseType == DatabaseType.MsSql)
             {
                 IBrandService brandService = Resolve<IBrandService>();
-                string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+                string suffix = TestHelper.UniqueSuffix();
 
                 var newBrand = new Brand
                 {

@@ -23,7 +23,7 @@ namespace makeITeasy.CarCatalog.dotnet8.Tests
         public async Task GetByIdAsync_SimpleKey_NoIncludes_Success()
         {
             ICarService carService = Resolve<ICarService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+            string suffix = TestHelper.UniqueSuffix();
             Car entity = new()
             {
                 Name = "C3" + suffix,
@@ -51,7 +51,7 @@ namespace makeITeasy.CarCatalog.dotnet8.Tests
         public async Task GetByIdAsync_SimpleKey_WithIncludes_Success()
         {
             ICarService carService = Resolve<ICarService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+            string suffix = TestHelper.UniqueSuffix();
             Car entity = new()
             {
                 Name = "C3" + suffix,

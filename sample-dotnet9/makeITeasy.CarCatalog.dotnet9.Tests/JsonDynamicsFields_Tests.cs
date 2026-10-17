@@ -17,7 +17,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         public async Task CreateAndGet_JsonDynamicFieldTest()
         {
             ICarService carService = Resolve<ICarService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+            string suffix = TestHelper.UniqueSuffix();
 
             Car newCar = new()
             {
@@ -64,7 +64,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         public async Task CreateAndGet_EF9JsonFieldTest()
         {
             IEngineService engineService = Resolve<IEngineService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+            string suffix = TestHelper.UniqueSuffix();
 
             const bool hasTurbo = true;
             const int powerHorses = 120;
@@ -95,7 +95,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         public async Task Query_EF9JsonFieldTest()
         {
             IEngineService engineService = Resolve<IEngineService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+            string suffix = TestHelper.UniqueSuffix();
 
             Engine engine = new()
             {
