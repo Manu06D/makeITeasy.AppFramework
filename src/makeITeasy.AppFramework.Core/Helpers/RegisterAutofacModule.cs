@@ -1,5 +1,4 @@
-﻿using System;
-using Module = Autofac.Module;
+﻿using Module = Autofac.Module;
 using System.Reflection;
 using Autofac;
 

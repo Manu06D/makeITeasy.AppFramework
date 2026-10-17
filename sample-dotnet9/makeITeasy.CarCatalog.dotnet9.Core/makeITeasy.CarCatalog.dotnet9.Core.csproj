@@ -5,17 +5,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\makeITeasy.AppFramework.Core\makeITeasy.AppFramework.Core.csproj" />
 		<ProjectReference Include="..\makeITeasy.CarCatalog.dotnet9.Models\makeITeasy.CarCatalog.dotnet9.Models.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,5 +1,4 @@
-﻿
-namespace makeITeasy.AppFramework.Models
+﻿namespace makeITeasy.AppFramework.Models
 {
     public class OrderBySpecification<T>
     {

@@ -1,6 +1,4 @@
-﻿using makeITeasy.AppFramework.Models;
-
-namespace makeITeasy.AppFramework.Core.Commands
+﻿namespace makeITeasy.AppFramework.Core.Commands
 {
     public class CommandResult
     {

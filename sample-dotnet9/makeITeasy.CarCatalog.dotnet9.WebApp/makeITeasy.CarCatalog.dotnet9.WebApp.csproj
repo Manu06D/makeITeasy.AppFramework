@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="11.0.0" />
+		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="11.0.2" />
 		<PackageReference Include="AutoMapper.Contrib.Autofac.DependencyInjection" Version="[9.0.0]" />
 		<PackageReference Include="MediatR.Extensions.Autofac.DependencyInjection" Version="[12.3.0]" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="[9.0.*, 10.0)" />
@@ -15,21 +15,18 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[9.0.*, 10.0)" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="[9.0.*, 10.0)" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="[9.0.*, 10.0)" />
-		<PackageReference Include="Radzen.Blazor" Version="10.4.2" />
-		<PackageReference Include="Scalar.AspNetCore" Version="2.13.19" />
+		<PackageReference Include="Radzen.Blazor" Version="12.1.4" />
+		<PackageReference Include="Scalar.AspNetCore" Version="2.18.0" />
 		<PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
 		<PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="[9.0.*, 10.0)" />	
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\makeITeasy.CarCatalog.dotnet9.Infrastructure\makeITeasy.CarCatalog.dotnet9.Infrastructure.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<NuGetAuditSuppress Include="https://github.com/advisories/GHSA-rvv3-g6hj-g44x" PackageId="AutoMapper" Reason="Known advisory; internal work around applied" />

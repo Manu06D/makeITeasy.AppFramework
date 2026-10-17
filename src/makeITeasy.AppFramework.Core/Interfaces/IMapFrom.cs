@@ -1,8 +1,4 @@
-﻿
-
-using AutoMapper;
-
-namespace makeITeasy.AppFramework.Core.Interfaces
+﻿namespace makeITeasy.AppFramework.Core.Interfaces
 {
     public interface IMapFrom<T>
     {

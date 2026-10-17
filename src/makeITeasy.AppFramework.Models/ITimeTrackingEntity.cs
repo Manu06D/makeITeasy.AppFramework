@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace makeITeasy.AppFramework.Models
+﻿namespace makeITeasy.AppFramework.Models
 {
     public interface ITimeTrackingEntity
     {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using makeITeasy.AppFramework.Core.Interfaces;
-using makeITeasy.AppFramework.Models;
+﻿using makeITeasy.AppFramework.Core.Interfaces;
 using MediatR;
 
 

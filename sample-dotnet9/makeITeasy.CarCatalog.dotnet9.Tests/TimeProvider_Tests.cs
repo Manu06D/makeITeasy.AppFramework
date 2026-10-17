@@ -49,7 +49,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         public async Task CustomerDateTimeProviderWithGenericService_DateTime()
         {
             ICountryService countryService = Resolve<ICountryService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+            string suffix = TestHelper.UniqueSuffix();
 
             var car = await countryService.CreateAsync(new Country() { Name = "FR" + suffix, CountryCode = "FR" });
 

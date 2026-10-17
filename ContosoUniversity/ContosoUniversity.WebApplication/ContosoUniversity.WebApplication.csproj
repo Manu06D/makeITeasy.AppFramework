@@ -29,15 +29,15 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version=" [9.0.*,10.0)" />
-		<PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="3.0.71" />
+		<PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="3.0.114" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-		<PackageReference Include="Scalar.AspNetCore" Version="2.14.11" />
-		<PackageReference Include="Serilog" Version="4.3.1" />
+		<PackageReference Include="Scalar.AspNetCore" Version="2.18.0" />
+		<PackageReference Include="Serilog" Version="4.4.0" />
 		<PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
-		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="11.0.0" />
+		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="11.0.2" />
 		<PackageReference Include="AutoMapper.Contrib.Autofac.DependencyInjection" Version="[9.0.0]" />
 		<PackageReference Include="MediatR.Extensions.Autofac.DependencyInjection" Version="[12.3.0]" />
-		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />		
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.2.0" />		
 	</ItemGroup>
 
 	<ItemGroup>
@@ -50,9 +50,4 @@
 	  <Folder Include="wwwroot\lib\jquery\" />
 	  <Folder Include="wwwroot\lib\jquery\dist\" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300" />
-	</ItemGroup>
-
 </Project>

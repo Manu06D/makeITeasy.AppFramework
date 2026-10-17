@@ -42,7 +42,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         public async Task CreationRangeDate_BasicTest()
         {
             ICarService carService = Resolve<ICarService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+            string suffix = TestHelper.UniqueSuffix();
 
             var dbCreation = await carService.CreateRangeAsync(new List<Car>() { CarsCatalog.CitroenC4(suffix), CarsCatalog.CitroenC5(suffix) });
 
@@ -55,7 +55,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
             if (DatabaseEngineFixture.CurentDatabaseType == DatabaseType.MsSql)
             {
                 ICarService carService = Resolve<ICarService>();
-                string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+                string suffix = TestHelper.UniqueSuffix();
 
                 DateTime dateTimeBeforeSave = DateTime.Now;
                 var dbCreation = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
@@ -83,7 +83,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         public async Task Entity_UpdateNofields_Test()
         {
             IBrandService brandService = Resolve<IBrandService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+            string suffix = TestHelper.UniqueSuffix();
 
             DateTime dateTimeBeforeSave = DateTime.Now;
             var dbCreation = await brandService.CreateAsync(CarsCatalog.Citroen(suffix));
@@ -110,7 +110,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         public async Task UpdateWithfields_Test()
         {
             ICarService carService = Resolve<ICarService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+            string suffix = TestHelper.UniqueSuffix();
 
             DateTime dateTimeBeforeSave = DateTime.Now;
             var dbCreation = await carService.CreateAsync(CarsCatalog.CitroenC4(suffix));
@@ -142,7 +142,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         public async Task UpdateProperties_LastModificationDateChanged()
         {
             ICarService carService = Resolve<ICarService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+            string suffix = TestHelper.UniqueSuffix();
 
             Car newCar = CarsCatalog.CitroenC4(suffix);
             DateTime creationDateTime = DateTime.Now;
@@ -164,7 +164,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests
         public async Task CreationRangeDate_RecursiveTest()
         {
             ICountryService countryService = Resolve<ICountryService>();
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+            string suffix = TestHelper.UniqueSuffix();
 
             DateTime dateTimeOfTest = DateTime.Now;
 

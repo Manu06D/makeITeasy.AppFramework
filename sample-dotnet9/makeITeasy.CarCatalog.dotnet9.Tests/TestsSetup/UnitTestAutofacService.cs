@@ -26,7 +26,7 @@ namespace makeITeasy.CarCatalog.dotnet9.Tests.TestsSetup
             IBrandService brandService = Resolve<IBrandService>();
             ICountryService countryService = Resolve<ICountryService>();
 
-            string suffix = TimeOnly.FromDateTime(DateTime.Now).ToString("hhmmssfffffff");
+            string suffix = TestHelper.UniqueSuffix();
             List<Car> cars = [];
 
             Country country = CarsCatalog.France;

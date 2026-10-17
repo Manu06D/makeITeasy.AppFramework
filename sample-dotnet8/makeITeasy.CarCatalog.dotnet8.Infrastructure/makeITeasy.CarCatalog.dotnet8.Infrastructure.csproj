@@ -8,9 +8,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-		<PackageReference Include="Serilog" Version="4.3.1" />
+		<PackageReference Include="Serilog" Version="4.4.0" />
 	</ItemGroup>
-
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\makeITeasy.AppFramework.Infrastructure.EntityFramework\makeITeasy.AppFramework.Infrastructure.EntityFramework.csproj" />
@@ -18,10 +17,6 @@
 		<ProjectReference Include="..\makeITeasy.CarCatalog.dotnet8.Models\makeITeasy.CarCatalog.dotnet8.Models.csproj" />
 	</ItemGroup>
 
-
-	<ItemGroup>
-	  <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.300" />
-	</ItemGroup>
 	<ItemGroup>
 		<NuGetAuditSuppress Include="https://github.com/advisories/GHSA-rvv3-g6hj-g44x" PackageId="AutoMapper" Reason="Known advisory; internal work around applied" />
 		<PackageVersion Include="AutoMapper" Version="14.0.0" />
