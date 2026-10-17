@@ -10,9 +10,9 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
 		<PackageTags>framework ef</PackageTags>
-		<Version>2.0.7</Version>
+		<Version>2.0.8</Version>
 		<PackageReleaseNotes>
-			2.0.7 : Add ForceLastModificationDateUpdate parameter in UpdateProperties
+			2.0.8 : Add ForceLastModificationDateUpdate parameter in UpdateProperties
 			2.0.6 : Add Tag and Split() query in ISpecification
 			2.0.5 : Dependencies update
 			2.0.3 : Add string to Expression helper
