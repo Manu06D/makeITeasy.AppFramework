@@ -80,7 +80,7 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests
 
             var dbCreation = await carService.CreateRangeAsync([CarsCatalog.CitroenC4(suffix), CarsCatalog.CitroenC5(suffix)]);
 
-            await carService.UpdateRangeAsync(x => x.Id > 0, new UpdateDefinition<Car>().Set(x => x.CarType, CarType.Hatchback).Set(x => x.ReleaseYear, x => x.ReleaseYear + 1000));
+            await carService.UpdateRangeAsync(x => x.Name.EndsWith(suffix), new UpdateDefinition<Car>().Set(x => x.CarType, CarType.Hatchback).Set(x => x.ReleaseYear, x => x.ReleaseYear + 1000));
 
             var queryResult = await carService.QueryAsync(new BasicCarQuery() { NameSuffix = suffix, IncludeBrandAndCountry = true });
 

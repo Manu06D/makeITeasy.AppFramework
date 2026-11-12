@@ -24,8 +24,12 @@
 		<PackageVersion Include="EFCore.BulkExtensions.SqlServer" Version="[9.0.2,10.0)" />
 	</ItemGroup>	
 	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
-		<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="[10.0.13,11.0)" />
-		<PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="[10.0.13,11.0)" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="[10.0.15,11.0)" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="[10.0.15,11.0)" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net11.0'">
+		<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="[11.0.0,12.0)" />
+		<PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="[11.0.0,12.0)" />
 	</ItemGroup>
 
 </Project>
