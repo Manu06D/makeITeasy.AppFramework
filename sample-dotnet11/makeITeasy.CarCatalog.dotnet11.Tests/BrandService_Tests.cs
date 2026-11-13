@@ -219,9 +219,9 @@ namespace makeITeasy.CarCatalog.dotnet11.Tests
         [Fact]
         public async Task SplitQuery_ViaSpecification_SuccessTest()
         {
-            (_, IBrandService brandService, _, _, _) = await CarsCatalog.CreateCarsAsync(this);
+            (_, IBrandService brandService, _, string suffix, _) = await CarsCatalog.CreateCarsAsync(this);
 
-            var result = await brandService.QueryAsync(new BasicBrandQuery { Includes = [x => x.Cars], SplitQuery = true });
+            var result = await brandService.QueryAsync(new BasicBrandQuery { NameSuffix = suffix, Includes = [x => x.Cars], SplitQuery = true });
 
             result.Results.Should().NotBeEmpty();
             result.Results.Should().Contain(x => x.Cars.Count > 0);
@@ -230,9 +230,10 @@ namespace makeITeasy.CarCatalog.dotnet11.Tests
         [Fact]
         public async Task SplitQuery_ViaQueryBuilder_SuccessTest()
         {
-            (_, IBrandService brandService, _, _, _) = await CarsCatalog.CreateCarsAsync(this);
+            (_, IBrandService brandService, _, string suffix, _) = await CarsCatalog.CreateCarsAsync(this);
 
             var query = QueryBuilder.Create<BasicBrandQuery, Brand>()
+                .Where(x => x.Name.EndsWith(suffix))
                 .Include(x => x.Cars)
                 .WithSplitQuery()
                 .Build();
