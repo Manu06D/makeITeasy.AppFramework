@@ -53,22 +53,22 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
             return _dbFactory.CreateDbContext();
         }
 
-        public virtual async Task<T?> GetByIdAsync(object id)
+        public virtual async Task<T?> GetByIdAsync(object id, CancellationToken cancellationToken = default)
         {
-            return await GetByIdAsync(GetDbContext(), id);
+            return await GetByIdAsync(GetDbContext(), id, cancellationToken);
         }
 
-        protected static async Task<T?> GetByIdAsync(U dbContext, object id)
+        protected static async Task<T?> GetByIdAsync(U dbContext, object id, CancellationToken cancellationToken = default)
         {
             if (id is object[] compositeKeys)
             {
-                return await dbContext.Set<T>().FindAsync(compositeKeys);
+                return await dbContext.Set<T>().FindAsync(compositeKeys, cancellationToken);
             }
 
-            return await dbContext.Set<T>().FindAsync(id);
+            return await dbContext.Set<T>().FindAsync([id], cancellationToken);
         }
 
-        public virtual async Task<T?> GetByIdAsync(object id, List<Expression<Func<T, object>>>? includes)
+        public virtual async Task<T?> GetByIdAsync(object id, List<Expression<Func<T, object>>>? includes, CancellationToken cancellationToken = default)
         {
             U? dbContext = GetDbContext();
 
@@ -101,13 +101,13 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
                     predicate = predicate == null ? condition : Expression.AndAlso(predicate, condition);
                 }
 
-                return await dbSet.FirstOrDefaultAsync(Expression.Lambda<Func<T, bool>>(predicate!, parameter));
+                return await dbSet.FirstOrDefaultAsync(Expression.Lambda<Func<T, bool>>(predicate!, parameter), cancellationToken);
             }
 
-            return await GetByIdAsync(id);
+            return await GetByIdAsync(id, cancellationToken);
         }
 
-        public virtual async Task<IList<T>> ListAllAsync(List<Expression<Func<T, object>>>? includes = null)
+        public virtual async Task<IList<T>> ListAllAsync(List<Expression<Func<T, object>>>? includes = null, CancellationToken cancellationToken = default)
         {
             var dbSet = GetDbContext().Set<T>().AsQueryable();
 
@@ -116,28 +116,30 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
                 dbSet = includes.Aggregate(dbSet, (current, include) => current.Include(include));
             }
 
-            return await dbSet.ToListAsync();
+            return await dbSet.ToListAsync(cancellationToken);
         }
 
-        public virtual async Task<QueryResult<T>> ListAsync(ISpecification<T> spec, bool includeCount = false)
+        public virtual async Task<QueryResult<T>> ListAsync(ISpecification<T> spec, bool includeCount = false, CancellationToken cancellationToken = default)
         {
             QueryResult<T> result = new();
 
-            (result.TotalItems, IQueryable<T>? filteredSet) = await CreateQueryableFromSpec(spec, GetDbContext(), includeCount);
+            (result.TotalItems, IQueryable<T>? filteredSet) = await CreateQueryableFromSpec(spec, GetDbContext(), includeCount, cancellationToken);
 
             if(filteredSet != null)
             {
-                result.Results = await filteredSet.AsNoTracking().ToListAsync();
+                result.Results = await filteredSet.AsNoTracking().ToListAsync(cancellationToken);
             }
 
             return result;
         }
 
-        public virtual async Task<QueryResult<X>> ListWithProjectionAsync<X>(ISpecification<T> spec, bool includeCount = false) where X : class
+        public virtual async Task<QueryResult<X>> ListWithProjectionAsync<X>(ISpecification<T> spec, bool includeCount = false, CancellationToken cancellationToken = default) where X : class
         {
             QueryResult<X> result = new();
 
-            (result.TotalItems, IQueryable<T>? filteredSet) = await CreateQueryableFromSpec(spec, GetDbContext(), includeCount);
+            (result.TotalItems, IQueryable<T>? filteredSet) = await CreateQueryableFromSpec(spec, GetDbContext(), includeCount, cancellationToken);
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             if (filteredSet != null && _mapper?.ConfigurationProvider != null)
             {
@@ -147,7 +149,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
             return result;
         }
 
-        private async Task<(int, IQueryable<T>?)> CreateQueryableFromSpec(ISpecification<T> spec, U dbContext, bool includeCount = false)
+        private async Task<(int, IQueryable<T>?)> CreateQueryableFromSpec(ISpecification<T> spec, U dbContext, bool includeCount = false, CancellationToken cancellationToken = default)
         {
             if (typeof(IIsValidSpecification).IsAssignableFrom(spec.GetType()) && !((IIsValidSpecification)spec).IsValid())
             {
@@ -168,7 +170,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
                 }
             }
 
-            int totalItems = await ApplyCountIfNeededAsync(filteredSet, includeCount);
+            int totalItems = await ApplyCountIfNeededAsync(filteredSet, includeCount, cancellationToken);
 
             if (spec.IsPagingEnabled && spec.Take.GetValueOrDefault() > 0)
             {
@@ -178,23 +180,23 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
             return (totalItems, filteredSet);
         }
 
-        public virtual async Task<int> ApplyCountIfNeededAsync(IQueryable<T>? filteredSet, bool includeCount)
+        public virtual async Task<int> ApplyCountIfNeededAsync(IQueryable<T>? filteredSet, bool includeCount, CancellationToken cancellationToken = default)
         {
             if (includeCount && filteredSet != null)
             {
-                return await filteredSet.CountAsync().ConfigureAwait(false);
+                return await filteredSet.CountAsync(cancellationToken).ConfigureAwait(false);
             }
 
             return 0;
         }
 
-        public async Task<int> CountAsync(ISpecification<T> spec)
+        public async Task<int> CountAsync(ISpecification<T> spec, CancellationToken cancellationToken = default)
         {
             IQueryable<T>? query = BaseEfRepository<T, U>.ApplySpecification(spec, GetDbContext());
 
             if (query != null)
             {
-                return await query.CountAsync();
+                return await query.CountAsync(cancellationToken);
             }
             else
             {
@@ -202,33 +204,33 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
             }
         }
 
-        public async Task<T> AddAsync(T entity, bool saveChanges = true)
+        public async Task<T> AddAsync(T entity, bool saveChanges = true, CancellationToken cancellationToken = default)
         {
             U dbContext = GetDbContext();
 
             PrepareEntityForDbOperation(entity, EntityState.Added);
 
-            await dbContext.Set<T>().AddAsync(entity);
+            await dbContext.Set<T>().AddAsync(entity, cancellationToken);
 
-            await SaveOrUpdateChanges(dbContext, saveChanges);
+            await SaveOrUpdateChanges(dbContext, saveChanges, cancellationToken: cancellationToken);
 
             return entity;
         }
 
-        public async Task<ICollection<T>> AddRangeAsync(ICollection<T> entities, bool saveChanges = true)
+        public async Task<ICollection<T>> AddRangeAsync(ICollection<T> entities, bool saveChanges = true, CancellationToken cancellationToken = default)
         {
             U dbContext = GetDbContext();
 
             PrepareEntitiesForDbOperation(entities, EntityState.Added);
 
-            await dbContext.Set<T>().AddRangeAsync(entities);
+            await dbContext.Set<T>().AddRangeAsync(entities, cancellationToken);
 
-            await SaveOrUpdateChanges(dbContext, saveChanges);
+            await SaveOrUpdateChanges(dbContext, saveChanges, cancellationToken: cancellationToken);
 
             return entities;
         }
 
-        private async Task<int> SaveOrUpdateChanges(U dbContext, bool saveChanges = true, object? forceLastModificationDateEntity = null)
+        private async Task<int> SaveOrUpdateChanges(U dbContext, bool saveChanges = true, object? forceLastModificationDateEntity = null, CancellationToken cancellationToken = default)
         {
             var entries =
                 dbContext.ChangeTracker.Entries().Where(e => e.Entity is ITimeTrackingEntity && (e.State == EntityState.Added || e.State == EntityState.Modified));
@@ -285,7 +287,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
 
             if (saveChanges)
             {
-                return await dbContext.SaveChangesAsync();
+                return await dbContext.SaveChangesAsync(cancellationToken);
             }
 
             return -1;
@@ -390,11 +392,11 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
             return result;
         }
 
-        private async Task<CommandResult<T>> SaveOrUpdateChangesWithResult(T entity, U dbContext, bool saveChanges = true, object? forceLastModificationDateEntity = null)
+        private async Task<CommandResult<T>> SaveOrUpdateChangesWithResult(T entity, U dbContext, bool saveChanges = true, object? forceLastModificationDateEntity = null, CancellationToken cancellationToken = default)
         {
             var result = new CommandResult<T>();
 
-            int dbChanges = await SaveOrUpdateChanges(dbContext, saveChanges, forceLastModificationDateEntity);
+            int dbChanges = await SaveOrUpdateChanges(dbContext, saveChanges, forceLastModificationDateEntity, cancellationToken);
 
             result.Entity = entity;
             result.Result = dbChanges >= 0 ? CommandState.Success : CommandState.Error;
@@ -408,7 +410,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
         /// <param name="entity"></param>
         /// <param name="saveChanges"></param>
         /// <returns></returns>
-        public async Task<CommandResult<T>> UpdateAsync(T entity, bool saveChanges = true)
+        public async Task<CommandResult<T>> UpdateAsync(T entity, bool saveChanges = true, CancellationToken cancellationToken = default)
         {
             var dbContext = GetDbContext();
 
@@ -419,11 +421,11 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
                 //This can be an issue if input entity is not fully filled with database value. Data can be lost !!
                 if (entity.DatabaseID is object[] compositeKey)
                 {
-                    databaseEntity = await dbContext.FindAsync<T>(compositeKey);
+                    databaseEntity = await dbContext.FindAsync<T>(compositeKey, cancellationToken);
                 }
                 else
                 {
-                    databaseEntity = await dbContext.FindAsync<T>(entity.DatabaseID);
+                    databaseEntity = await dbContext.FindAsync<T>([entity.DatabaseID], cancellationToken);
                 }
 
                 if (databaseEntity != null)
@@ -446,12 +448,12 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
                 }
             }
 
-            var dbResult = await SaveOrUpdateChangesWithResult(entity, dbContext, saveChanges);
+            var dbResult = await SaveOrUpdateChangesWithResult(entity, dbContext, saveChanges, cancellationToken: cancellationToken);
 
             return dbResult;
         }
 
-        public async Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] propertyNames, bool saveChanges = true, bool forceLastModificationDateUpdate = false)
+        public async Task<CommandResult<T>> UpdatePropertiesAsync(T entity, string[] propertyNames, bool saveChanges = true, bool forceLastModificationDateUpdate = false, CancellationToken cancellationToken = default)
         {
             if (propertyNames == null || propertyNames.Length  == 0)
             {
@@ -461,7 +463,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
             var dbContext = GetDbContext();
 
             var result = new CommandResult<T>();
-            T? databaseEntity = await GetByIdAsync(dbContext, entity.DatabaseID);
+            T? databaseEntity = await GetByIdAsync(dbContext, entity.DatabaseID, cancellationToken);
 
             if (PrepareEntityForDbOperation(entity, EntityState.Modified))
             {
@@ -494,7 +496,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
 
                 if (shouldSave)
                 {
-                    result = await SaveOrUpdateChangesWithResult(entity, dbContext, shouldSave, forceLastModificationDateUpdate ? databaseEntity : null);
+                    result = await SaveOrUpdateChangesWithResult(entity, dbContext, shouldSave, forceLastModificationDateUpdate ? databaseEntity : null, cancellationToken);
                 }
                 else
                 {
@@ -515,7 +517,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
             return [.. objectProperties.Where(x => propertiesToUpdate.Contains(x.Name))];
         }
 
-        public async Task<CommandResult> DeleteAsync(T entity, bool saveChanges = true)
+        public async Task<CommandResult> DeleteAsync(T entity, bool saveChanges = true, CancellationToken cancellationToken = default)
         {
             CommandResult result = new();
 
@@ -525,7 +527,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
 
             if (saveChanges)
             {
-                int dbResult = await dbContext.SaveChangesAsync();
+                int dbResult = await dbContext.SaveChangesAsync(cancellationToken);
                 result.Result = dbResult > 0 ? CommandState.Success : CommandState.Error;
             }
 
@@ -557,7 +559,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
             }
         }
 
-        public async Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, UpdateDefinition<T> updates)
+        public async Task<int> UpdateRangeAsync(Expression<Func<T, bool>> entityPredicate, UpdateDefinition<T> updates, CancellationToken cancellationToken = default)
         {
 #if NET10_0_OR_GREATER
             var dbContext = GetDbContext();
@@ -572,7 +574,7 @@ namespace makeITeasy.AppFramework.Infrastructure.EntityFramework.Persistence
                     ds = ds.SetProperty((dynamic)propertyLambda, (dynamic)valueLambda);
                     s = ds;
                 }
-            });
+            }, cancellationToken);
 #else
             throw new NotImplementedException(nameof(UpdateRangeAsync));
 #endif

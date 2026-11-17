@@ -18,7 +18,7 @@ namespace makeITeasy.AppFramework.Core.Commands
                 throw new ArgumentNullException(nameof(request));
             }
 
-            return await baseService.CreateAsync(request.Entity);
+            return await baseService.CreateAsync(request.Entity, cancellationToken: cancellationToken);
         }
     }
 }
