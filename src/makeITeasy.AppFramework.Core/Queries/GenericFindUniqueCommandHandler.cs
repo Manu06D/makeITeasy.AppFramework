@@ -19,7 +19,7 @@ namespace makeITeasy.AppFramework.Core.Queries
                 throw new ArgumentNullException(nameof(request));
             }
 
-            return await baseService.GetFirstByQueryAsync(request.Query);
+            return await baseService.GetFirstByQueryAsync(request.Query, cancellationToken);
         }
     }
 }

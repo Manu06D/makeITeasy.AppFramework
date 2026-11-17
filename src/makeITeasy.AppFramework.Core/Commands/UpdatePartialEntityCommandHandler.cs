@@ -20,7 +20,7 @@ namespace makeITeasy.AppFramework.Core.Commands
                 throw new ArgumentNullException(nameof(request));
             }
 
-            return await baseService.UpdatePropertiesAsync(request.Entity, request.Properties, request.ForceLastModificationDateUpdate);
+            return await baseService.UpdatePropertiesAsync(request.Entity, request.Properties, request.ForceLastModificationDateUpdate, cancellationToken);
         }
     }
 }
