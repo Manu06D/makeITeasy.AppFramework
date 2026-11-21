@@ -26,7 +26,7 @@
 	  <PackageReference Include="Serilog.Settings.Configuration" Version="10.0.1" />
 	  <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.15" />
-	  <PackageReference Include="Testcontainers.MsSql" Version="4.16.0" />
+	  <PackageReference Include="Testcontainers.MsSql" Version="4.17.0" />
 
 	  <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.2.0" />
 	  <PackageReference Include="AutoMapper.Contrib.Autofac.DependencyInjection" Version="[9.0.0]" />
@@ -34,8 +34,8 @@
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos" Version="10.0.15" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.15" />
 	  <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.15" />
-	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
-	  <PackageReference Include="coverlet.collector" Version="10.1.0">
+	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />
+	  <PackageReference Include="coverlet.collector" Version="10.1.1">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
@@ -45,7 +45,7 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
 
-	  <PackageReference Include="xunit.v3" Version="4.0.2" />
+	  <PackageReference Include="xunit.v3" Version="4.0.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,9 +53,4 @@
 	  <ProjectReference Include="..\makeITeasy.CarCatalog.dotnet10.Infrastructure\makeITeasy.CarCatalog.dotnet10.Infrastructure.csproj" />
 	  <ProjectReference Include="..\makeITeasy.CarCatalog.dotnet10.Models\makeITeasy.CarCatalog.dotnet10.Models.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-	  <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.402" />
-  </ItemGroup>
-
 </Project>

@@ -314,9 +314,9 @@ namespace makeITeasy.CarCatalog.dotnet11.Tests
         [Fact]
         public async Task SplitQuery_GetFirstByQueryAsync_SuccessTest()
         {
-            (_, IBrandService brandService, _, _, _) = await CarsCatalog.CreateCarsAsync(this);
+            (_, IBrandService brandService, _, string suffix, _) = await CarsCatalog.CreateCarsAsync(this);
 
-            var firstBrand = await brandService.GetFirstByQueryAsync(new BasicBrandQuery { Includes = [x => x.Cars], SplitQuery = true });
+            var firstBrand = await brandService.GetFirstByQueryAsync(new BasicBrandQuery { NameSuffix = suffix, Includes = [x => x.Cars], SplitQuery = true });
 
             firstBrand.Should().NotBeNull();
             firstBrand.Cars.Should().NotBeEmpty();

@@ -7,7 +7,8 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests.Catalogs
 {
     public static class CarsCatalog
     {
-        public static async Task<(ICarService carService, IBrandService brandService, Brand citroenBrand, string suffix, List<Car> cars)> CreateCarsAsync(IResolveEntity resolveEntity)
+        public static async Task<(ICarService carService, IBrandService brandService, Brand citroenBrand, string suffix, List<Car> cars)>
+            CreateCarsAsync(IResolveEntity resolveEntity)
         {
             ICarService carService = resolveEntity.Resolve<ICarService>();
             IBrandService brandService = resolveEntity.Resolve<IBrandService>();

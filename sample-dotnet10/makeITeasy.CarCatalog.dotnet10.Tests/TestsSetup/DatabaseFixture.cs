@@ -32,11 +32,16 @@ namespace makeITeasy.CarCatalog.dotnet10.Tests.TestsSetup
                 var msSqlContainer =
                     new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-latest")
                     .WithReuse(true)
-                    .WithLabel("reuse-id", "makeiteasyUnitTests")
+                    .WithLabel("reuse-id", "makeiteasyUnitTests.net10")
+                    .WithPortBinding(14333, true)
                     .Build();
                 await msSqlContainer.StartAsync();
 
-                ConnectionString = msSqlContainer.GetConnectionString();
+                // Dedicated database per test assembly: the reused container is shared across samples/processes
+                ConnectionString = new Microsoft.Data.SqlClient.SqlConnectionStringBuilder(msSqlContainer.GetConnectionString())
+                {
+                    InitialCatalog = "CarCatalog_dotnet10"
+                }.ConnectionString;
             }
             else if (GlobalTestSetup.DatabaseType == DatabaseType.SqlLite)
             {

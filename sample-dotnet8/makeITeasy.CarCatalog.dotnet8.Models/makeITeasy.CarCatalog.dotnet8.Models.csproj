@@ -19,5 +19,4 @@
 		<NuGetAuditSuppress Include="https://github.com/advisories/GHSA-rvv3-g6hj-g44x" PackageId="AutoMapper" Reason="Known advisory; internal work around applied" />
 		<PackageVersion Include="AutoMapper" Version="14.0.0" />
 	</ItemGroup>
-
 </Project>
