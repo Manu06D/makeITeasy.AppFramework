@@ -11,8 +11,9 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryUrl>https://github.com/Manu06D/makeITeasy.AppFramework</RepositoryUrl>
 		<PackageTags>framework ef</PackageTags>
-		<Version>10.5.0</Version>
+		<Version>10.5.1</Version>
 		<PackageReleaseNotes>
+			10.5.1  : Add cancellation token for all async methods
 			10.5.0  : Add dotnet 11 support
 			10.4.1  : Add ForceLastModificationDateUpdate parameter in UpdateProperties
 			10.3.0  : Add Tag and Split() query in ISpecification

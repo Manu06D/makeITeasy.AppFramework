@@ -13,7 +13,7 @@ namespace makeITeasy.AppFramework.Core.Commands
         }
         public async Task<CommandResult> Handle(DeleteEntityCommand<TEntity> request, CancellationToken cancellationToken)
         {
-            CommandResult result = await baseService.DeleteAsync(request.Entity);
+            CommandResult result = await baseService.DeleteAsync(request.Entity, cancellationToken: cancellationToken);
 
             return result;           
         }
